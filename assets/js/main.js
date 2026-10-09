@@ -39,7 +39,8 @@
     ["news", "News", "news.html"],
     ["research", "Research", "research.html"],
     ["people", "People", "people.html"],
-    ["publications", "Publications", "publications.html"]
+    ["publications", "Publications", "publications.html"],
+    ["teaching", "Teaching", "teaching.html"]
   ];
   (function header() {
     const joinHref = page === "home" ? "#join" : "index.html#join";
@@ -537,6 +538,104 @@
           "</div></section>";
       }).join("");
     }
+    render();
+  }
+
+  /* ================= Teaching ================= */
+  if (page === "teaching") {
+    const T = L.teaching || {};
+    setHTML("#page-intro", T.intro || "");
+    const C = T.courses || {};
+    const TAGC = T.tagColors || {};
+    const LEVELS = [["undergrad", "Undergraduate"], ["grad", "Graduate"]];
+    const termKey = (t) => { const [y, s] = String(t).split("-").map(Number); return y * 10 + (s || 0); };
+    const termLong = (t) => { const [y, s] = String(t).split("-"); return y + "학년도 " + s + "학기"; };
+    const termShort = (t) => String(t);
+    const cur = termKey(T.currentTerm || "0-0");
+    // 학기별 개설 목록 → { term, id, link }
+    const offerings = [];
+    (T.terms || []).forEach((tm) => (tm.courses || []).forEach((c) => {
+      const id = typeof c === "string" ? c : c.id;
+      if (C[id]) offerings.push({ term: tm.term, id, link: typeof c === "string" ? "" : c.link || "" });
+    }));
+    offerings.sort((a, b) => termKey(b.term) - termKey(a.term));
+    const allTags = Object.keys(TAGC).filter((t) => Object.values(C).some((c) => (c.tags || []).includes(t)));
+    let view = "term", tag = "all";
+
+    const tagBadges = (c) => (c.tags || []).map((t) => '<span class="badge' + (TAGC[t] ? " tag-" + TAGC[t] : "") + '">' + esc(t) + "</span>").join("");
+    const courseName = (c, link) =>
+      '<p class="course-name">' + (link ? '<a href="' + esc(link) + '">' + esc(c.name) + "</a>" : esc(c.name)) + "</p>" +
+      (c.nameEn ? '<p class="course-en">' + esc(c.nameEn) + "</p>" : "");
+    // 이번 학기 과목 옆 움직이는 그림 (누르면 과목 사이트로)
+    const courseArt = (c, link) => {
+      const f = c.illustration && window.ILLUS && window.ILLUS[c.illustration];
+      if (!f) return "";
+      return link
+        ? '<a class="course-art" href="' + esc(link) + '" aria-label="' + esc(c.name) + ' 과목 사이트">' + f() + "</a>"
+        : '<div class="course-art">' + f() + "</div>";
+    };
+    const levelGroups = (items, getCourse) => LEVELS
+      .map(([k, label]) => [label, items.filter((x) => getCourse(x).level === k)]).filter(([, a]) => a.length);
+
+    const viewEl = $("#teach-view"), tagEl = $("#teach-tags");
+    const drawChips = () => {
+      viewEl.innerHTML = [["term", "By term"], ["course", "By course"]]
+        .map(([k, l]) => '<button type="button" class="chip" data-view="' + k + '" aria-pressed="' + (k === view) + '">' + l + "</button>").join("");
+      tagEl.innerHTML = [["all", "All"]].concat(allTags.map((t) => [t, t]))
+        .map(([k, l]) => '<button type="button" class="chip chip-tag" data-tag="' + esc(k) + '" aria-pressed="' + (k === tag) + '">' + esc(l) + "</button>").join("");
+    };
+    viewEl.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; view = b.dataset.view; drawChips(); render(); });
+    tagEl.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; tag = b.dataset.tag; drawChips(); render(); });
+
+    function termView(list) {
+      const terms = [...new Set(list.map((o) => o.term))];
+      const block = (t) => {
+        const inTerm = list.filter((o) => o.term === t);
+        const isNow = termKey(t) >= cur;
+        return '<section class="pub-year-block teach-term' + (isNow ? " is-current" : "") + '" aria-label="' + esc(termLong(t)) + '">' +
+          '<h3 class="pub-year teach-term-label">' + esc(t.split("-")[0]) + '<span>' + esc(t.split("-")[1]) + "학기</span></h3><div>" +
+          levelGroups(inTerm, (o) => C[o.id]).map(([label, arr]) =>
+            '<h4 class="caps pub-scope">' + label + '</h4><ul class="pubs">' +
+            arr.map((o) => {
+              const c = C[o.id], link = o.link || c.link, art = isNow ? courseArt(c, link) : "";
+              return '<li class="pub course' + (art ? " has-art" : "") + '"><div class="pub-tags">' + tagBadges(c) + '</div><div class="pub-main">' + courseName(c, link) + "</div>" + art + "</li>";
+            }).join("") +
+            "</ul>").join("") +
+          "</div></section>";
+      };
+      const now = terms.filter((t) => termKey(t) >= cur), past = terms.filter((t) => termKey(t) < cur);
+      return (now.length ? '<h2 class="caps teach-section">Current Courses</h2>' + now.map(block).join("") : "") +
+        (past.length ? '<h2 class="caps teach-section">Past Courses</h2>' + past.map(block).join("") : "");
+    }
+    function courseView(list) {
+      const ids = [...new Set(list.map((o) => o.id))];   // 최근 개설 순
+      return levelGroups(ids, (id) => C[id]).map(([label, arr]) =>
+        '<section class="pub-year-block teach-course-block" aria-label="' + label + '">' +
+        '<h3 class="pub-year teach-level">' + label + '</h3><div><ul class="pubs">' +
+        arr.map((id) => {
+          const c = C[id], terms = list.filter((o) => o.id === id);
+          const isCur = terms.some((o) => termKey(o.term) >= cur);
+          const art = isCur ? courseArt(c, c.link) : "";
+          return '<li class="pub course' + (art ? " has-art" : "") + '"><div class="pub-tags">' + tagBadges(c) + '</div><div class="pub-main">' +
+            courseName(c, c.link) +
+            '<p class="course-terms">(' + terms.map((o) => {
+              const label = termShort(o.term) + "학기";
+              const inner = termKey(o.term) >= cur ? '<strong>' + esc(label) + "</strong>" : esc(label);
+              return o.link ? '<a href="' + esc(o.link) + '">' + inner + "</a>" : inner;
+            }).join(", ") + ")" + (isCur ? ' <span class="caps pub-status">Now</span>' : "") + "</p>" +
+            "</div>" + art + "</li>";
+        }).join("") + "</ul></div></section>").join("");
+    }
+    function render() {
+      const list = offerings.filter((o) => tag === "all" || (C[o.id].tags || []).includes(tag));
+      const nCourses = new Set(list.map((o) => o.id)).size, nTerms = new Set(list.map((o) => o.term)).size;
+      $("#teach-count").textContent = nCourses + " courses · " + nTerms + " terms";
+      $("#teach-list").innerHTML = list.length ? (view === "term" ? termView(list) : courseView(list)) : '<p class="empty">해당 분야의 강의가 없습니다.</p>';
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.querySelectorAll(".course-art svg").forEach((el) => el.pauseAnimations && el.pauseAnimations());
+      }
+    }
+    drawChips();
     render();
   }
 })();

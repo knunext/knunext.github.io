@@ -372,5 +372,100 @@
     return svg("0 0 480 300", b, "지구 궤도를 도는 서버 모듈 위성, 위성 간 광링크, 지상국 다운링크");
   };
 
+  /* ---------- Teaching: 과목별 움직이는 그림 (360 x 110) ---------- */
+  // 움직이는 작은 블록(데이터, 명령어)
+  const Tok = (w, h, motion, extra) =>
+    `<rect class="solid" x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="1">${motion}${extra || ""}</rect>`;
+  const Move = (path, dur, begin, opts) =>
+    `<animateMotion path="${path}" dur="${dur}s" begin="${begin}s" repeatCount="indefinite"${opts || ""}/>`;
+  const Fade = (dur, begin, values, keyTimes) =>
+    `<animate attributeName="opacity" values="${values || "0;1;1;0"}" keyTimes="${keyTimes || "0;0.06;0.9;1"}" dur="${dur}s" begin="${begin}s" repeatCount="indefinite"/>`;
+
+  // 컴퓨터구조: 5단 파이프라인 + 레지스터 파일, 캐시, DRAM. 명령어가 단계를 한 칸씩 이동
+  I.courseArch = () => {
+    let b = "";
+    const st = ["IF", "ID", "EX", "MEM", "WB"], cx = (i) => 38 + i * 68;
+    st.forEach((n, i) => {
+      b += R(cx(i) - 26, 14, 52, 28, 2) + T(cx(i), 31.5, n, "middle");
+      if (i < 4) b += Ln(cx(i) + 26, 28, cx(i + 1) - 26, 28, "thin");
+    });
+    // 아래: 레지스터 파일, L1 캐시, DRAM
+    b += R(80, 70, 52, 26, 2) + T(106, 86.5, "REG", "middle");
+    b += R(216, 70, 52, 26, 2) + T(242, 86.5, "L1 $", "middle");
+    b += R(296, 70, 56, 26, 2) + T(324, 86.5, "DRAM", "middle");
+    b += Ln(106, 42, 106, 70, "thin") + Ln(242, 42, 242, 70, "thin") + Ln(268, 83, 296, 83, "thin");
+    b += P("M168 42 Q140 60 112 42", "dash");                                   // 포워딩
+    // 명령어 토큰: 1초마다 한 단계씩 (파이프라인)
+    const kp = "0;0;0.25;0.25;0.5;0.5;0.75;0.75;1;1", kt = "0;0.14;0.2;0.34;0.4;0.54;0.6;0.74;0.8;1";
+    range(3).forEach((k) => {                                                   // 3개만 두어 빈 단계(버블)가 보이게
+      b += Tok(12, 8, Move("M38 52 H310", 5, -k * 1.0, ` calcMode="linear" keyPoints="${kp}" keyTimes="${kt}"`), Fade(5, -k, "0;1;1;0", "0;0.04;0.92;1"));
+    });
+    // 데이터 이동: 레지스터 ↔ ID, 캐시 ↔ MEM, DRAM ↔ 캐시
+    b += Tok(6, 6, Move("M106 68 V44 V68", 2, 0));
+    b += Tok(6, 6, Move("M242 44 V68 V44", 2.4, -0.6));
+    b += Tok(8, 5, Move("M272 83 H292 H272", 1.8, -0.3));
+    return svg("0 0 360 110", b, "5단 파이프라인을 따라 이동하는 명령어와 캐시, 메모리 사이의 데이터 이동");
+  };
+
+  // 항공드론알고리즘: 경로점을 따라 화물을 나르는 드론, 상자를 들고 걷는 휴머노이드
+  I.courseDrone = () => {
+    let b = "";
+    b += Ln(6, 100, 354, 100);
+    // 비행 경로와 경로점
+    const route = "M330 34 C292 6 236 46 196 26 C160 8 122 30 92 24 C140 52 268 58 330 34 Z";
+    b += P(route, "dash");
+    [[196, 26], [92, 24], [330, 34]].forEach(([x, y]) => (b += P(`M${x - 3} ${y} H${x + 3} M${x} ${y - 3} V${y + 3}`, "thin")));
+    // 착륙장, 선반
+    b += E(250, 99, 18, 3, "thin") + T(250, 96, "H", "middle");
+    b += R(304, 72, 22, 14) + R(328, 72, 22, 14) + R(316, 58, 22, 14) + Ln(300, 86, 354, 86, "thin");
+    // 드론 (본체, 팔, 프로펠러, 매달린 화물)
+    const prop = (x, d) => `<ellipse cx="${x}" cy="-7" rx="9" ry="1.4"><animate attributeName="rx" values="9;2.5;9" dur="0.16s" begin="${d}s" repeatCount="indefinite"/></ellipse>`;
+    let dr = R(-11, -4, 22, 7, 2) + Ln(-11, -1, -18, -6) + Ln(11, -1, 18, -6) + Ln(-18, -6, -18, -8) + Ln(18, -6, 18, -8);
+    dr += prop(-18, 0) + prop(18, -0.08);
+    dr += Ln(0, 3, 0, 11, "thin") + R(-5, 11, 10, 8, 1);
+    b += `<g>${dr}${Move(route, 10, 0)}</g>`;
+    // 휴머노이드 (G1 형태: 둥근 머리와 바이저, 몸통, 상자를 든 팔, 걷는 다리)
+    const leg = (dx, d) =>
+      `<g><path d="M${dx} 0 L${dx + 2} 11 L${dx} 21 M${dx - 2} 21 H${dx + 5}"/>` +
+      `<animateTransform attributeName="transform" type="rotate" values="16 ${dx} 0;-16 ${dx} 0;16 ${dx} 0" dur="1s" begin="${d}s" repeatCount="indefinite"/></g>`;
+    let hm = R(-6, -40, 12, 11, 4) + Ln(-4, -35, 4, -35, "thin");           // 머리, 바이저
+    hm += Ln(0, -29, 0, -27) + R(-8, -27, 16, 19, 3);                        // 목, 몸통
+    hm += P("M-7 -24 L-3 -15 L8 -16 M7 -24 L11 -16 L8 -16");                 // 팔 (앞으로)
+    hm += R(8, -22, 13, 11, 1) + Ln(8, -17, 21, -17, "thin");                // 들고 있는 상자
+    hm += `<g transform="translate(0 -8)">${leg(-3, 0)}${leg(3, -0.5)}</g>`;
+    b += `<g><g transform="translate(0 92)">${hm}</g>` +
+      `<animateTransform attributeName="transform" type="translate" values="24 0;210 0" dur="9s" repeatCount="indefinite"/>` +
+      `${Fade(9, 0, "0;1;1;0", "0;0.06;0.9;1")}</g>`;
+    return svg("0 0 360 110", b, "경로점을 따라 화물을 나르는 드론과 상자를 들고 걷는 휴머노이드 로봇");
+  };
+
+  // 컴퓨터시스템설계론: CPU, GPU(SM 배열, L2), HBM 사이를 오가는 데이터와 작동하는 SM
+  I.courseGpu = () => {
+    let b = "";
+    b += R(6, 38, 40, 34, 2) + T(26, 58, "CPU", "middle");
+    b += Ln(46, 55, 70, 55, "thin");
+    b += R(70, 6, 284, 98, 4) + T(84, 16, "GPU · SM");
+    const sx = (i) => 84 + i * 40, sy = (r) => 22 + r * 40;
+    range(2).forEach((r) => range(4).forEach((i) => {
+      const x = sx(i), y = sy(r), d = -((i * 2 + r * 3) % 7) * 0.35;
+      b += R(x, y, 34, 32, 2);
+      range(3).forEach((k) => (b += Ln(x + 6, y + 9 + k * 7, x + 28, y + 9 + k * 7, "thin")));
+      b += `<rect class="solid soft" x="${x + 3}" y="${y + 3}" width="28" height="26" rx="1">` +
+        `<animate attributeName="opacity" values="0;0.28;0" dur="2.5s" begin="${d}s" repeatCount="indefinite"/></rect>`;
+    }));
+    b += R(246, 22, 14, 72, 2) + T(253, 18, "L2", "middle");
+    [22, 62].forEach((y) => { b += R(282, y, 62, 32, 2); range(3).forEach((k) => (b += Ln(282, y + 8 + k * 8, 344, y + 8 + k * 8, "thin"))); });
+    b += T(313, 18, "HBM", "middle");
+    b += Ln(260, 38, 282, 38, "thin") + Ln(260, 78, 282, 78, "thin");
+    // HBM → L2 → SM 으로 가는 데이터, 결과는 다시 L2 로
+    [[38, 0], [78, -0.7], [38, -1.4], [78, -2.1]].forEach(([y, d]) => {
+      const tgt = y === 38 ? 38 : 76;
+      b += Tok(7, 5, Move(`M280 ${y} H262 M246 ${tgt} H${sx(3) + 36}`, 2.8, d, ` calcMode="linear"`), Fade(2.8, d));
+    });
+    b += Tok(6, 5, Move(`M${sx(3) + 36} 58 H244`, 2.2, -1), Fade(2.2, -1));
+    b += Tok(8, 5, Move("M48 55 H68", 1.4, 0), Fade(1.4, 0));
+    return svg("0 0 360 110", b, "HBM에서 L2 캐시를 거쳐 GPU의 SM으로 이동하는 데이터와 CPU 연결");
+  };
+
   window.ILLUS = I;
 })();

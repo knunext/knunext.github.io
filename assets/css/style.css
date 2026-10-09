@@ -248,6 +248,8 @@ p { margin: 0; }
 .illus .dash { stroke: var(--text-3); stroke-dasharray: 3 4; }
 .illus .dash-strong { stroke-dasharray: 6 5; }
 .illus .eye { fill: var(--text); stroke: none; }
+.illus .solid { fill: var(--text); stroke: none; }
+.illus .soft { fill: var(--text-2); }
 .illus text {
   fill: var(--text-2); stroke: none;
   font-family: var(--wide); font-stretch: 125%; font-size: 9px; font-weight: 600; letter-spacing: 0.12em;
@@ -825,6 +827,40 @@ img.avatar-line { object-fit: contain; filter: none; padding: 2%; }
 @media (max-width: 760px) {
   .pub-year-block, .pub { grid-template-columns: 1fr; }
 }
+
+/* =========================================================
+   Teaching
+   ========================================================= */
+.teach-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+.teach-section { margin: 2.75rem 0 1rem; color: var(--text-2); }
+.teach-section:first-child { margin-top: 0.5rem; }
+.teach-term-label span { display: block; margin-top: 0.35rem; color: var(--text-2); font-size: 0.95rem; letter-spacing: 0; }
+.teach-level { font-size: 1.15rem; letter-spacing: -0.01em; }
+.course { grid-template-columns: 13rem minmax(0, 1fr); align-items: start; }
+.course-name { font-size: 1.05rem; font-weight: 500; line-height: 1.4; }
+.course-en { margin-top: 0.15rem; color: var(--text-2); font-size: 0.9rem; }
+.course-terms { margin-top: 0.4rem; color: var(--text-2); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.course-terms strong { color: var(--text); font-weight: 600; }
+/* 강의 분야 태그 (data/teaching.js 의 tagColors) */
+.badge.tag-magenta { --tag: #FF4FD8; }
+.badge.tag-green   { --tag: #4DFF88; }
+.badge.tag-yellow  { --tag: #FFE14D; }
+.badge.tag-blue    { --tag: #4DB8FF; }
+/* 분야 필터 버튼: 평소 흰 글씨, 선택하면 흰 배경 + 짙은 글씨 (태그 색은 목록의 라벨에만) */
+.chip-tag { color: var(--text); }
+.chip-tag[aria-pressed="true"] { background: var(--text); color: var(--page); }
+/* 이번 학기: 박스로 감싸고, 연도·학기 라벨은 흰 바탕 + 짙은 글씨 */
+.teach-term.is-current { padding: 1.5rem 1.5rem 1.25rem; border: 1px solid var(--text); }
+.teach-term.is-current .teach-term-label { align-self: start; justify-self: start; padding: 0.55rem 0.75rem 0.6rem; background: var(--text); color: var(--page); }
+.teach-term.is-current .teach-term-label span { color: var(--page); opacity: 0.75; }
+/* 과목 옆 움직이는 그림 */
+.course.has-art { grid-template-columns: 13rem minmax(0, 1fr) minmax(220px, 340px); }
+.course-art { display: block; align-self: center; color: inherit; text-decoration: none; }
+.course-art .illus { width: 100%; }
+.course-art:hover .illus .thin { stroke: var(--text); }
+.course-art:focus-visible { outline: 1px solid var(--text); outline-offset: 4px; }
+@media (max-width: 1000px) { .course.has-art { grid-template-columns: 11rem minmax(0, 1fr); } .course-art { grid-column: 1 / -1; max-width: 420px; } }
+@media (max-width: 760px) { .course, .course.has-art { grid-template-columns: 1fr; } }
 
 /* =========================================================
    Footer

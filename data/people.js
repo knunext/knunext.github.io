@@ -14,7 +14,7 @@
 window.LAB = window.LAB || {};
 
 LAB.people = {
-  intro: "교수, 대학원생, 학부연구생, 졸업생",
+  intro: "MEMBERS",
   pi: {
     name: "김정근",
     nameEn: "Jeonggeun Kim, Ph.D.",

@@ -139,7 +139,7 @@
     const room = Array.isArray(Lc.room) ? Lc.room : Lc.room ? [Lc.room] : [];
     return '<section class="loc" aria-label="' + esc(Lc.title || "Location") + '">' +
       (Lc.logo ? '<img class="loc-logo" src="' + esc(Lc.logo) + '" alt="NextGen Lab">' : "") +
-      (room.length ? '<p class="loc-room" aria-label="연구실 위치 ' + esc(room.join("-")) + '">' + room.map(esc).join("<br>") + "</p>" : "") +
+      (room.length ? '<p class="loc-room" aria-label="연구실 위치 ' + esc(room.join("-")) + '">' + room.map((t) => esc(t).replace(/→/g, '<span class="arr">→</span>')).join("<br>") + "</p>" : "") +
       (Lc.minimap ? '<img class="loc-mini" src="' + esc(Lc.minimap) + '" alt="IT & AI Cluster, 경북대학교 대구캠퍼스 약도" loading="lazy">' : "") +
       '<table class="loc-table"><thead><tr>' + cols.map((c) => '<th scope="col">' + esc(c) + "</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody></table>" +
       (Lc.aerial

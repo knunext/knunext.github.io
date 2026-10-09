@@ -870,22 +870,21 @@ img.avatar-line { object-fit: contain; filter: none; padding: 2%; }
   display: grid;
   grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
   grid-template-areas:
-    "logo  room"
     "mini  room"
     "mini  aerial"
     "table aerial";
-  grid-template-rows: auto auto auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: 2rem clamp(1.5rem, 3vw, 2.75rem);
   margin-top: clamp(3.5rem, 7vw, 6rem);
-  padding: clamp(1.25rem, 2.5vw, 2rem);
-  background: #0E0F10;
 }
 .loc-logo { grid-area: logo; align-self: start; display: block; width: auto; height: clamp(36px, 4vw, 52px); }
 .loc-room {
   grid-area: room; align-self: start; justify-self: end; text-align: right;
   margin: 0; font-family: "Inter Tight", Pretendard, sans-serif; font-weight: 700;
-  font-size: clamp(3rem, 8vw, 7.5rem); line-height: 0.84; letter-spacing: -0.045em; white-space: nowrap;
+  font-size: clamp(2.25rem, 5.6vw, 5.25rem); line-height: 0.9; letter-spacing: -0.04em; white-space: nowrap;
 }
+/* 화살표(→)는 웹폰트에 없는 글자라 시스템 글꼴로 그려져 가늘게 보이므로 굵기를 보정 */
+.loc-room .arr { display: inline-block; margin: 0 -0.08em; font-size: 1.3em; line-height: 0; font-weight: 700; -webkit-text-stroke: 0.05em currentColor; transform: translateY(-0.06em); }
 .loc-mini { grid-area: mini; align-self: start; display: block; width: 100%; max-width: 380px; height: auto; }
 
 .loc-table { grid-area: table; width: 100%; border-collapse: collapse; font-size: 0.95rem; align-self: start; }
@@ -930,7 +929,7 @@ img.avatar-line { object-fit: contain; filter: none; padding: 2%; }
 .loc-link circle { fill: var(--text); }
 
 @media (max-width: 1100px) {
-  .loc { grid-template-columns: 1fr; grid-template-areas: "logo" "room" "mini" "aerial" "table"; grid-template-rows: none; }
+  .loc { grid-template-columns: 1fr; grid-template-areas: "room" "mini" "aerial" "table"; grid-template-rows: none; }
   .loc-room { justify-self: start; text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) { .loc-dim, .loc-link, .loc-table td { transition: none; } }

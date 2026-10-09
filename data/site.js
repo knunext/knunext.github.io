@@ -57,8 +57,7 @@ LAB.location = {
   aerialView: [26, 0, 1310, 1125],   // 사진에서 보여줄 영역 [x, y, 폭, 높이]
   // 사진 위 안내 문구: at = 글자 시작 위치, from → to = 화살표 (모두 원본 사진 좌표)
   callout: { text: "WE ARE HERE.", at: [560, 232], from: [618, 252], to: [600, 334], bend: 26 },
-  logo: "assets/img/logo/logo-horizontal-light.svg",
-  room: ["IT4", "412-2"]             // 줄마다 한 항목
+  room: ["IT-4 → 412-2"]             // 줄마다 한 항목 (여러 줄이면 항목을 나눠 적기)
 };
 
 LAB.join = {

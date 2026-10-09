@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 106" role="img" aria-label="과학기술정보통신부 장관상 메달">
+<title>과학기술정보통신부 장관상</title>
+<defs>
+<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="80" height="106">
+<rect width="80" height="106" fill="#fff"/>
+<circle cx="40" cy="76" r="21" fill="none" stroke="#000" stroke-width="1.6"/>
+<circle cx="40" cy="76" r="16.4" fill="none" stroke="#000" stroke-width="1.2"/>
+<path d="M25 76 A15 15 0 0 1 55 76 A7.5 7.5 0 0 1 40 76 A7.5 7.5 0 0 0 25 76 Z" fill="#000" transform="rotate(-18 40 76)"/>
+<path d="M20 2 L33 2 L42 40 L37 42 Z" fill="#000" fill-opacity="0"/>
+<line x1="40" y1="0" x2="40" y2="44" stroke="#000" stroke-width="1.6"/>
+</mask>
+</defs>
+<g mask="url(#m)" fill="#F1F1EF">
+<polygon points="14,2 30,2 43,42 35,46"/>
+<polygon points="66,2 50,2 37,42 45,46"/>
+<rect x="34" y="42" width="12" height="6" rx="2"/>
+<circle cx="40" cy="76" r="26"/>
+</g>
+<circle cx="40" cy="47.5" r="3.2" fill="none" stroke="#F1F1EF" stroke-width="1.8"/>
+</svg>

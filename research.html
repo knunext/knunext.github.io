@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17181A">
+  <title>Research | NCSL, KNU</title>
+  <meta name="description" content="경북대학교 컴퓨터학부 차세대 컴퓨팅 시스템 연구실 (NCSL)">
+  <meta property="og:title" content="Research | NCSL, KNU">
+  <meta property="og:description" content="경북대학교 컴퓨터학부 차세대 컴퓨팅 시스템 연구실 (NCSL)">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Archivo:wdth,wght@125,600;125,700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="research">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <header class="wrap page-head">
+      <div class="band"><h1 class="band-label">Research</h1><p class="band-num">KNU NCSL</p></div>
+      <p class="page-headline" id="page-intro"></p>
+    </header>
+
+    <section class="topics" id="topics" aria-labelledby="topics-title">
+      <div class="wrap">
+        <div class="band"><p class="band-label">Research topics</p><p class="band-num">01</p></div>
+        <h2 class="visually-hidden" id="topics-title">연구 주제</h2>
+      </div>
+      <div class="wrap chips-row">
+        <div class="chips" id="topic-chips" aria-label="연구 주제 바로가기"></div>
+        <a class="btn-box" href="#details" id="see-all">See all</a>
+      </div>
+      <div class="track" id="topic-track" tabindex="0" aria-label="연구 주제 슬라이드. 좌우 화살표 키로 넘길 수 있습니다."></div>
+      <div class="wrap slider-nav" id="slider-nav">
+        <p class="counter" id="topic-counter" aria-live="polite"></p>
+        <div class="arrows">
+          <button type="button" class="arrow" id="topic-prev" aria-label="이전 주제">&larr;</button>
+          <button type="button" class="arrow" id="topic-next" aria-label="다음 주제">&rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section" id="details" aria-labelledby="details-title">
+      <div class="band"><p class="band-label">Research details</p><p class="band-num">02</p></div>
+      <h2 class="section-headline" id="details-title">Research Topics & Projects</h2>
+      <div class="topic-detail" id="topic-detail"></div>
+    </section>
+
+    <section class="wrap section" id="projects" aria-labelledby="projects-title">
+      <div class="band"><p class="band-label">Ongoing projects</p><p class="band-num">03</p></div>
+      <h2 class="section-headline" id="projects-title">진행 중인 과제</h2>
+      <div class="project-grid" id="project-list"></div>
+      <div class="section-foot" id="project-foot"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <noscript><p class="wrap">이 사이트는 JavaScript가 필요합니다.</p></noscript>
+
+  <script src="data/site.js"></script>
+  <script src="data/research.js"></script>
+  <script src="assets/js/illustrations.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

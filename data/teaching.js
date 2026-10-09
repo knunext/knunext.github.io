@@ -27,7 +27,7 @@ LAB.teaching = {
     "comp-arch":        { name: "컴퓨터구조", nameEn: "Computer Architecture", level: "undergrad", tags: ["Architecture"],
                           link: "ComArchi/", illustration: "courseArch" },   // TODO: 실제 과목 사이트 주소로 변경
     "drone-algo":       { name: "항공드론알고리즘", nameEn: "Aerial Drone Algorithms", level: "undergrad", tags: ["Algorithm & SW", "AI", "Robotics"],
-                          link: "courses/aerial-drone-algorithms/", illustration: "courseDrone" },   // TODO: 실제 과목 사이트 주소로 변경
+                          link: "KNU_Intro_to_Robotics/", illustration: "courseDrone" },   // TODO: 실제 과목 사이트 주소로 변경
     "logic-circuits":   { name: "논리회로", nameEn: "Logic Circuits", level: "undergrad", tags: ["Architecture"] },
     "prog-lang":        { name: "프로그래밍언어론", nameEn: "Programming Languages", level: "undergrad", tags: ["Compiler & PL"] },
     "compiler":         { name: "컴파일러", nameEn: "Compilers", level: "undergrad", tags: ["Compiler & PL"] },

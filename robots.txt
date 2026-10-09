@@ -1,2 +1,30 @@
+# ---- AI 학습 / 데이터 수집 크롤러: 거부 ----
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: Meta-ExternalAgent
+User-agent: Amazonbot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: Diffbot
+User-agent: ImagesiftBot
+User-agent: omgili
+User-agent: Timpibot
+ 
+# ---- AI 검색(답변에 출처로 인용) 크롤러 ----
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+ 
+# 모든 로봇을 완전히 막으려면 (검색 결과에서도 사라짐) 위 내용을 모두 지우고 아래 두 줄만 남기세요.
 User-agent: *
-Disallow: /ComArchi/slides/
+Disallow: /
+
+# Disallow: /ComArchi/slides/

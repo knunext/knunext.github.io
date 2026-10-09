@@ -122,6 +122,24 @@
   function partnerBlock(list, cls) {
     return sponsorBlock(list, false, "partner-block" + (cls ? " " + cls : ""), "Partners");
   }
+  // 연구실 위치 안내: 왼쪽 표와 약도, 오른쪽 항공사진, 아래 로고와 호실 표기
+  function locationBlock(Lc) {
+    if (!Lc || !Lc.rows || !Lc.rows.length) return "";
+    const cols = Lc.columns || ["Key", "Building", "Description"];
+    const rows = Lc.rows.map((r) => r.gap
+      ? '<tr class="loc-gap" aria-hidden="true"><td colspan="3"></td></tr>'
+      : "<tr><td>" + esc(r.key || "") + "</td><td>" + esc(r.building || "") + (r.ko ? '<span class="loc-ko">' + esc(r.ko) + "</span>" : "") + "</td><td>" + esc(r.desc || "") + "</td></tr>").join("");
+    return '<section class="loc" aria-label="' + esc(Lc.title || "Location") + '">' +
+      '<div class="loc-side">' +
+        '<table class="loc-table"><thead><tr>' + cols.map((c) => '<th scope="col">' + esc(c) + "</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody></table>" +
+        (Lc.minimap ? '<img class="loc-mini" src="' + esc(Lc.minimap) + '" alt="경북대학교 IT·공과대학 일대 약도" loading="lazy">' : "") +
+      "</div>" +
+      (Lc.aerial ? '<figure class="loc-aerial"><img src="' + esc(Lc.aerial) + '" alt="경북대학교 IT·공과대학 일대 항공사진. 번호로 표시된 건물 위치" loading="lazy"></figure>' : "") +
+      '<div class="loc-foot">' +
+        (Lc.logo ? '<img class="loc-logo" src="' + esc(Lc.logo) + '" alt="NextGen Lab">' : "<span></span>") +
+        (Lc.room ? '<p class="loc-room" aria-label="연구실 위치 ' + esc(Lc.room) + '">' + esc(Lc.room) + "</p>" : "") +
+      "</div></section>";
+  }
   function newsIds(all) {
     const seen = {};
     return all.map((n) => { const k = n.date; seen[k] = (seen[k] || 0) + 1; return "n-" + String(k).replace(/\D/g, "") + (seen[k] > 1 ? "-" + (seen[k] - 1) : ""); });
@@ -213,6 +231,7 @@
         ? '<div class="info-block"><p class="caps">' + esc(b.title) + "</p>" + arrowList(b.items) + "</div>" : "";
       html += '<div class="req-grid"><div class="req-intro"><p>' + (J.intro || "") + "</p></div>" + block(J.required) + block(J.preferred) + "</div>";
       html += '<div class="contact-row"><p>' + (J.contact || "") + "</p>" + email(c, "email-box") + "</div>";
+      html += locationBlock(L.location);
       setHTML("#join-body", html);
 
       if (quotes.length < 2) return;
@@ -253,7 +272,7 @@
   if (page === "news") {
     const all = L.news || [];
     const ids = newsIds(all);
-    setHTML("#page-intro", "연구실 소식과 성과 전체 " + all.length + "건");
+    setHTML("#page-intro", "연구실 소식 & 성과 (" + all.length + "건)");
     const years = [...new Set(all.map((n) => String(n.date).slice(0, 4)))];
     setHTML("#news-archive", years.map((y) => {
       const items = all.map((n, i) => [n, i]).filter(([n]) => String(n.date).startsWith(y));

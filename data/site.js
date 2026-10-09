@@ -38,6 +38,24 @@ LAB.site = {
   }
 };
 
+// Join us 아래 연구실 위치 안내 (KEY / BUILDING / DESCRIPTION 표, 약도, 항공사진)
+LAB.location = {
+  title: "Find us",
+  columns: ["Key", "Building", "Description"],
+  rows: [
+    { key: "1.", building: "IT Building 4", ko: "IT대학 4호관", desc: "Computer Science & Engineering · NCSL" },
+    { key: "2.", building: "Engineering Building 9", ko: "공과대학 9호관", desc: "Computer Science & Engineering" },
+    { key: "3.", building: "IT Building 5", ko: "IT대학 5호관", desc: "College of IT · Computer Science & Engineering" },
+    { key: "4.", building: "Engineering Building 12", ko: "공과대학 12호관", desc: "Server Rooms" },
+    { gap: true },
+    { key: "A.", building: "Main Gate", ko: "경북대학교 정문", desc: "KNU Main Gate" }
+  ],
+  minimap: "assets/img/campus/campus-minimap.svg",
+  aerial: "assets/img/campus/campus-aerial.jpg",
+  logo: "assets/img/logo/logo-horizontal-light.svg",
+  room: "IT4-412-2"
+};
+
 LAB.join = {
   title: "모험가들을 모집합니다",
   // 일정 시간마다 바뀌는 인용문 (rotateSeconds 초 간격).

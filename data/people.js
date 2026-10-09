@@ -56,7 +56,7 @@ LAB.people = {
           role: "M&S 랩장",
           period: "Dec. 2024 – Present",
           research: ["Defense M&S", "RL", "LLM", "Agentic AI"],
-          extra: ["과학기술전문사관 2기"],
+          extra: ["과학기술전문사관 2기", "과학기술정보통신부 장관수여 (장학증서 및 메달)"],
           badges: [
             { name: "과학기술정보통신부 장관상", logo: "assets/img/badges/msit-minister-award.svg" },
             { name: "과학기술전문사관 2기", logo: "assets/img/news/tech-officer-emblem.png" }

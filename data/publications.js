@@ -24,7 +24,7 @@ LAB.tagColors = {
   "Top-tier": "red", "High-impact": "red"
 };
 
-LAB.publicationsIntro = "Selected publications. 굵게 표시된 이름은 연구실 구성원입니다.";
+LAB.publicationsIntro = "Selected publications";
 
 LAB.ongoingWork = [
   {

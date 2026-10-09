@@ -123,6 +123,6 @@ LAB.join = {
 // 메일 주소는 스크래핑 방지를 위해 링크 없이 이미지로만 표시합니다. 주소를 바꾸려면 tools/email_image.py 로 새로 만드세요.
 LAB.contact = {
   emailImage: "assets/img/email/email-pi.png",
-  address: "경북대학교 IT대학 ○호관 ○○○호<br>대구광역시 북구 대학로 80",
+  address: "경북대학교 IT대학 4호관 412-2호<br>대구광역시 북구 대학로 80",
   mapUrl: "https://map.naver.com/"
 };

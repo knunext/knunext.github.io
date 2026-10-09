@@ -94,7 +94,7 @@ LAB.publications = [
   {
     year: 2026,
     scope: "international",
-    tags: ["Top-tier", "ICORE-A*"],
+    tags: ["Top-tier", "BK3", "ICORE-A*"],
     authors: ["Hyunwoo Nam", "Jay Hwan Lee", "Yeonsoo Kim", "Mengzhao Zhang", "Jeonggeun Kim", "Bernd Burgstaller*"],
     title: "LPGSim: A Lightweight Parallel GPU Simulator Maximizing Speed with Trustworthy Simulation",
     venue: "Proceedings of the ACM on Measurement and Analysis of Computing Systems (SIGMETRICS)",

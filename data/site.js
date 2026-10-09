@@ -42,18 +42,23 @@ LAB.site = {
 LAB.location = {
   title: "Find us",
   columns: ["Key", "Building", "Description"],
+  // shape: 항공사진(원본 1483 x 1125 px) 위 건물 영역. 마우스를 올리면 표의 행과 연결되어 강조됩니다.
   rows: [
-    { key: "1.", building: "IT Building 4", ko: "IT대학 4호관", desc: "Computer Science & Engineering · NCSL" },
-    { key: "2.", building: "Engineering Building 9", ko: "공과대학 9호관", desc: "Computer Science & Engineering" },
-    { key: "3.", building: "IT Building 5", ko: "IT대학 5호관", desc: "College of IT · Computer Science & Engineering" },
-    { key: "4.", building: "Engineering Building 12", ko: "공과대학 12호관", desc: "Server Rooms" },
+    { key: "1.", building: "IT Building 4", ko: "IT대학 4호관", desc: "Computer Science & Engineering · NCSL", shape: [[579,341],[572,354],[560,447],[598,455],[604,451],[618,351],[613,344]] },
+    { key: "2.", building: "Engineering Building 9", ko: "공과대학 9호관", desc: "Computer Science & Engineering", shape: [[47,676],[47,709],[55,716],[228,716],[234,709],[234,676],[227,669],[54,669]] },
+    { key: "3.", building: "IT Building 5", ko: "IT대학 5호관", desc: "College of IT · Computer Science & Engineering", shape: [[629,361],[626,384],[633,395],[638,450],[778,452],[783,448],[784,413],[778,406],[724,406],[720,401],[722,375],[639,358]] },
+    { key: "4.", building: "Engineering Building 12", ko: "공과대학 12호관", desc: "Server Rooms", shape: [[344,295],[335,354],[341,369],[403,377],[413,361],[478,368],[483,363],[489,330],[485,309],[359,290]] },
     { gap: true },
-    { key: "A.", building: "Main Gate", ko: "경북대학교 정문", desc: "KNU Main Gate" }
+    { key: "A.", building: "Main Gate", ko: "경북대학교 정문", desc: "KNU Main Gate", shape: [[1242,985],[1306,955],[1324,994],[1257,1022]] }
   ],
   minimap: "assets/img/campus/campus-minimap.svg",
   aerial: "assets/img/campus/campus-aerial.jpg",
+  aerialSize: [1483, 1125],
+  aerialView: [26, 0, 1310, 1125],   // 사진에서 보여줄 영역 [x, y, 폭, 높이]
+  // 사진 위 안내 문구: at = 글자 시작 위치, from → to = 화살표 (모두 원본 사진 좌표)
+  callout: { text: "WE ARE HERE.", at: [560, 232], from: [618, 252], to: [600, 334], bend: 26 },
   logo: "assets/img/logo/logo-horizontal-light.svg",
-  room: "IT4-412-2"
+  room: ["IT4", "412-2"]             // 줄마다 한 항목
 };
 
 LAB.join = {

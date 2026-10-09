@@ -122,23 +122,92 @@
   function partnerBlock(list, cls) {
     return sponsorBlock(list, false, "partner-block" + (cls ? " " + cls : ""), "Partners");
   }
-  // 연구실 위치 안내: 왼쪽 표와 약도, 오른쪽 항공사진, 아래 로고와 호실 표기
+  // 연구실 위치 안내: 로고와 호실(위), 약도와 표(왼쪽), 항공사진(오른쪽). 사진의 건물과 표의 행이 서로 연결되어 강조됨
   function locationBlock(Lc) {
     if (!Lc || !Lc.rows || !Lc.rows.length) return "";
     const cols = Lc.columns || ["Key", "Building", "Description"];
+    const id = (r) => "k" + String(r.key || "").replace(/[^0-9A-Za-z]/g, "");
     const rows = Lc.rows.map((r) => r.gap
       ? '<tr class="loc-gap" aria-hidden="true"><td colspan="3"></td></tr>'
-      : "<tr><td>" + esc(r.key || "") + "</td><td>" + esc(r.building || "") + (r.ko ? '<span class="loc-ko">' + esc(r.ko) + "</span>" : "") + "</td><td>" + esc(r.desc || "") + "</td></tr>").join("");
+      : '<tr data-key="' + id(r) + '"' + (r.shape ? ' tabindex="0"' : "") + "><td>" + esc(r.key || "") + "</td><td>" + esc(r.building || "") +
+        (r.ko ? '<span class="loc-ko">' + esc(r.ko) + "</span>" : "") + "</td><td>" + esc(r.desc || "") + "</td></tr>").join("");
+    const [W, H] = Lc.aerialSize || [1483, 1125];
+    const vb = (Lc.aerialView || [0, 0, W, H]).join(" ");
+    const hot = Lc.rows.filter((r) => r.shape).map((r) =>
+      '<polygon class="loc-hot" data-key="' + id(r) + '" tabindex="0" role="button" aria-label="' + esc((r.key || "") + " " + (r.building || "")) + '" points="' +
+      r.shape.map((p) => p.join(",")).join(" ") + '"/>').join("");
+    const room = Array.isArray(Lc.room) ? Lc.room : Lc.room ? [Lc.room] : [];
     return '<section class="loc" aria-label="' + esc(Lc.title || "Location") + '">' +
-      '<div class="loc-side">' +
-        '<table class="loc-table"><thead><tr>' + cols.map((c) => '<th scope="col">' + esc(c) + "</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody></table>" +
-        (Lc.minimap ? '<img class="loc-mini" src="' + esc(Lc.minimap) + '" alt="경북대학교 IT·공과대학 일대 약도" loading="lazy">' : "") +
-      "</div>" +
-      (Lc.aerial ? '<figure class="loc-aerial"><img src="' + esc(Lc.aerial) + '" alt="경북대학교 IT·공과대학 일대 항공사진. 번호로 표시된 건물 위치" loading="lazy"></figure>' : "") +
-      '<div class="loc-foot">' +
-        (Lc.logo ? '<img class="loc-logo" src="' + esc(Lc.logo) + '" alt="NextGen Lab">' : "<span></span>") +
-        (Lc.room ? '<p class="loc-room" aria-label="연구실 위치 ' + esc(Lc.room) + '">' + esc(Lc.room) + "</p>" : "") +
-      "</div></section>";
+      (Lc.logo ? '<img class="loc-logo" src="' + esc(Lc.logo) + '" alt="NextGen Lab">' : "") +
+      (room.length ? '<p class="loc-room" aria-label="연구실 위치 ' + esc(room.join("-")) + '">' + room.map(esc).join("<br>") + "</p>" : "") +
+      (Lc.minimap ? '<img class="loc-mini" src="' + esc(Lc.minimap) + '" alt="IT & AI Cluster, 경북대학교 대구캠퍼스 약도" loading="lazy">' : "") +
+      '<table class="loc-table"><thead><tr>' + cols.map((c) => '<th scope="col">' + esc(c) + "</th>").join("") + "</tr></thead><tbody>" + rows + "</tbody></table>" +
+      (Lc.aerial
+        ? '<figure class="loc-aerial"><svg class="loc-map" viewBox="' + vb + '" preserveAspectRatio="xMidYMid slice" role="group" aria-label="경북대학교 IT·AI 클러스터 항공사진. 번호 건물에 마우스를 올리면 표와 연결됩니다">' +
+          '<defs><mask id="loc-dim-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '">' +
+          '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff"/><polygon class="loc-hole" points="" fill="#000"/></mask></defs>' +
+          '<image href="' + esc(Lc.aerial) + '" x="0" y="0" width="' + W + '" height="' + H + '"/>' +
+          '<rect class="loc-dim" x="0" y="0" width="' + W + '" height="' + H + '" mask="url(#loc-dim-mask)"/>' +
+          (Lc.callout ? calloutSvg(Lc.callout) : "") + hot +
+          "</svg></figure>"
+        : "") +
+      '<svg class="loc-link" aria-hidden="true"><path d=""/><circle r="3.5"/><circle r="3.5"/></svg>' +
+      "</section>";
+  }
+  // 사진 위 안내 문구와 화살표 (예: WE ARE HERE. → 1번 건물)
+  function calloutSvg(c) {
+    const [tx, ty] = c.at, [ax, ay] = c.to, [sx, sy] = c.from || [tx + 40, ty + 16];
+    const mx = (sx + ax) / 2 + (c.bend || 30), my = (sy + ay) / 2;
+    const ang = Math.atan2(ay - my, ax - mx), L = 22, Wd = 11;
+    const p1 = [ax - L * Math.cos(ang) + Wd * Math.sin(ang), ay - L * Math.sin(ang) - Wd * Math.cos(ang)];
+    const p2 = [ax - L * Math.cos(ang) - Wd * Math.sin(ang), ay - L * Math.sin(ang) + Wd * Math.cos(ang)];
+    return '<g class="loc-callout" aria-hidden="true">' +
+      '<text x="' + tx + '" y="' + ty + '">' + esc(c.text) + "</text>" +
+      '<path d="M' + sx + " " + sy + " Q" + mx + " " + my + " " + ax + " " + ay + '"/>' +
+      '<polygon points="' + ax + "," + ay + " " + p1.map((v) => v.toFixed(1)).join(",") + " " + p2.map((v) => v.toFixed(1)).join(",") + '"/>' +
+      "</g>";
+  }
+  function initLocation() {
+    const root = $(".loc");
+    if (!root) return;
+    const hole = $(".loc-hole", root), link = $(".loc-link", root), path = $("path", link), dots = $$("circle", link);
+    const aerial = $(".loc-aerial", root), table = $(".loc-table", root);
+    let active = null, pinned = false;
+    function drawLink() {
+      if (!active) { link.classList.remove("is-on"); return; }
+      const tr = $('tr[data-key="' + active + '"]', table), poly = $('.loc-hot[data-key="' + active + '"]', root);
+      const R = root.getBoundingClientRect(), t = tr.getBoundingClientRect(), b = poly.getBoundingClientRect(), a = aerial.getBoundingClientRect();
+      if (a.left < t.right) { link.classList.remove("is-on"); return; }    // 사진이 표 오른쪽에 있을 때만 선을 그림
+      const sx = t.right - R.left, sy = t.top + t.height / 2 - R.top;
+      const ex = b.left - R.left, ey = b.top + b.height / 2 - R.top;        // 건물 왼쪽 가장자리 가운데
+      const mx = (t.right + a.left) / 2 - R.left;
+      path.setAttribute("d", "M" + sx + " " + sy + " H" + mx + " L" + ex + " " + ey);
+      dots[0].setAttribute("cx", sx); dots[0].setAttribute("cy", sy);
+      dots[1].setAttribute("cx", ex); dots[1].setAttribute("cy", ey);
+      link.setAttribute("width", R.width); link.setAttribute("height", R.height);
+      link.classList.add("is-on");
+    }
+    function setActive(key) {
+      active = key;
+      root.classList.toggle("has-active", !!key);
+      $$("[data-key]", root).forEach((el) => el.classList.toggle("is-active", el.dataset.key === key));
+      const poly = key ? $('.loc-hot[data-key="' + key + '"]', root) : null;
+      hole.setAttribute("points", poly ? poly.getAttribute("points") : "");
+      drawLink();
+    }
+    $$("[data-key]", root).forEach((el) => {
+      if (!$('.loc-hot[data-key="' + el.dataset.key + '"]', root)) return;
+      el.addEventListener("mouseenter", () => { if (!pinned) setActive(el.dataset.key); });
+      el.addEventListener("mouseleave", () => { if (!pinned) setActive(null); });
+      el.addEventListener("focus", () => setActive(el.dataset.key));
+      el.addEventListener("blur", () => { if (!pinned) setActive(null); });
+      el.addEventListener("click", () => {          // 터치 화면: 눌러서 고정, 다시 누르면 해제
+        if (pinned && active === el.dataset.key) { pinned = false; setActive(null); }
+        else { pinned = true; setActive(el.dataset.key); }
+      });
+    });
+    let rt = 0;
+    window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawLink, 80); });
   }
   function newsIds(all) {
     const seen = {};
@@ -233,6 +302,7 @@
       html += '<div class="contact-row"><p>' + (J.contact || "") + "</p>" + email(c, "email-box") + "</div>";
       html += locationBlock(L.location);
       setHTML("#join-body", html);
+      initLocation();
 
       if (quotes.length < 2) return;
       const qEls = $$(".quote-stage .quote"), pEls = $$(".portraits .portrait"), dots = $$(".quote-dots button");

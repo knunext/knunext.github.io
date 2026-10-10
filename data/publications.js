@@ -18,6 +18,7 @@ window.LAB = window.LAB || {};
 
 // 태그 색상: teal(청록) | red(붉은색) | purple(보라) | orange(주황). 목록에 없는 태그는 기본 회색.
 LAB.tagColors = {
+  "Intl.conf": "grey", "Dom.conf": "grey",
   "BK1": "teal", "BK2": "teal", "BK3": "red", "BK4": "red",
   "ICORE-A*": "red", "ICORE-A": "red", "ICORE-B": "teal",
   "KCI": "purple", "SCIE": "orange",
@@ -85,7 +86,7 @@ LAB.publications = [
     year: 2026,
     scope: "international",
     tags: ["BK1"],
-    authors: ["Minsu Choi", "Jeonggeun Kim", "Dukyun Nam*"],
+    authors: ["Minsu Choi*", "Jeonggeun Kim", "Dukyun Nam*"],
     title: "SCOPE: Shared-stage CPU–DPU Orchestration for PIM Environments",
     venue: "IEEE International Conference on High Performance Computing (HiPC)",
     details: "2026",
@@ -96,29 +97,40 @@ LAB.publications = [
     year: 2026,
     scope: "international",
     tags: ["BK3", "ICORE-A*", "KIISE-S"],
-    authors: ["Hyunwoo Nam", "Jay Hwan Lee", "Yeonsoo Kim", "Mengzhao Zhang", "Jeonggeun Kim", "Bernd Burgstaller*"],
+    authors: ["Hyunwoo Nam*", "Jay Hwan Lee", "Yeonsoo Kim", "Mengzhao Zhang", "Jeonggeun Kim", "Bernd Burgstaller*"],
     title: "LPGSim: A Lightweight Parallel GPU Simulator Maximizing Speed with Trustworthy Simulation",
     venue: "Proceedings of the ACM on Measurement and Analysis of Computing Systems (SIGMETRICS)",
     details: "10(2), 2026, 1-27",
-    note: "Acceptance rate: Winter round, 15%",
+    note: "Acceptance rate: 17% (82/479)",
+    links: {}
+  },
+  {
+    year: 2026,
+    scope: "domestic",
+    tags: ["Dom.conf"],
+    authors: ["임정훈*", "Jeonggeun Kim*"],
+    title: "UPMEM Processing-in-Memory 기반의 효율적인 Ray Tracing을 위한 BVH Traversal 기법",
+    venue: "대한전자공학회 하계종합학술대회",
+    details: "June, 2026",
     links: {}
   },
   {
     year: 2026,
     scope: "international",
     tags: ["BK1", "ICORE-A"],
-    authors: ["Oladayo Ajani", "Jeonggeun Kim*", "Jong Taek Lee", "Byungchul Tak"],
+    authors: ["Oladayo Ajani*", "Jeonggeun Kim*", "Jong Taek Lee", "Byungchul Tak"],
     title:
       "Measuring Intrinsic Dimension of Multiobjective Landscapes and Dimensionality-Reduced Neuroevolution of Deep Reinforcement Learning",
     venue: "Proceedings of the Genetic and Evolutionary Computation Conference Companion (GECCO)",
     details: "2026",
+    note: "Acceptance rate: 35% (150/425)",
     links: {}
   },
   {
     year: 2026,
     scope: "domestic",
     tags: ["KCI"],
-    authors: ["장성욱", "전하운", "김범준", "홍일표", "김정근", "김명석*"],
+    authors: ["장성욱*", "전하운", "김범준", "홍일표", "김정근", "김명석*"],
     title: "읽기 재시도 동작 최적화를 통한 대용량 SSD의 성능 개선",
     venue: "반도체디스플레이기술학회지",
     details: "25(1), Mar. 2026",
@@ -128,7 +140,7 @@ LAB.publications = [
     year: 2026,
     scope: "domestic",
     tags: ["KCI"],
-    authors: ["안재원", "김명석", "김정근*"],
+    authors: ["안재원*", "김명석", "김정근*"],
     title: "LLM 기반 워게임 교전 시나리오 생성 및 DEVS 기반 M&S를 통한 개선 방안 연구",
     venue: "멀티미디어학회지",
     details: "Jan. 2026",
@@ -138,12 +150,43 @@ LAB.publications = [
   // ---------- 2025 ----------
   {
     year: 2025,
+    scope: "domestic",
+    tags: ["Dom.conf"],
+    authors: ["안재원*", "장성욱", "유상훈", "정세엽", "김명석", "Jeonggeun Kim*"],
+    title: "DEVS 교전 시뮬레이션을 통한 LLM 기반의 자동 방책 생성 및 평가",
+    venue: "한국군사과학기술학회 추계학술대회",
+    details: "Nov, 2025",
+    links: {}
+  },
+  {
+    year: 2025,
     scope: "international",
     tags: ["SCIE", "High-impact"],
-    authors: ["Hyunwoo Nam", "Jay Hwan Lee", "Shinhyung Yang", "Yeonsoo Kim", "Jiun Jeong", "Jeonggeun Kim", "Bernd Burgstaller"],
+    authors: ["Hyunwoo Nam*", "Jay Hwan Lee", "Shinhyung Yang", "Yeonsoo Kim", "Jiun Jeong", "Jeonggeun Kim", "Bernd Burgstaller*"],
     title: "Comprehensive Design Space Exploration for Graph Neural Network Aggregation on GPUs",
     venue: "IEEE Computer Architecture Letters (IEEE CAL)",
     details: "24(1), 2025",
+    links: {}
+  },
+  {
+    year: 2025,
+    scope: "international",
+    tags: ["Intl.conf"],
+    authors: ["Seokhyeon Lee*", "Jeonggeun Kim", "Yongtae Kim*"],
+    title: "Accuracy Performance Analysis of Quantized DNN Models using Approximate 4-2 Compressor Based Multipliers",
+    venue: "International Conference on Artificial Intelligence in Information and Communication (ICAIIC)",
+    details: "Feb, 2025",
+    links: {}
+  },
+  {
+    year: 2024,
+    scope: "international",
+    tags: ["SCIE"],
+    authors: ["Myeongjin Kwak*", "Jeonggeun Kim", "Yongtae Kim*"],
+    title: "A Comprehensive Exploration of Approximate DNN Models with a Novel Floating-Point Simulation Framework",
+    venue: "Performance Evaluation",
+    details: "vol. 165, pp. 1-15, Aug, 2024",
+    status: "Invited (Special Issue)",
     links: {}
   },
 
@@ -152,7 +195,7 @@ LAB.publications = [
     year: 2023,
     scope: "international",
     tags: ["BK2", "ICORE-B", "KIISE-A"],
-    authors: ["Myeongjin Kwak*", "Jeonggeun Kim", "Yongtae Kim"],
+    authors: ["Myeongjin Kwak*", "Jeonggeun Kim", "Yongtae Kim*"],
     title: "TorchAxf: Enabling Rapid Simulation of Approximate DNN Models using GPU-based Floating-Point Computing Framework",
     venue: "International Symposium on Modeling, Analysis, and Simulation of Computer and Telecommunication Systems (MASCOTS)",
     details: "Oct. 2023",

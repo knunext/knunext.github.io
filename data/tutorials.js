@@ -36,5 +36,38 @@ LAB.tutorials = {
     //   sponsors: [],
     //   partners: []
     // }
+    {
+      section: "arch",
+      title: "Computer Architecture",
+      audience: ["Members", "Candidates"],
+      link: "ComArchi/",
+      summary: "학부 수준 컴퓨터구조 및 대학원 수준 고급컴퓨터구조",
+      body: "<p>- ISA<br>- Processor Design<br>- Pipelining<br>- Out-of-Order Processor<br>- Memory Hierarchy<br>- SSD<br>- PIM/NDP/ISC<br>- GPU & Accelerators</p>",
+      related: [{ title: "BIO-PIM", link: "research.html#detail-ai-accelerator" }],
+      sponsors: [],
+      partners: []
+    },
+    {
+      section: "robotics",
+      title: "Introduction to Robotics & Physical AI",
+      audience: ["Members", "Candidates"],
+      link: "KNU_Intro_to_Robotics/",
+      summary: "학부 수준 로보틱스 AI",
+      body: "<p>- Motion Models<br>- Motion Planning<br>- Path Planning<br>- Bayesian Filters<br>- Decision Making<br>- VLM & VLA</p>",
+      related: [{ title: "항공드론혁신융합대학사업(첨단기술융합대학)", link: "research.html#detail-mns-ax" }],
+      sponsors: [],
+      partners: []
+    },
+    {
+      section: "mns",
+      title: "Introduction to Modeling & Simulation (M&S)",
+      audience: ["Members", "Candidates"],
+      link: "KNU_Intro_to_Simulation/",
+      summary: "Modeling & Simulation 기초 트레이닝",
+      body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
+      related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
+      sponsors: [],
+      partners: []
+    },
   ]
 };

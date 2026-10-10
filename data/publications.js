@@ -21,6 +21,7 @@ LAB.tagColors = {
   "BK1": "teal", "BK2": "teal", "BK3": "red", "BK4": "red",
   "ICORE-A*": "red", "ICORE-A": "red", "ICORE-B": "teal",
   "KCI": "purple", "SCIE": "orange",
+  "KIISE-S": "red", "KIISE-A": "teal",
   "Top-tier": "red", "High-impact": "red"
 };
 
@@ -94,7 +95,7 @@ LAB.publications = [
   {
     year: 2026,
     scope: "international",
-    tags: ["Top-tier", "BK3", "ICORE-A*"],
+    tags: ["BK3", "ICORE-A*", "KIISE-S"],
     authors: ["Hyunwoo Nam", "Jay Hwan Lee", "Yeonsoo Kim", "Mengzhao Zhang", "Jeonggeun Kim", "Bernd Burgstaller*"],
     title: "LPGSim: A Lightweight Parallel GPU Simulator Maximizing Speed with Trustworthy Simulation",
     venue: "Proceedings of the ACM on Measurement and Analysis of Computing Systems (SIGMETRICS)",
@@ -150,7 +151,7 @@ LAB.publications = [
   {
     year: 2023,
     scope: "international",
-    tags: ["BK2", "ICORE-B"],
+    tags: ["BK2", "ICORE-B", "KIISE-A"],
     authors: ["Myeongjin Kwak*", "Jeonggeun Kim", "Yongtae Kim"],
     title: "TorchAxf: Enabling Rapid Simulation of Approximate DNN Models using GPU-based Floating-Point Computing Framework",
     venue: "International Symposium on Modeling, Analysis, and Simulation of Computer and Telecommunication Systems (MASCOTS)",

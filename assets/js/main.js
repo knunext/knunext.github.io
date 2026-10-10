@@ -40,7 +40,9 @@
     ["research", "Research", "research.html"],
     ["people", "People", "people.html"],
     ["publications", "Publications", "publications.html"],
-    ["teaching", "Teaching", "teaching.html"]
+    ["teaching", "Teaching", "teaching.html"],
+    ["tutorials", "Tutorials", "tutorials.html"],
+    ["facilities", "Facilities", "facilities.html"]
   ];
   (function header() {
     const joinHref = page === "home" ? "#join" : "index.html#join";
@@ -722,6 +724,83 @@
       $("#teach-list").innerHTML = list.length ? (view === "term" ? termView(list) : courseView(list)) : '<p class="empty">해당 분야의 강의가 없습니다.</p>';
       if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         document.querySelectorAll(".course-art svg").forEach((el) => el.pauseAnimations && el.pauseAnimations());
+      }
+    }
+    drawChips();
+    render();
+  }
+
+  /* ================= Facilities ================= */
+  if (page === "facilities") {
+    const F = L.facilities || {};
+    setHTML("#page-intro", F.intro || "");
+    let n = 0, html = "";
+    (F.groups || []).filter((g) => g.items && g.items.length).forEach((g) => {
+      const id = "f-" + (g.id || slug(g.title));
+      html += '<section class="wrap section" id="' + id + '" aria-labelledby="t' + id + '">' +
+        band(esc(g.title) + ' <span class="band-count">' + g.items.length + "</span>", pad(++n), "h2").replace('class="band-label"', 'class="band-label" id="t' + id + '"') +
+        '<ul class="fac-list">' + g.items.map((it) => {
+          const art = it.illustration && window.ILLUS && window.ILLUS[it.illustration] ? window.ILLUS[it.illustration]() : "";
+          return '<li class="fac-item">' +
+            (art ? '<div class="fac-art">' + art + "</div>" : "") +
+            '<div class="fac-text"><h3 class="fac-name">' + esc(it.name) + (it.qty ? ' <span class="fac-qty">' + esc(it.qty) + "</span>" : "") + "</h3>" +
+            (it.summary ? '<p class="fac-summary">' + it.summary + "</p>" : "") +
+            (it.specs && it.specs.length ? '<dl class="fac-specs">' + it.specs.map(([k, v]) => "<div><dt>" + esc(k) + "</dt><dd>" + esc(v) + "</dd></div>").join("") + "</dl>" : "") +
+            "</div></li>";
+        }).join("") + "</ul></section>";
+    });
+    setHTML("#fac-list", html || '<p class="wrap empty">준비 중입니다.</p>');
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      $$(".fac-art svg").forEach((el) => el.pauseAnimations && el.pauseAnimations());
+    }
+  }
+
+  /* ================= Tutorials ================= */
+  if (page === "tutorials") {
+    const T = L.tutorials || {};
+    setHTML("#page-intro", T.intro || "");
+    const S = T.sections || [], items = T.items || [];
+    let sec = "all";
+    const tagEl = $("#tut-tags");
+    const drawChips = () => {
+      tagEl.innerHTML = [["all", "All"]].concat(S.map((x) => [x.id, x.title]))
+        .map(([k, l]) => '<button type="button" class="chip chip-tag" data-sec="' + esc(k) + '" aria-pressed="' + (k === sec) + '">' + esc(l) + "</button>").join("");
+    };
+    tagEl.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; sec = b.dataset.sec; drawChips(); render(); });
+    const item = (it) => {
+      const more = [
+        it.body || "",
+        it.related && it.related.length
+          ? '<div class="info-block"><p class="caps">Related</p><ul class="tut-related">' +
+            it.related.map((r) => "<li>" + (r.link ? '<a href="' + esc(r.link) + '">' + esc(r.title) + "</a>" : esc(r.title)) + "</li>").join("") + "</ul></div>"
+          : "",
+        sponsorBlock(it.sponsors, false, "news-sponsors"),
+        partnerBlock(it.partners, "news-sponsors")
+      ].join("");
+      return '<li class="tut-item">' +
+        '<div class="tut-head"><h3 class="tut-title">' + (it.link ? '<a href="' + esc(it.link) + '">' + esc(it.title) + "</a>" : esc(it.title)) + "</h3>" +
+        (it.audience && it.audience.length ? '<p class="tut-aud">' + it.audience.map((a) => '<span class="badge">' + esc(a) + "</span>").join("") + "</p>" : "") + "</div>" +
+        (it.summary ? '<p class="tut-summary">' + esc(it.summary) + "</p>" : "") +
+        (more ? '<details class="news-details"><summary>자세히 보기</summary><div class="news-body">' + more + "</div></details>" : "") +
+        "</li>";
+    };
+    function render() {
+      const shownS = S.filter((x) => sec === "all" || x.id === sec);
+      const shownI = items.filter((it) => shownS.some((x) => x.id === it.section));
+      $("#tut-count").textContent = (shownI.length ? shownI.length + (shownI.length === 1 ? " tutorial · " : " tutorials · ") : "") + shownS.length + (shownS.length === 1 ? " area" : " areas");
+      $("#tut-list").innerHTML = shownS.map((x) => {
+        const list = items.filter((it) => it.section === x.id);
+        const art = x.illustration && window.ILLUS && window.ILLUS[x.illustration] ? window.ILLUS[x.illustration]() : "";
+        return '<section class="pub-year-block tut-section" id="tut-' + esc(x.id) + '" aria-labelledby="tt-' + esc(x.id) + '">' +
+          '<div class="tut-side"><h2 class="tut-sec-title" id="tt-' + esc(x.id) + '">' +
+          (x.link ? '<a href="' + esc(x.link) + '">' + esc(x.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></a>' : esc(x.title)) + "</h2>" +
+          (x.description ? '<p class="tut-sec-desc">' + esc(x.description) + "</p>" : "") +
+          (art ? (x.link ? '<a class="tut-art" href="' + esc(x.link) + '" aria-label="' + esc(x.title) + ' 자료로 이동">' + art + "</a>" : '<div class="tut-art">' + art + "</div>") : "") + "</div>" +
+          '<div>' + (list.length ? '<ul class="tut-list">' + list.map(item).join("") + "</ul>" : '<p class="tut-empty caps">Coming soon</p>') + "</div>" +
+          "</section>";
+      }).join("");
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        $$(".tut-art svg").forEach((el) => el.pauseAnimations && el.pauseAnimations());
       }
     }
     drawChips();

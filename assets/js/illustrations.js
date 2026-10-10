@@ -467,5 +467,284 @@
     return svg("0 0 360 110", b, "HBM에서 L2 캐시를 거쳐 GPU의 SM으로 이동하는 데이터와 CPU 연결");
   };
 
+  /* ---------- Facilities: 서버 와이어프레임 (420 x 240), 은은하게 움직임 ---------- */
+  const Blink = (dur, begin, lo, hi) =>
+    `<animate attributeName="opacity" values="${lo};${hi};${lo}" dur="${dur}s" begin="${begin}s" repeatCount="indefinite"/>`;
+  const Spin = (cx, cy, dur) =>
+    `<animateTransform attributeName="transform" type="rotate" from="0 ${cx} ${cy}" to="360 ${cx} ${cy}" dur="${dur}s" repeatCount="indefinite"/>`;
+  const Flow = (dur) => `<animate attributeName="stroke-dashoffset" from="0" to="-24" dur="${dur}s" repeatCount="indefinite"/>`;
+
+  // (1) UPMEM PIM 서버: Xeon CPU, 일반 DIMM 과 PIM DIMM. PIM 칩(DPU)이 번갈아 연산
+  I.facPim = () => {
+    let b = R(10, 10, 400, 220, 4);
+    b += R(30, 78, 92, 92, 3) + R(42, 90, 68, 68, 2) + T(76, 128, "XEON", "middle");
+    range(5).forEach((k) => (b += Ln(30 + 14 + k * 16, 78, 30 + 14 + k * 16, 70, "thin") + Ln(30 + 14 + k * 16, 170, 30 + 14 + k * 16, 178, "thin")));
+    const dimms = [["DDR", 34], ["DDR", 64], ["PIM", 102], ["PIM", 132], ["DDR", 170], ["DDR", 200]];
+    dimms.forEach(([kind, y], di) => {
+      b += R(168, y - 10, 226, 20, 2) + T(176, y + 3.5, kind);
+      range(8).forEach((k) => {
+        const x = 206 + k * 23;
+        if (kind === "PIM") {
+          b += R(x, y - 6, 17, 12, 1);
+          b += `<rect class="solid soft" x="${x + 2}" y="${y - 4}" width="13" height="8">${Blink(1.6, -((k * 3 + di * 5) % 8) * 0.2, 0, 0.9)}</rect>`;
+        } else b += R(x, y - 5, 17, 10, 1);
+      });
+      b += Ln(122, 124, 146, 124, "thin") + Ln(146, 124, 146, y) + Ln(146, y, 168, y, "thin");
+    });
+    // CPU ↔ PIM 데이터
+    [[102, 0], [132, -0.9]].forEach(([y, d]) =>
+      (b += Tok(8, 5, Move(`M124 124 H146 V${y} H166`, 1.8, d), Fade(1.8, d))));
+    b += T(390, 228, "256 GB DRAM · 16 GB PIM", "end");
+    return svg("0 0 420 240", b, "Xeon CPU 옆에 일반 메모리와 PIM 메모리 모듈이 꽂혀 있고, PIM 칩이 번갈아 연산하는 모습");
+  };
+
+  // (2) Threadripper PRO + Alveo U50 x3 + SmartSSD: PCIe 로 연결된 FPGA 카드와 연산형 저장장치
+  I.facFpga = () => {
+    let b = R(10, 10, 400, 220, 4);
+    b += R(24, 84, 84, 72, 3) + R(34, 94, 64, 52, 2) + T(66, 118, "TR PRO", "middle") + T(66, 132, "32C", "middle");
+    b += Ln(108, 120, 132, 120) + Ln(132, 36, 132, 208) + T(132, 224, "PCIe", "middle");
+    const cards = [20, 72, 124];
+    cards.forEach((y, i) => {
+      b += Ln(132, y + 18, 150, y + 18, "thin");
+      b += R(150, y, 246, 36, 2) + Ln(150, y, 150, y + 36) + R(146, y + 4, 4, 28);           // 카드, 브래킷
+      b += T(160, y + 22, "ALVEO U50");
+      b += R(240, y + 5, 40, 26, 2) + T(260, y + 22, "FPGA", "middle");
+      [288, 304].forEach((x, k) => {
+        b += R(x, y + 8, 12, 20, 1);
+        b += `<rect class="solid soft" x="${x + 2}" y="${y + 10}" width="8" height="16">${Blink(2.2, -(i * 0.6 + k * 0.35), 0.05, 0.75)}</rect>`;
+      });
+      b += T(388, y + 22, "HBM2", "end");
+    });
+    // SmartSSD (NAND + FPGA)
+    const sy = 176;
+    b += Ln(132, sy + 20, 150, sy + 20, "thin") + R(150, sy, 246, 40, 6) + T(160, sy + 24, "SMARTSSD");
+    range(5).forEach((k) => (b += R(236 + k * 20, sy + 10, 14, 20, 1)));
+    b += R(344, sy + 9, 24, 22, 2) + T(356, sy + 24, "F", "middle");
+    // 데이터: SSD 안에서 NAND → FPGA (근접 처리), CPU → 각 카드
+    b += Tok(7, 5, Move(`M240 ${sy + 20} H340`, 1.6, 0), Fade(1.6, 0));
+    cards.forEach((y, i) => (b += Tok(8, 5, Move(`M110 120 H132 V${y + 18} H148`, 2.4, -i * 0.8, ` calcMode="linear"`), Fade(2.4, -i * 0.8))));
+    return svg("0 0 420 240", b, "Threadripper PRO CPU 가 PCIe 로 Alveo U50 FPGA 카드 세 장과 SmartSSD 에 연결된 구성");
+  };
+
+  // (2-b) Ryzen 9 9900X3D 서버: 3D V-Cache CPU, DDR5 네 개, 저장장치, C++ → RTL → 비트스트림(HLS) 흐름
+  I.facHls = () => {
+    let b = R(10, 10, 400, 220, 4);
+    // CPU (패키지, 다이, 위에 쌓인 V-Cache)
+    b += R(26, 66, 104, 104, 3) + R(40, 80, 76, 76, 2) + T(78, 136, "9900X3D", "middle");
+    b += R(46, 88, 64, 22, 1) + T(78, 103, "V-CACHE", "middle");
+    b += `<rect class="solid soft" x="48" y="90" width="60" height="18">${Blink(2.6, 0, 0.05, 0.45)}</rect>`;
+    range(6).forEach((k) => (b += Ln(36 + k * 17, 66, 36 + k * 17, 58, "thin") + Ln(36 + k * 17, 170, 36 + k * 17, 178, "thin")));
+    // DDR5 네 개
+    [148, 166, 184, 202].forEach((x, i) => {
+      b += R(x, 34, 12, 168, 2);
+      range(6).forEach((k) => (b += R(x + 3, 44 + k * 26, 6, 16, 1)));
+    });
+    b += T(181, 222, "DDR5 256 GB", "middle");
+    b += Ln(130, 118, 148, 118, "thin");
+    b += Tok(6, 6, Move("M132 118 H146 H132", 1.4, 0));
+    // 저장장치 (10 TB)
+    [[34, 0], [78, -0.6]].forEach(([y, d]) => {
+      b += R(236, y, 158, 34, 3) + T(248, y + 21, "SSD") + Ln(290, y + 8, 290, y + 26, "thin");
+      range(4).forEach((k) => (b += R(300 + k * 18, y + 9, 12, 16, 1)));
+      b += `<circle class="solid" cx="382" cy="${y + 17}" r="2.4">${Blink(0.9, d, 0.15, 1)}</circle>`;
+    });
+    b += T(394, 128, "10 TB", "end");
+    // HLS: C++ → RTL → BIT
+    const hx = [236, 296, 356], hy = 162;
+    ["C++", "RTL", "BIT"].forEach((n, i) => {
+      b += R(hx[i], hy, 40, 30, 2) + T(hx[i] + 20, hy + 19, n, "middle");
+      if (i < 2) b += Ln(hx[i] + 40, hy + 15, hx[i + 1], hy + 15, "thin");
+    });
+    b += T(236, hy - 8, "HLS");
+    b += Tok(8, 5, Move(`M256 ${hy + 40} H376`, 2.4, 0, ` calcMode="linear" keyPoints="0;0;0.5;0.5;1;1" keyTimes="0;0.25;0.4;0.65;0.8;1"`), Fade(2.4, 0, "0;1;1;0", "0;0.05;0.92;1"));
+    return svg("0 0 420 240", b, "3D V-Cache CPU, DDR5 메모리 네 개, 저장장치, 그리고 C++ 코드가 RTL을 거쳐 비트스트림으로 합성되는 흐름");
+  };
+
+  // (3) RTX PRO 6000 Max-Q x4: 블로어 팬이 도는 GPU 네 장과 뒤로 빠지는 배기
+  I.facGpu4 = () => {
+    let b = R(10, 10, 400, 220, 4);
+    [24, 76, 128, 180].forEach((y, i) => {
+      b += R(44, y, 340, 38, 3) + R(40, y + 4, 4, 30);                        // 카드, 브래킷
+      b += T(56, y + 16, "RTX PRO 6000") + T(56, y + 30, "96 GB");
+      range(13).forEach((k) => (b += Ln(170 + k * 10, y + 8, 170 + k * 10, y + 30, "thin")));   // 방열 핀
+      const fx = 350, fy = y + 19;
+      b += C(fx, fy, 14);
+      b += `<g>${range(6).map((k) => { const a = (k * 60) * Math.PI / 180; return Ln(fx, fy, (fx + 12 * Math.cos(a)).toFixed(1), (fy + 12 * Math.sin(a)).toFixed(1), "thin"); }).join("")}${Spin(fx, fy, 1.1 + i * 0.07)}</g>`;
+      b += `<path class="dash" d="M38 ${y + 12} H16 M38 ${y + 26} H16" style="stroke-dasharray:6 6">${Flow(0.9)}</path>`;  // 배기
+    });
+    return svg("0 0 420 240", b, "블로어 팬이 도는 RTX PRO 6000 그래픽카드 네 장이 꽂힌 워크스테이션");
+  };
+
+  // (4) DGX Spark x3: 입체 상자 세 대가 QSFP 케이블로 연결되어 데이터를 주고받음
+  I.facSpark = () => {
+    let b = "";
+    const xs = [22, 152, 282], y = 112, w = 104, h = 58, d = 14;
+    xs.forEach((x, i) => {
+      b += R(x, y, w, h, 3);
+      b += P(`M${x} ${y} L${x + d} ${y - d} H${x + w + d} L${x + w} ${y} M${x + w + d} ${y - d} V${y + h - d} L${x + w} ${y + h}`);
+      range(4).forEach((r) => range(8).forEach((c) => (b += C(x + 15 + c * 10.5, y + 12 + r * 9, 1.6, "thin"))));   // 앞면 타공
+      b += T(x, y + h + 18, "DGX SPARK") + T(x, y + h + 32, "128 GB");
+      b += `<circle class="solid" cx="${x + w - 8}" cy="${y + h - 8}" r="2.2">${Blink(2, -i * 0.7, 0.2, 1)}</circle>`;
+    });
+    // 뒤쪽 QSFP 케이블 (위로 둥글게)
+    const cab = [`M${xs[0] + 84} ${y - 14} C${xs[0] + 104} 34 ${xs[1] + 46} 34 ${xs[1] + 66} ${y - 14}`,
+                 `M${xs[1] + 84} ${y - 14} C${xs[1] + 104} 34 ${xs[2] + 46} 34 ${xs[2] + 66} ${y - 14}`];
+    cab.forEach((c, i) => {
+      b += P(c);
+      b += Tok(7, 5, Move(c, 1.6, -i * 0.5), Fade(1.6, -i * 0.5));
+      b += Tok(7, 5, Move(c, 1.6, -0.8 - i * 0.5, ` keyPoints="1;0" keyTimes="0;1" calcMode="linear"`), Fade(1.6, -0.8 - i * 0.5));
+    });
+    b += T(210, 36, "QSFP · 200 Gb/s", "middle");
+    return svg("0 0 420 240", b, "QSFP 케이블로 서로 연결된 DGX Spark 세 대");
+  };
+
+  /* ---------- Tutorials: 분야별 그림 (420 x 260), 움직이고 마우스를 올리면 부분이 밝아짐 ---------- */
+  // 부분 묶음: 마우스를 올리면 강조되고 이름이 툴팁으로 보임
+  const Part = (title, body) => `<g class="part"><title>${title}</title>${body}</g>`;
+  const polyLen = (pts) => pts.slice(1).reduce((a, p, i) => a + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
+
+  // Computer Architecture: 4코어 + 링 인터커넥트 + L3 + 메모리 컨트롤러 + HBM + I/O
+  I.tutArch = () => {
+    let b = "";
+    const ring = "M134 78 H286 Q306 78 306 98 V162 Q306 182 286 182 H134 Q114 182 114 162 V98 Q114 78 134 78 Z";
+    b += Part("Ring interconnect", P(ring) + [[154, 78], [266, 78], [154, 182], [266, 182], [306, 130], [114, 130]].map(([x, y]) => R(x - 4, y - 4, 8, 8, 1)).join(""));
+    b += Part("Shared L3 cache (3 slices)", range(3).map((k) => R(146 + k * 44, 112, 40, 36, 2) + T(166 + k * 44, 134, "L3", "middle") +
+      `<rect class="solid soft" x="${149 + k * 44}" y="${115}" width="34" height="30" rx="1">${Blink(3, -k * 1, 0, 0.3)}</rect>`).join(""));
+    [[110, 12, 154, 64, 78], [222, 12, 266, 64, 78], [110, 196, 154, 196, 182], [222, 196, 266, 196, 182]].forEach(([x, y, cx, ly, ry], i) => {
+      let c = R(x, y, 88, 52, 3) + T(x + 8, y + 16, "CORE " + i) + R(x + 62, y + 6, 20, 14, 1) + T(x + 72, y + 16, "L1", "middle");
+      range(5).forEach((k) => {
+        c += R(x + 8 + k * 15, y + 26, 11, 18, 1);
+        c += `<rect class="solid" x="${x + 9 + k * 15}" y="${y + 27}" width="9" height="16">${Blink(1.5, -((k + i * 2) % 5) * 0.3, 0, 0.85)}</rect>`;
+      });
+      b += Part("Core " + i + ": 5-stage pipeline + L1", c + Ln(cx, ly, cx, ry, "thin"));
+    });
+    b += Part("Memory controller", R(326, 106, 34, 48, 2) + T(343, 134, "MC", "middle") + Ln(306, 130, 326, 130, "thin"));
+    b += Part("HBM stack", range(4).map((k) => R(374, 92 + k * 20, 36, 16, 1)).join("") + T(392, 186, "HBM", "middle") + Ln(360, 130, 374, 130, "thin"));
+    b += Part("I/O · PCIe", R(28, 106, 52, 48, 2) + T(54, 134, "I/O", "middle") + Ln(80, 130, 114, 130, "thin"));
+    // 링 위를 도는 패킷, 메모리·I/O 트래픽
+    range(4).forEach((k) => (b += Tok(7, 7, Move(ring, 6, -k * 1.5, ' rotate="auto"'))));
+    b += Tok(8, 5, Move("M308 130 H324 M362 130 H372", 1.6, 0), Fade(1.6, 0));
+    b += Tok(8, 5, Move("M372 140 H362 M324 140 H308", 1.6, -0.8), Fade(1.6, -0.8));
+    b += Tok(8, 5, Move("M82 130 H112", 1.8, -0.4), Fade(1.8, -0.4));
+    return svg("0 0 420 260", b, "네 개의 코어가 링 인터커넥트로 L3 캐시, 메모리 컨트롤러, HBM, I/O와 연결된 멀티코어 프로세서");
+  };
+
+  // Robotics: A* 경로 계획(격자 지도) + 라이다를 단 이동 로봇 + 3관절 로봇팔 역기구학
+  I.tutRobot = () => {
+    let b = "";
+    const gx = 18, gy = 46, cs = 17, cols = 10, rows = 8;
+    const obs = [[2, 1], [2, 2], [2, 3], [2, 4], [5, 3], [5, 4], [5, 5], [5, 6], [6, 3], [7, 1], [8, 1], [3, 6], [8, 5], [8, 6]];
+    let grid = R(gx, gy, cols * cs, rows * cs);
+    range(cols - 1).forEach((c) => (grid += Ln(gx + (c + 1) * cs, gy, gx + (c + 1) * cs, gy + rows * cs, "thin")));
+    range(rows - 1).forEach((r) => (grid += Ln(gx, gy + (r + 1) * cs, gx + cols * cs, gy + (r + 1) * cs, "thin")));
+    grid += obs.map(([c, r]) => `<rect class="solid soft" x="${gx + c * cs + 1}" y="${gy + r * cs + 1}" width="${cs - 2}" height="${cs - 2}"/>`).join("");
+    b += Part("Occupancy grid map", grid) + T(gx, gy - 10, "A* PLANNER");
+    const cc = (c, r) => [gx + c * cs + cs / 2, gy + r * cs + cs / 2];
+    const route = [[0, 7], [1, 7], [1, 6], [1, 5], [1, 4], [1, 3], [1, 2], [1, 1], [1, 0], [2, 0], [3, 0], [4, 0], [4, 1], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [9, 1], [9, 0]].map(([c, r]) => cc(c, r));
+    const d = "M" + route.map((p) => p.join(" ")).join(" L"), len = polyLen(route).toFixed(1);
+    b += Part("Planned path", `<path d="${d}" style="stroke-dasharray:${len};stroke-dashoffset:${len}"><animate attributeName="stroke-dashoffset" values="${len};0;0;${len}" keyTimes="0;0.45;0.85;1" dur="7s" repeatCount="indefinite"/></path>`);
+    const [sx, sy] = cc(0, 7), [ex, ey] = cc(9, 0);
+    b += C(sx, sy, 4) + P(`M${ex - 5} ${ey} H${ex + 5} M${ex} ${ey - 5} V${ey + 5}`) + C(ex, ey, 6, "thin");
+    // 이동 로봇 (라이다가 회전하며 스캔)
+    b += Part("Mobile robot with LiDAR", `<g><circle class="solid" r="4.2"/><path class="thin" d="M0 0 L20 -6 M0 0 L20 6">${Spin(0, 0, 1.2)}</path>${Move(d, 7, 0, ' calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.45;0.85;1"')}</g>`);
+    // 로봇팔 (기준 좌표계, 관절 3개, 그리퍼)
+    const bx = 300, by = 214;
+    let arm = R(bx - 28, by, 56, 12, 2) + Ln(bx - 40, by + 12, bx + 40, by + 12);
+    arm += P(`M${bx - 54} ${by + 30} H${bx - 30} M${bx - 54} ${by + 30} V${by + 6}`, "thin") + T(bx - 28, by + 34, "x") + T(bx - 58, by + 4, "y");
+    const link = (L) => R(0, -5, L, 10, 5) + C(0, 0, 5) + C(0, 0, 1.6, "thin");
+    arm += `<g transform="translate(${bx} ${by})"><g>${link(70)}` +
+      `<animateTransform attributeName="transform" type="rotate" values="-115;-70;-95;-115" keyTimes="0;0.4;0.7;1" dur="6s" repeatCount="indefinite"/>` +
+      `<g transform="translate(70 0)"><g>${link(56)}` +
+      `<animateTransform attributeName="transform" type="rotate" values="75;35;95;75" keyTimes="0;0.4;0.7;1" dur="6s" repeatCount="indefinite"/>` +
+      `<g transform="translate(56 0)"><g>${link(24)}<path d="M24 -8 V8 M24 -8 H32 M24 8 H32"/>` +
+      `<animateTransform attributeName="transform" type="rotate" values="30;-10;20;30" keyTimes="0;0.4;0.7;1" dur="6s" repeatCount="indefinite"/>` +
+      `</g></g></g></g></g></g>`;
+    b += Part("3-joint robot arm (inverse kinematics)", arm);
+    b += P("M248 92 C280 58 340 60 372 96", "dash") + T(330, 40, "INVERSE KINEMATICS", "middle");
+    b += Part("Target pose", `<g>${C(352, 74, 7, "thin")}${P("M344 74 H360 M352 66 V82")}${Blink(2, 0, 0.35, 1)}</g>`);
+    return svg("0 0 420 260", b, "격자 지도 위 A* 경로를 따라 움직이는 라이다 로봇과, 목표 자세로 움직이는 3관절 로봇팔");
+  };
+
+  // Modeling & Simulation: 이산 사건 시뮬레이션(소스 → 대기열 → 서버 2대 → 싱크) + 사건 목록 타임라인 + 대기열 길이 통계
+  I.tutMns = () => {
+    let b = "";
+    b += Part("Source (arrivals)", C(36, 74, 16) + P("M30 74 H42 M36 68 V80") + T(36, 108, "SOURCE", "middle"));
+    let q = R(80, 60, 92, 28, 2);
+    range(5).forEach((k) => (q += Ln(80 + (k + 1) * 15.3, 60, 80 + (k + 1) * 15.3, 88, "thin") +
+      `<rect class="solid soft" x="${157 - k * 15.3 - 12}" y="64" width="11" height="20">${Blink(4, -k * 0.6, 0, 0.75)}</rect>`));
+    b += Part("FIFO queue", q + T(126, 108, "QUEUE", "middle"));
+    [[232, 44, 0], [232, 104, -1.2]].forEach(([x, y, dd], i) => {
+      const r = 15, cir = (2 * Math.PI * r).toFixed(1);
+      b += Part("Server " + (i + 1), C(x, y, r) +
+        `<circle cx="${x}" cy="${y}" r="${r - 5}" class="thin" style="stroke-dasharray:${cir};stroke-dashoffset:${cir}" transform="rotate(-90 ${x} ${y})">` +
+        `<animate attributeName="stroke-dashoffset" values="${cir};0" dur="2.4s" begin="${dd}s" repeatCount="indefinite"/></circle>` + T(x + 22, y + 4, "S" + (i + 1)));
+    });
+    b += Part("Sink (departures)", C(320, 74, 16) + C(320, 74, 6) + T(320, 108, "SINK", "middle"));
+    b += Ln(52, 74, 80, 74, "thin") + P("M172 74 L196 74 L217 46 M196 74 L217 102", "thin") + P("M247 46 L272 74 L247 102 M272 74 H304", "thin");
+    // 개체 이동
+    [[0, "M52 74 H78"], [-1.0, "M52 74 H78"]].forEach(([dd, pth]) => (b += Tok(7, 7, Move(pth, 2, dd), Fade(2, dd))));
+    b += Tok(7, 7, Move("M174 74 L196 74 L216 48", 2.4, -0.3), Fade(2.4, -0.3));
+    b += Tok(7, 7, Move("M174 74 L196 74 L216 100", 2.4, -1.5), Fade(2.4, -1.5));
+    b += Tok(7, 7, Move("M248 48 L272 74 H302", 2.4, -0.9), Fade(2.4, -0.9));
+    b += Tok(7, 7, Move("M248 100 L272 74 H302", 2.4, -2.1), Fade(2.4, -2.1));
+    // 대기열 길이 막대 (실시간 통계)
+    let bars = R(352, 28, 56, 92, 2) + T(380, 22, "Q LEN", "middle");
+    range(5).forEach((k) => {
+      const hs = [[30, 62, 44, 30], [50, 24, 70, 50], [20, 46, 34, 20], [64, 40, 22, 64], [36, 70, 50, 36]][k];
+      bars += `<rect class="solid soft" x="${358 + k * 10}" width="7" y="${116 - hs[0]}" height="${hs[0]}">` +
+        `<animate attributeName="height" values="${hs.join(";")}" dur="5s" repeatCount="indefinite"/>` +
+        `<animate attributeName="y" values="${hs.map((h) => 116 - h).join(";")}" dur="5s" repeatCount="indefinite"/></rect>`;
+    });
+    b += Part("Statistics: queue length", bars);
+    // 사건 목록 타임라인 (왼쪽으로 흘러감)
+    let tl = Ln(24, 206, 404, 206) + T(24, 236, "EVENT LIST") + T(404, 236, "t →", "end");
+    let ev = "";
+    const evs = [[10, "A"], [42, "D"], [70, "A"], [96, "A"], [131, "D"], [158, "D"], [186, "A"]];
+    [0, 200, 400].forEach((off) => evs.forEach(([x, k]) => {
+      const X = 60 + x + off;
+      ev += Ln(X, 198, X, 214, "thin") + (k === "A" ? `<rect x="${X - 4}" y="${182}" width="8" height="8" transform="rotate(45 ${X} 186)"/>` : C(X, 186, 4)) + T(X, 176, k, "middle");
+    }));
+    tl += `<clipPath id="tut-ev-clip"><rect x="24" y="160" width="380" height="60"/></clipPath>` +
+      `<g clip-path="url(#tut-ev-clip)"><g>${ev}<animateTransform attributeName="transform" type="translate" from="0 0" to="-200 0" dur="8s" repeatCount="indefinite"/></g></g>`;
+    tl += Ln(60, 166, 60, 216) + T(64, 160, "NOW");
+    b += Part("Future event list (A = arrival, D = departure)", tl);
+    return svg("0 0 420 260", b, "소스에서 대기열과 서버 두 대를 거쳐 싱크로 가는 이산 사건 시뮬레이션, 흘러가는 사건 목록과 대기열 길이 통계");
+  };
+
+  // Operational Art: 육각 지도 위 전선(FLOT), 단계선, 작전 축선, 결정적 지점, 목표, 아군·적군 부대 기호
+  I.tutOpart = () => {
+    let b = "";
+    const s = 15, h = Math.sqrt(3) * s;
+    const hex = (cx, cy) => "M" + range(6).map((k) => { const a = (Math.PI / 3) * k; return (cx + s * Math.cos(a)).toFixed(1) + " " + (cy + s * Math.sin(a)).toFixed(1); }).join(" L") + " Z";
+    let hx = "";
+    range(17).forEach((col) => range(10).forEach((row) => {
+      const cx = 14 + col * 1.5 * s, cy = 12 + row * h + (col % 2 ? h / 2 : 0);
+      if (cy < 250) hx += `<path class="hexbg" d="${hex(cx, cy)}"/>`;
+    }));
+    b += hx;
+    // 단계선, 전선
+    b += Part("Phase line ALPHA", Ln(170, 18, 170, 244, "dash") + T(174, 30, "PL ALPHA"));
+    b += Part("Phase line BRAVO", Ln(290, 18, 290, 244, "dash") + T(294, 30, "PL BRAVO"));
+    b += Part("Forward line of own troops (FLOT)", P("M120 18 C140 70 104 120 128 170 C146 206 118 230 124 248") + T(66, 248, "FLOT"));
+    // 작전 축선 (점선이 흐르는 굵은 화살표)
+    const axes = [["M70 196 C150 196 190 150 250 128 C300 110 330 90 362 72", "Main effort"], ["M70 80 C140 64 220 70 300 88", "Supporting effort"]];
+    axes.forEach(([d, t], i) => {
+      b += Part("Axis of advance: " + t, `<path d="${d}" style="stroke-width:${i ? 1.5 : 2.4};stroke-dasharray:10 7">${Flow(i ? 1.6 : 1.1)}</path>`);
+    });
+    b += P("M356 64 L372 70 L360 82") + P("M292 80 L304 89 L292 96");
+    // 결정적 지점, 목표
+    b += Part("Decisive point", `<circle cx="250" cy="128" r="10"/><circle class="solid" cx="250" cy="128" r="3"/>` + T(250, 108, "DP", "middle") +
+      `<circle cx="250" cy="128" r="10" class="thin"><animate attributeName="r" values="10;24" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0" dur="2.2s" repeatCount="indefinite"/></circle>`);
+    b += Part("Objective", P("M378 40 V78 M378 40 L398 47 L378 54") + T(388, 92, "OBJ", "middle"));
+    // 아군 부대 (보병 X, 기갑 타원), 적군 (마름모)
+    const inf = (x, y) => R(x - 12, y - 8, 24, 16) + P(`M${x - 12} ${y - 8} L${x + 12} ${y + 8} M${x + 12} ${y - 8} L${x - 12} ${y + 8}`, "thin");
+    const arm = (x, y) => R(x - 12, y - 8, 24, 16) + E(x, y, 8, 4.5, "thin");
+    b += Part("Friendly infantry", inf(52, 80) + inf(52, 140));
+    b += Part("Friendly armor (main effort)", `<g>${arm(0, 0)}${Move("M70 196 C150 196 190 150 250 128", 9, 0, ' calcMode="spline" keySplines="0.4 0 0.6 1" keyTimes="0;1"')}${Fade(9, 0, "0;1;1;0", "0;0.08;0.9;1")}</g>` + arm(52, 196));
+    const hos = (x, y, dd) => `<g><path d="M${x} ${y - 11} L${x + 11} ${y} L${x} ${y + 11} L${x - 11} ${y} Z"/>${P(`M${x - 5} ${y} H${x + 5}`, "thin")}${Blink(2.4, dd, 0.45, 1)}</g>`;
+    b += Part("Enemy units", hos(226, 60, 0) + hos(338, 150, -0.8) + hos(214, 214, -1.6));
+    return svg("0 0 420 260", b, "육각 지도 위에서 전선, 단계선, 주공과 조공의 작전 축선, 결정적 지점과 목표, 아군과 적군 부대 기호");
+  };
+
   window.ILLUS = I;
 })();

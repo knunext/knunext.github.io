@@ -777,11 +777,24 @@
         sponsorBlock(it.sponsors, false, "news-sponsors"),
         partnerBlock(it.partners, "news-sponsors")
       ].join("");
+      // 교재·영상 등 참고 자료 (표지 그림과 함께, 오른쪽에 규격화된 카드로)
+      const res = (it.resources || []).filter((r) => r && (r.image || r.title));
+      const resHtml = res.length
+        ? '<div class="tut-mat"><p class="caps tut-mat-label">Materials</p><ul class="tut-res" aria-label="참고 자료">' + res.map((r) => {
+            const inner = '<span class="res-cover">' + (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy">' : '<span class="res-noimg caps">' + esc(r.type || "") + "</span>") + "</span>" +
+              '<span class="res-title">' + esc(r.title || "") + "</span>";
+            const tip = [r.title, r.note].filter(Boolean).join(" · ");
+            return "<li>" + (r.link ? '<a class="res" href="' + esc(r.link) + '" title="' + esc(tip) + '">' + inner + "</a>" : '<span class="res" title="' + esc(tip) + '">' + inner + "</span>") + "</li>";
+          }).join("") + "</ul></div>"
+        : "";
       return '<li class="tut-item">' +
-        '<div class="tut-head"><h3 class="tut-title">' + (it.link ? '<a href="' + esc(it.link) + '">' + esc(it.title) + "</a>" : esc(it.title)) + "</h3>" +
-        (it.audience && it.audience.length ? '<p class="tut-aud">' + it.audience.map((a) => '<span class="badge">' + esc(a) + "</span>").join("") + "</p>" : "") + "</div>" +
+        '<div class="tut-main"><h3 class="tut-title">' + (it.link ? '<a href="' + esc(it.link) + '">' + esc(it.title) + "</a>" : esc(it.title)) + "</h3>" +
         (it.summary ? '<p class="tut-summary">' + esc(it.summary) + "</p>" : "") +
         (more ? '<details class="news-details"><summary>자세히 보기</summary><div class="news-body">' + more + "</div></details>" : "") +
+        "</div>" +
+        '<div class="tut-aside">' +
+        (it.audience && it.audience.length ? '<p class="tut-aud">' + it.audience.map((a) => '<span class="badge">' + esc(a) + "</span>").join("") + "</p>" : "") +
+        resHtml + "</div>" +
         "</li>";
     };
     function render() {

@@ -994,7 +994,26 @@ img.avatar-line { object-fit: contain; filter: none; padding: 2%; }
 .tut-list { margin: 0; padding: 0; list-style: none; }
 .tut-item { padding: 0 0 1.25rem; }
 .tut-item + .tut-item { padding-top: 1.25rem; border-top: 1px solid var(--line); }
-.tut-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; }
+.tut-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 0.75rem 2rem; align-items: start; }
+.tut-aside { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+/* 참고 자료 카드: 3열, 표지 크기 통일 (3:4) */
+.tut-res { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem 0.75rem; width: 100%; margin: 0; padding: 0; list-style: none; }
+.res { display: flex; flex-direction: column; gap: 0.35rem; color: inherit; text-decoration: none; }
+.res-cover {
+  display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 4; padding: 6px;
+  border: 1px solid var(--line-2); transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.res-cover img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.res-noimg { color: var(--text-2); font-size: 0.62rem; }
+a.res:hover .res-cover, a.res:focus-visible .res-cover { border-color: var(--text); transform: translateY(-2px); }
+.tut-mat { width: 100%; }
+.tut-mat-label { margin: 0 0 0.7rem; color: var(--text-2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; }
+.res-title { font-size: 0.72rem; line-height: 1.35; color: var(--text); overflow-wrap: anywhere; }
+@media (max-width: 860px) {
+  .tut-item { grid-template-columns: 1fr; }
+  .tut-aside { align-items: flex-start; }
+  .tut-res { max-width: 360px; }
+}
 .tut-title { margin: 0; font-size: 1.1rem; font-weight: 500; }
 .tut-aud { display: flex; gap: 0.4rem; margin: 0; }
 .tut-summary { margin: 0.45rem 0 0; color: var(--text-2); line-height: 1.6; }

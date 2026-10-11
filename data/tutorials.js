@@ -62,7 +62,7 @@ LAB.tutorials = {
       section: "mns",
       title: "Introduction to Modeling & Simulation (M&S)",
       audience: ["Members", "Candidates"],
-      link: "KNU_Intro_to_Simulation/",
+      link: "KNU_Intro_to_Simulations/",
       summary: "Modeling & Simulation 기초 트레이닝",
       body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
       related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],

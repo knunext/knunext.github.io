@@ -7,6 +7,9 @@
  *     body: '자세히 보기'에 들어갈 설명 (HTML 가능)
  *     related: 연관 연구/프로젝트 [{ title, link }]
  *     sponsors / partners: 로고 [{ name, logo, url }] (뉴스와 같은 형식)
+ *     resources: 교재·영상 등 참고 자료 [{ type, title, note, image, link }] → 오른쪽 "MATERIALS" 칸
+ *       type 은 그림이 없을 때만 칸에 표시됨 (예: "Textbook", "YouTube") / note 는 저자·판 등 (마우스를 올리면 보임)
+ *       image 는 assets/img/tutorials/ 의 표지 그림 (흰 선, 투명 배경 권장). 오른쪽에 3열로 같은 크기로 정렬됩니다.
  */
 window.LAB = window.LAB || {};
 
@@ -44,6 +47,11 @@ LAB.tutorials = {
       summary: "학부 수준 컴퓨터구조 및 대학원 수준 고급컴퓨터구조",
       body: "<p>- ISA<br>- Processor Design<br>- Pipelining<br>- Out-of-Order Processor<br>- Memory Hierarchy<br>- SSD<br>- PIM/NDP/ISC<br>- GPU & Accelerators</p>",
       related: [{ title: "BIO-PIM", link: "research.html#detail-ai-accelerator" }],
+      resources: [
+        { type: "Textbook", title: "Computer Organization and Design RISC-V Edition", note: "Patterson & Hennessy, 2nd ed.", image: "assets/img/tutorials/cod-riscv.png", link: "" },
+        { type: "Textbook", title: "Computer Architecture: A Quantitative Approach", note: "Hennessy, Patterson & Kozyrakis, 7th ed.", image: "assets/img/tutorials/ca-quantitative.png", link: "" },
+        { type: "Textbook", title: "RISC-V System-on-Chip Design", note: "Harris, Stine, Thompson & Harris", image: "assets/img/tutorials/riscv-soc-design.png", link: "" }
+      ],
       sponsors: [],
       partners: []
     },
@@ -55,6 +63,17 @@ LAB.tutorials = {
       summary: "학부 수준 로보틱스 AI",
       body: "<p>- Motion Models<br>- Motion Planning<br>- Path Planning<br>- Bayesian Filters<br>- Decision Making<br>- VLM & VLA</p>",
       related: [{ title: "항공드론혁신융합대학사업(첨단기술융합대학)", link: "research.html#detail-mns-ax" }],
+      resources: [
+        { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },
+        //{ type: "Textbook", title: "The Hundred-Page Language Models Book", note: "", image: "assets/img/tutorials/100-lang.png", link: "" },
+        { type: "Textbook", title: "Hands-On Large Language Models", note: "", image: "assets/img/tutorials/handson-llm.png", link: "" },
+        { type: "Textbook", title: "Introduction to Autonomous Robots", note: "", image: "assets/img/tutorials/intro-auto-robots.png", link: "" },
+        { type: "Textbook", title: "피지컬 AI 시스템 설계", note: "", image: "assets/img/tutorials/robot-vla.png", link: "" },
+        //{ type: "Textbook", title: "모던 로보틱스", note: "", image: "assets/img/tutorials/modern-robots.png", link: "" },
+        { type: "Textbook", title: "Introduction to AI Robotics", note: "", image: "assets/img/tutorials/intro-robot-ai.png", link: "" },
+        { type: "Textbook", title: "Statistical Robotics", note: "", image: "assets/img/tutorials/stat-robots.png", link: "" },
+        //{ type: "Textbook", title: "Build a Reasoning Model", note: "", image: "assets/img/tutorials/build-a-reasoningmodel.png", link: "" },
+      ],
       sponsors: [],
       partners: []
     },
@@ -66,6 +85,33 @@ LAB.tutorials = {
       summary: "Modeling & Simulation 기초 트레이닝",
       body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
       related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
+      resources: [
+        { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },
+        { type: "Textbook", title: "Theory of Modeling and Simulation", note: "", image: "assets/img/tutorials/mns.png", link: "" },
+        { type: "Textbook", title: "시스템 모델링 시뮬레이션", note: "", image: "assets/img/tutorials/sys_mns.png", link: "" },
+        { type: "Textbook", title: "Agent-based Modeling", note: "", image: "assets/img/tutorials/abm_geo.png", link: "" },
+        { type: "Textbook", title: "Agent-Based and Indivisual-Based Modeling", note: "", image: "assets/img/tutorials/abm_indivisual.png", link: "" },
+        { type: "Textbook", title: "Introduction to the Modeling and Analysis of Complex Systems", note: "", image: "assets/img/tutorials/intro-maa.png", link: "" },
+      ],
+      sponsors: [],
+      partners: []
+    },
+    {
+      section: "opart",
+      title: "Operational Art",
+      audience: ["Members", "Candidates"],
+      link: "KNU_Intro_to_Simulations/",
+      summary: "Defense Modeling & Simulation 기초 트레이닝",
+      body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
+      related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
+      resources: [
+        { type: "Textbook", title: "국방 M&S", note: "3nd ed.", image: "assets/img/tutorials/mil-mns.png", link: "" },
+        { type: "Textbook", title: "Engineering Principles of Combat Modeling and Distributed Simulation", note: "", image: "assets/img/tutorials/combat-mns.png", link: "" },
+        { type: "Textbook", title: "시스템 모델링 시뮬레이션", note: "", image: "assets/img/tutorials/sys_mns.png", link: "" },
+        { type: "Textbook", title: "수학적 전투모델링과 컴퓨터 워게임", note: "", image: "assets/img/tutorials/math_wargame.png", link: "" },
+        { type: "Textbook", title: "전술학", note: "", image: "assets/img/tutorials/mil-str.png", link: "" },
+        { type: "Textbook", title: "전술과 지휘", note: "", image: "assets/img/tutorials/mil-tac.png", link: "" },
+      ],
       sponsors: [],
       partners: []
     },

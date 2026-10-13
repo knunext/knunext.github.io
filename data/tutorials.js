@@ -123,7 +123,7 @@ LAB.tutorials = {
       audience: ["Candidates"],
       link: "KNU_Intro_to_Simulations/starship_ai1.html",
       summary: "Defense Modeling & Simulation 기초 트레이닝",
-      body: "<p>- Fault-tolerant Computing Architecture - Dependable Computing - Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
+      body: "<p>- Fault-tolerant Computing Architecture<br>- Dependable Computing<br>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
       related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
       resources: [
         { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },        

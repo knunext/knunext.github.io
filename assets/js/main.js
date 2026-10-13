@@ -211,6 +211,16 @@
     let rt = 0;
     window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawLink, 80); });
   }
+  // 다른 페이지에서 #아이디 로 들어왔을 때 (내용이 그려진 뒤) 그 위치로 스크롤하고 잠깐 강조
+  function jumpTo(id) {
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ block: "start" });
+      el.classList.remove("is-target"); void el.offsetWidth; el.classList.add("is-target");
+      setTimeout(() => el.classList.remove("is-target"), 2400);
+    });
+  }
   function newsIds(all) {
     const seen = {};
     return all.map((n) => { const k = n.date; seen[k] = (seen[k] || 0) + 1; return "n-" + String(k).replace(/\D/g, "") + (seen[k] > 1 ? "-" + (seen[k] - 1) : ""); });
@@ -386,7 +396,14 @@
     detail.innerHTML = topics.map((t, i) =>
       '<article class="detail" id="detail-' + esc(t.id) + '">' +
       '<div class="detail-side"><p class="label">' + pad(i + 1) + " / " + esc(t.category || "") + '</p><div class="detail-art">' + art(t) + "</div>" +
-      (t.imageCredit && t.image ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") + "</div>" +
+      (t.imageCredit && t.image ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") +
+      (t.related && t.related.length
+        ? '<div class="detail-rel"><p class="caps detail-rel-label">Related Courses / Tutorials</p><ul>' +
+          t.related.map((r) => '<li><a class="rel-box" href="' + esc(r.link || "#") + '">' +
+            (r.type ? '<span class="rel-type caps">' + esc(r.type) + "</span>" : "") +
+            '<span class="rel-title">' + esc(r.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></span></a></li>').join("") +
+          "</ul></div>"
+        : "") + "</div>" +
       '<div class="detail-main"><h3>' + esc(t.subtitle || t.title) + '</h3><p class="detail-en">' + esc(t.title) + "</p>" +
       (t.description ? '<p class="prose">' + t.description + "</p>" : "") +
       (t.note ? '<p class="note"><span class="caps">Notice</span> ' + t.note + "</p>" : "") +
@@ -654,6 +671,8 @@
     offerings.sort((a, b) => termKey(b.term) - termKey(a.term));
     const allTags = Object.keys(TAGC).filter((t) => Object.values(C).some((c) => (c.tags || []).includes(t)));
     let view = "term", tag = "all";
+    const hashId = () => decodeURIComponent(location.hash.slice(1));
+    if (hashId().startsWith("course-")) view = "course";
 
     const tagBadges = (c) => (c.tags || []).map((t) => '<span class="badge' + (TAGC[t] ? " tag-" + TAGC[t] : "") + '">' + esc(t) + "</span>").join("");
     const courseName = (c, link) =>
@@ -709,7 +728,7 @@
           const c = C[id], terms = list.filter((o) => o.id === id);
           const isCur = terms.some((o) => termKey(o.term) >= cur);
           const art = isCur ? courseArt(c, c.link) : "";
-          return '<li class="pub course' + (art ? " has-art" : "") + '"><div class="pub-tags">' + tagBadges(c) + '</div><div class="pub-main">' +
+          return '<li class="pub course' + (art ? " has-art" : "") + '" id="course-' + esc(id) + '"><div class="pub-tags">' + tagBadges(c) + '</div><div class="pub-main">' +
             courseName(c, c.link) +
             '<p class="course-terms">(' + terms.map((o) => {
               const label = termShort(o.term) + "학기";
@@ -730,6 +749,11 @@
     }
     drawChips();
     render();
+    if (hashId()) jumpTo(hashId());
+    window.addEventListener("hashchange", () => {
+      if (hashId().startsWith("course-") && view !== "course") { view = "course"; tag = "all"; drawChips(); render(); }
+      jumpTo(hashId());
+    });
   }
 
   /* ================= Facilities ================= */
@@ -820,5 +844,11 @@
     }
     drawChips();
     render();
+    const tHash = () => decodeURIComponent(location.hash.slice(1));
+    if (tHash()) jumpTo(tHash());
+    window.addEventListener("hashchange", () => {
+      if (sec !== "all") { sec = "all"; drawChips(); render(); }
+      jumpTo(tHash());
+    });
   }
 })();

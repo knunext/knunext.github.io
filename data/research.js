@@ -9,6 +9,8 @@
  *     illustration: pim | sim | wargame | provenance | loop | nearfar | hetero | orbit (assets/js/illustrations.js)
  *     labels: 그림 왼쪽에 붙는 짧은 라벨 2–3개
  *     wordmark: 카드 아래 큰 글자 [앞, 뒤] (별표로 이어짐)
+ * - related: 왼쪽 그림 아래 'Related Courses / Tutorials' 버튼 [{ type, title, link }]
+ *     link 예: "tutorials.html#tut-arch" (튜토리얼 분야), "teaching.html#course-comp-arch" (과목). 해당 페이지로 가서 그 위치로 스크롤됩니다.
  * - sponsors: 상세 아래 'Sponsors' 칸에 들어갈 로고 [{ name, logo, url }]
  * - partners: 그 아래 'Partners' 칸 (공동연구기관·협력 대학 로고). 비워 두면 칸이 보이지 않음
  *     logo 는 어두운 배경용 흰색(투명 배경) PNG/SVG 권장. assets/img/sponsors/ 에 넣어 주세요.
@@ -39,6 +41,12 @@ LAB.research = {
           items: ["유전체 염기서열 분석 가속화를 위한 페타스케일 인-스토리지 컴퓨팅 기초연구실 (BRL, 한국연구재단, 2024–2027)"]
         }
       ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Tutorial", title: "Computer Architecture", link: "tutorials.html#tut-arch" },
+        { type: "Course", title: "컴퓨터구조", link: "teaching.html#course-comp-arch" },
+        { type: "Course", title: "차세대 컴퓨팅 시스템", link: "teaching.html#course-nextgen-sys" }
+      ],
       sponsors: [{ name: "과학기술정보통신부", logo: "assets/img/sponsors/msit.png", url: "" }],
       image: "",
       imageCredit: ""
@@ -64,6 +72,12 @@ LAB.research = {
           ]
         }
       ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Tutorial", title: "Computer Architecture", link: "tutorials.html#tut-arch" },
+        { type: "Course", title: "컴퓨터시스템설계론", link: "teaching.html#course-sys-design" },
+        { type: "Course", title: "컴퓨터구조", link: "teaching.html#course-comp-arch" }
+      ],
       sponsors: [{ name: "Samsung Electronics", logo: "assets/img/sponsors/samsung.png", url: "" }],
       image: ""
     },
@@ -86,6 +100,11 @@ LAB.research = {
             "차세대 무기 체계의 도입, 전술, 전략적 타당성 평가를 위한 워게임 시뮬레이션 및 모델링"
           ]
         }
+      ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Tutorial", title: "Modeling & Simulation", link: "tutorials.html#tut-mns" },
+        { type: "Tutorial", title: "Operational Art", link: "tutorials.html#tut-opart" }
       ],
       sponsors: [{ name: "교육부", logo: "assets/img/sponsors/moe.png", url: "" }],
       image: "",
@@ -112,6 +131,10 @@ LAB.research = {
           ]
         },
         { label: "관련 연구 프로젝트 (진행 중)", items: ["지역주도형 인공지능(AI) 대전환 사업 (중소벤처기업부, 2025-2026)"] }
+      ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Tutorial", title: "Modeling & Simulation", link: "tutorials.html#tut-mns" }
       ],
       sponsors: [{ name: "중소벤처기업부", logo: "assets/img/sponsors/mos.png", url: "" }, { name: "경남테크노파크 (GNTP)", logo: "assets/img/sponsors/gntp.png", url: "" }],
       partners: [
@@ -173,6 +196,12 @@ LAB.research = {
           label: "관련 분야",
           items: ["Computer Architecture, Algorithm, Compiler", "Programming Model", "Processing-in-Memory, Neural Processing Unit"]
         }
+      ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Course", title: "컴퓨터시스템설계론", link: "teaching.html#course-sys-design" },
+        { type: "Course", title: "차세대 컴퓨팅 시스템", link: "teaching.html#course-nextgen-sys" },
+        { type: "Tutorial", title: "Computer Architecture", link: "tutorials.html#tut-arch" }
       ],
       sponsors: [{ name: "교육부", logo: "assets/img/sponsors/moe.png", url: "" }],
       image: ""
@@ -237,6 +266,10 @@ LAB.research = {
             "지상-궤도 하이브리드 작업 분배와 스케줄링"
           ]
         }
+      ],
+      // 관련 수업·튜토리얼: 왼쪽 그림 아래 버튼. 링크를 누르면 해당 페이지의 그 위치로 이동
+      related: [
+        { type: "Tutorial", title: "Orbit AI Datacenter", link: "tutorials.html#tut-orbit" }
       ],
       sponsors: [],
       image: ""

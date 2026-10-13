@@ -121,7 +121,7 @@ LAB.tutorials = {
       section: "orbit",
       title: "Orbit AI Datacenter",
       audience: ["Candidates"],
-      link: "KNU_Intro_to_Simulations/",
+      link: "KNU_Intro_to_Simulations/starship_ai1.html",
       summary: "Defense Modeling & Simulation 기초 트레이닝",
       body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
       related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
@@ -129,6 +129,9 @@ LAB.tutorials = {
         { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },        
         { type: "Textbook", title: "Theory of Modeling and Simulation", note: "", image: "assets/img/tutorials/mns.png", link: "" },
         { type: "Textbook", title: "시스템 모델링 시뮬레이션", note: "", image: "assets/img/tutorials/sys_mns.png", link: "" },
+        { type: "Textbook", title: "Fault Tolerant Computer Architecture", note: "", image: "assets/img/tutorials/ft-archi.png", link: "" },
+        { type: "Textbook", title: "FAULT-TOLERANT SYSTEMS", note: "", image: "assets/img/tutorials/ft-sys.png", link: "" },
+        { type: "Textbook", title: "Dependable Computing", note: "", image: "assets/img/tutorials/de-com.png", link: ""},
       ],
       sponsors: [],
       partners: []

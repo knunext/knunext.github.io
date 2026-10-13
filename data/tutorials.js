@@ -24,7 +24,9 @@ LAB.tutorials = {
     { id: "mns", link: "KNU_Intro_to_Simulations/", title: "Modeling & Simulation", illustration: "tutMns",
       description: "이산 사건 시뮬레이션(DES)과 에이전트 기반 시뮬레이션(ABS)으로 실세계 문제를 모델링합니다." },
     { id: "opart", link: "KNU_Intro_to_Wargaminig/", title: "Operational Art", illustration: "tutOpart",
-      description: "작전술의 개념과 워게임을 통해 국방 M&S 연구의 배경 지식을 다집니다." }
+      description: "작전술의 개념과 워게임을 통해 국방 M&S 연구의 배경 지식을 다집니다." },
+    { id: "orbit", link: "KNU_Intro_to_Wargaminig/", title: "Orbit AI Datacenter", illustration: "tutOrbit",
+      description: "궤도 AI 데이터센터를 위한 M&S 및 극한 환경에서의 컴퓨팅 아키텍처를 다룹니다." },
   ],
   items: [
     // 예시 (주석을 풀고 내용을 바꿔 쓰세요)
@@ -111,6 +113,22 @@ LAB.tutorials = {
         { type: "Textbook", title: "수학적 전투모델링과 컴퓨터 워게임", note: "", image: "assets/img/tutorials/math_wargame.png", link: "" },
         { type: "Textbook", title: "전술학", note: "", image: "assets/img/tutorials/mil-str.png", link: "" },
         { type: "Textbook", title: "전술과 지휘", note: "", image: "assets/img/tutorials/mil-tac.png", link: "" },
+      ],
+      sponsors: [],
+      partners: []
+    },
+    {
+      section: "orbit",
+      title: "Orbit AI Datacenter",
+      audience: ["Candidates"],
+      link: "KNU_Intro_to_Simulations/",
+      summary: "Defense Modeling & Simulation 기초 트레이닝",
+      body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
+      related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
+      resources: [
+        { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },        
+        { type: "Textbook", title: "Theory of Modeling and Simulation", note: "", image: "assets/img/tutorials/mns.png", link: "" },
+        { type: "Textbook", title: "시스템 모델링 시뮬레이션", note: "", image: "assets/img/tutorials/sys_mns.png", link: "" },
       ],
       sponsors: [],
       partners: []

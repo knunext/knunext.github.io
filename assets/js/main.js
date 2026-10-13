@@ -464,7 +464,9 @@
         "<h3>" + esc(p.title) + "</h3>" +
         (p.subtitle ? '<p class="project-sub">' + esc(p.subtitle) + "</p>" : "") +
         (p.description ? '<p class="prose">' + p.description + "</p>" : "") +
-        lists(p.lists) + "</div></article>";
+        lists(p.lists) +
+        sponsorBlock(p.sponsors, false, "news-sponsors project-logos") + partnerBlock(p.partners, "news-sponsors project-logos") +
+        "</div></article>";
     }).join(""));
     if (projects.length > show) {
       setHTML("#project-foot", '<button type="button" class="btn-box btn-wide" id="project-more" aria-expanded="false"><span>Expand list</span><span class="chev" aria-hidden="true"></span></button>');

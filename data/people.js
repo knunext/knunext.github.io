@@ -38,7 +38,8 @@ LAB.people = {
           research: ["GPU", "Processing-in-Memory", "Defense M&S", "Quantum Computing"],
           extra: ["IBM Quantum Leadership Training Program (2024)"],
           badges: [
-            { name: "IBM Quantum Leadership Training Program (2024)", logo: "assets/img/sponsors/ibm.png", height: 20 }
+            { name: "IBM Quantum Leadership Training Program (2024)", logo: "assets/img/sponsors/ibm.png", height: 25 },
+            { name: "bk21-4", logo: "assets/img/news/bk21-four.png", height: 23},
           ],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
@@ -48,6 +49,9 @@ LAB.people = {
           role: "PIM 랩장",
           period: "Dec. 2024 – Present",
           research: ["BioPIM", "Processing-in-Memory", "FPGA", "HLS"],
+          badges: [
+            { name: "bk21-4", logo: "assets/img/news/bk21-four.png", height: 23 }
+          ],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
         },
@@ -59,7 +63,8 @@ LAB.people = {
           extra: ["과학기술전문사관 2기", "과학기술정보통신부 장관수여 (장학증서 및 메달)"],
           badges: [
             { name: "과학기술정보통신부 장관상", logo: "assets/img/badges/msit-minister-award.svg" },
-            { name: "과학기술전문사관 2기", logo: "assets/img/news/tech-officer-emblem.png" }
+            { name: "과학기술전문사관 2기", logo: "assets/img/news/tech-officer-emblem.png" },
+            { name: "bk21-4", logo: "assets/img/news/bk21-four.png", height: 23 }
           ],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
@@ -68,6 +73,9 @@ LAB.people = {
           name: "유상훈",
           period: "Jun. 2025 – Present",
           research: ["Defense M&S", "RL", "LLM", "Agentic AI"],
+          badges: [
+            { name: "bk21-4", logo: "assets/img/news/bk21-four.png", height: 23 }
+          ],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
         },
@@ -75,6 +83,9 @@ LAB.people = {
           name: "조재용",
           period: "Dec. 2024 – Present",
           research: ["BioPIM, Processing-in-Memory", "FPGA", "HLS"],
+          badges: [
+            { name: "bk21-4", logo: "assets/img/news/bk21-four.png", height: 23 }
+          ],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
         },
@@ -82,6 +93,9 @@ LAB.people = {
           name: "Seong-kyo Seo",
           period: "Sep. 2024 – Present",
           extra: ["부사장, 범일정보 (Bumil Information)"],
+          badges: [
+            { name: "itrc-grandICT", logo: "assets/img/sponsors/itrc.png", height: 23}
+          ],
           research: ["Cloud Computing", "Distributed Computing"],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"
@@ -90,6 +104,9 @@ LAB.people = {
           name: "이부현",
           period: "Mar. 2026 – Present",
           extra: ["대표(CEO), 주식회사 링크즈(LinkZ inc.)"],
+          badges: [
+            { name: "itrc-grandICT", logo: "assets/img/sponsors/itrc.png", height: 23}
+          ],
           research: ["LLM (Agentic AI)"],
           photo: "assets/img/people/student-mascot.png",
           photoFit: "contain"

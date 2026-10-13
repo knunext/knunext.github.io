@@ -252,6 +252,7 @@ p { margin: 0; }
 .illus .eye { fill: var(--text); stroke: none; }
 .illus .solid { fill: var(--text); stroke: none; }
 .illus .soft { fill: var(--text-2); }
+.illus .occ rect:not(.solid) { fill: var(--page); }   /* 위성 몸체가 뒤쪽 선을 가리도록 */
 .illus text {
   fill: var(--text-2); stroke: none;
   font-family: var(--wide); font-stretch: 125%; font-size: 9px; font-weight: 600; letter-spacing: 0.12em;

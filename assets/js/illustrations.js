@@ -746,5 +746,60 @@
     return svg("0 0 420 260", b, "육각 지도 위에서 전선, 단계선, 주공과 조공의 작전 축선, 결정적 지점과 목표, 아군과 적군 부대 기호");
   };
 
+  // Orbit AI Datacenter: 새벽-황혼 태양동기궤도에서 촘촘한 대형으로 나는 태양광 연산 위성 군집(예: 구글 Suncatcher, Starcloud)
+  //   위성끼리 광통신 링크로 묶여 하나의 데이터센터처럼 동작, 지상국으로 다운링크
+  I.tutOrbit = () => {
+    let b = "";
+    [[24, 20], [120, 16], [300, 22], [404, 60], [16, 96], [398, 196]].forEach(([x, y]) => (b += P(`M${x - 3} ${y} H${x + 3} M${x} ${y - 3} V${y + 3}`, "thin")));
+    // 지구, 대기, 궤도
+    b += Part("Earth", P("M0 236 Q210 176 420 236") + P("M0 224 Q210 160 420 224", "dash") + T(12, 254, "EARTH"));
+    b += Part("Dawn–dusk sun-synchronous orbit (panels always in sunlight)",
+      `<path d="M0 150 Q210 70 420 150" style="stroke-dasharray:3 7">${Flow(2.4)}</path>`) + T(414, 176, "DAWN–DUSK ORBIT", "end");
+    // 태양과 햇빛
+    let sun = C(30, 50, 11) + `<g>${range(8).map((k) => { const a = k * Math.PI / 4; return Ln((30 + 15 * Math.cos(a)).toFixed(1), (50 + 15 * Math.sin(a)).toFixed(1), (30 + 21 * Math.cos(a)).toFixed(1), (50 + 21 * Math.sin(a)).toFixed(1), "thin"); }).join("")}${Spin(30, 50, 18)}</g>`;
+    [[56, 104], [120, 116], [184, 96]].forEach(([x, y], k) => (sun += `<path d="M48 58 L${x} ${y}" style="stroke-dasharray:2 6">${Flow(1.6 + k * 0.2)}</path>`));
+    b += Part("Sunlight on the solar arrays", sun);
+    // 위성 군집 (앞쪽은 크게, 뒤쪽은 작게)
+    const sats = [[210, 100, 1.0, "lead"], [124, 124, 0.7], [298, 118, 0.74], [52, 110, 0.48], [368, 136, 0.52]];
+    // 광통신 링크 (그물 형태)
+    const pairs = [[0, 1], [0, 2], [1, 3], [2, 4], [1, 2], [0, 3], [0, 4]];
+    let isl = "";
+    pairs.forEach(([i, j], k) => {
+      const [x1, y1] = sats[i], [x2, y2] = sats[j];
+      isl += `<path d="M${x1} ${y1} L${x2} ${y2}" style="stroke-dasharray:5 5">${Flow(0.8 + (k % 3) * 0.2)}</path>`;
+    });
+    b += Part("Free-space optical links between satellites", `<g class="thin-links">${isl}</g>`);
+    const sat = (x, y, sc, lead, idx) => {
+      let g = R(-10, -8, 20, 16, 2);                                                     // 연산 모듈
+      range(3).forEach((k) => (g += `<rect class="solid" x="${-6 + k * 5}" y="-3" width="3" height="6">${Blink(1.3, -((idx * 2 + k) % 5) * 0.25, 0.15, 1)}</rect>`));
+      [[-44, 1], [12, 1]].forEach(([px]) => {                                           // 태양광 패널
+        g += R(px, -6, 32, 12, 1) + Ln(px, 0, px + 32, 0, "thin");
+        range(3).forEach((k) => (g += Ln(px + (k + 1) * 8, -6, px + (k + 1) * 8, 6, "thin")));
+      });
+      g += Ln(-12, 0, -10, 0) + Ln(10, 0, 12, 0);
+      g += R(-6, -20, 12, 8, 1) + Ln(-2, -20, -2, -12, "thin") + Ln(2, -20, 2, -12, "thin") + Ln(0, -12, 0, -8);   // 방열판
+      return `<g class="occ" transform="translate(${x} ${y}) scale(${sc})">${g}</g>`;   // occ: 뒤의 링크 선을 가림
+    };
+    let con = "";
+    sats.forEach(([x, y, sc, lead], i) => (con += sat(x, y, sc, lead, i)));
+    // 앞쪽 위성의 방열(열 배출)
+    [-4, 0, 4].forEach((dx, k) => (con += `<path d="M${210 + dx} 78 q-3 -5 0 -10 q3 -5 0 -10" style="stroke-dasharray:3 3">${Flow(1 + k * 0.25)}</path>`));
+    b += Part("Constellation of solar-powered compute satellites (TPU/GPU) flying in formation", con);
+    b += T(210, 48, "RADIATOR", "middle") + T(210, 130, "COMPUTE SAT", "middle");
+    // 우주 방사선 → ECC
+    let rad = "";
+    [[0, 360, 40], [-1.4, 330, 26], [-2.3, 390, 30]].forEach(([d, x0, y0]) =>
+      (rad += Tok(4, 4, Move(`M${x0} ${y0} L218 98`, 2.6, d), Fade(2.6, d, "0;1;1;0", "0;0.1;0.85;1"))));
+    rad += `<g>${R(246, 136, 26, 13, 2)}${T(259, 146, "ECC", "middle")}${Blink(2.6, -0.4, 0.25, 1)}</g>`;
+    b += Part("Radiation / single-event upsets, corrected by ECC", rad);
+    // 지상국 다운링크
+    const gx = 300, gy = 200;
+    let gs = P(`M${gx - 11} ${gy - 8} Q${gx} ${gy + 4} ${gx + 11} ${gy - 8}`) + Ln(gx, gy - 2, gx, gy + 6);
+    gs += `<path d="M368 142 L${gx + 2} ${gy - 8}" style="stroke-dasharray:4 5">${Flow(1.1)}</path>`;
+    b += Part("Ground station downlink", gs) + T(gx - 16, gy + 4, "GROUND", "end");
+    b += T(124, 160, "OPTICAL ISL", "middle");
+    return svg("0 0 420 260", b, "새벽-황혼 궤도에서 대형을 이루어 나는 태양광 연산 위성 군집. 위성끼리 광통신으로 연결되고, 방열판으로 열을 내보내며, 방사선 오류는 ECC로 고치고, 지상국으로 데이터를 내려보냄");
+  };
+
   window.ILLUS = I;
 })();

@@ -2,6 +2,8 @@
  * Research 페이지.
  * - topics: 연구 주제. id 는 메인 '탐험 분야' 링크(research.html#id)에 쓰입니다.
  * - projects: 진행 중인 과제.
+ *     sponsor: 카드 위쪽에 글자로 나오는 사업명·기관명
+ *     sponsors / partners: 카드 아래 로고 칸 [{ name, logo, url }]. 비워 두면 칸이 보이지 않음
  * - lists: [{ label: "제목", items: ["항목", ...] }] 형식으로 원하는 만큼 추가할 수 있습니다.
  * - 슬라이드 카드용 필드
  *     illustration: pim | sim | wargame | provenance | loop | nearfar | hetero | orbit (assets/js/illustrations.js)
@@ -246,6 +248,11 @@ LAB.research = {
       title: "유전체 DNA 염기서열 분석 가속화를 위한 페타스케일 인-스토리지 컴퓨팅 기초연구실",
       subtitle: "생물정보학 프로그램 가속을 위한 Processing-in-Memory 구조 및 관리 기법 연구",
       sponsor: "기초연구실사업(BRL), 한국연구재단",
+      sponsors: [
+        { name: "과학기술정보통신부", logo: "assets/img/sponsors/msit.png", url: "" },
+        { name: "한국연구재단 (NRF)", logo: "assets/img/sponsors/nrf.png", url: "" }
+      ],
+      partners: [],
       period: "2024–2027",
       description:
         "차세대 컴퓨팅 디바이스로 떠오르는 메모리 기반 프로세싱 장치(PIM)를 활용해, 생물정보학 프로그램의 처리를 가속하는 구조를 개발합니다.",
@@ -265,6 +272,8 @@ LAB.research = {
       title: "Project Ouroboros",
       subtitle: "οὐροβόρος, AI 에이전트 기반 재귀적 시스템 개선 루프",
       sponsor: "",
+      sponsors: [],
+      partners: [],
       period: "",
       description: "AI 에이전트가 시스템을 설계하고, 실행 피드백을 받아 더 개선된 시스템을 다시 설계하는 과정을 반복합니다. <a href=\"#ouroboros\">연구 주제 보기</a>",
       lists: []
@@ -273,6 +282,8 @@ LAB.research = {
       title: "Scalable Near-Far Memory Architecture for Multi-GPUs with CXL-interface",
       subtitle: "다중 GPU 환경을 위한, 확장 가능한 Near-Far 메모리 아키텍처 연구",
       sponsor: "Yonsei-Samsung Joint Research Program, Samsung Electronics",
+      sponsors: [],
+      partners: [],
       period: "2020–",
       description: "다중 GPU 환경에서의 메모리 병목 현상을 해소하기 위한 Near-Far Memory Architecture 설계",
       lists: [
@@ -290,6 +301,8 @@ LAB.research = {
       title: "AI솔루션 개발·실증 지원(가치사슬형) 사업",
       subtitle: "지역 제조 혁신을 위한 AX",
       sponsor: "지역주도형 AI대전환사업, 중소벤처기업부",
+      sponsors: [],
+      partners: [],
       period: "2026.01–2026.12",
       description: "",
       lists: [{ label: "공동 연구진", items: ["아라소프트(주)", "경상국립대학교 부석준 교수님", "건국대학교 오병국 교수님"] }]
@@ -298,6 +311,8 @@ LAB.research = {
       title: "저작권기술 글로벌 인재 양성 사업",
       subtitle: "멀티모달 기반 콘텐츠 저작권 관련 기술 (문화AX)",
       sponsor: "선도형 저작권 기술개발사업, 문화체육관광부",
+      sponsors: [],
+      partners: [],
       period: "2026–2031",
       description: "",
       lists: [
@@ -311,6 +326,8 @@ LAB.research = {
       title: "자율화된 군지휘결심체계(MDMP)를 위한 국방M&S 및 에이전트AI 기반 프레임워크",
       subtitle: "완전히 자율화된 무인 전투 부대 운영을 위한 지휘결심체계 자동화 연구 (국방AX)",
       sponsor: "",
+      sponsors: [],
+      partners: [],
       period: "",
       description: "",
       lists: [
@@ -322,6 +339,8 @@ LAB.research = {
       title: "다중 가속기 기반의 이종 컴퓨팅 연구 (Accelerator-rich Heterogeneous Computing)",
       subtitle: "xPU 및 다중 계층 메모리 시스템 기반의 초고성능 이종 컴퓨팅 시스템 구축",
       sponsor: "",
+      sponsors: [],
+      partners: [],
       period: "",
       description: "다중/이기종 프로세서 xPU (CPU, GPU, NPU, PIM, ISC) 및 다계층 메모리 기반 이종 컴퓨팅 구조 연구",
       lists: [{ label: "공동 연구진", items: ["경북대학교 남덕윤 교수님 (HPC Lab)"] }]

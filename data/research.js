@@ -151,8 +151,8 @@ LAB.research = {
       labels: ["Design", "Feedback", "Improve"],
       wordmark: ["Ouro", "boros"],
       category: "Agentic AI",
-      title: "Project Ouroboros: Recursive Self-Improving Design Loop",
-      subtitle: "스스로 설계하고, 피드백으로 다시 개선하는 AI 에이전트",
+      title: "Project Ouroboros: Recursive Self-Improvement for X",
+      subtitle: "{  }를 위한 AI 기반 재귀개선(RSI)",
       description:
         "꼬리를 문 전설 속의 뱀, 우로보로스(οὐροβόρος)처럼 끝없이 이어지는 개선 루프를 만듭니다. " +
         "AI 에이전트가 시스템을 설계하고, 그 시스템을 실행해 얻은 피드백을 다시 받아 더 나은 시스템을 설계하는 과정을 반복합니다. " +

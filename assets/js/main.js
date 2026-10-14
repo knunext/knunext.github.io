@@ -36,6 +36,7 @@
   /* ================= Header ================= */
   const NAV = [
     ["home", "Home", "index.html"],
+    ["overview", "Overview", "overview.html"],
     ["news", "News", "news.html"],
     ["research", "Research", "research.html"],
     ["people", "People", "people.html"],
@@ -49,16 +50,56 @@
     $("#site-header").innerHTML =
       '<div class="wrap header-inner">' +
       '<a class="brand" href="index.html"><img src="assets/img/logo/logo-horizontal-light.svg" alt="NextGen Lab, ' + esc(S.shortName || "") + ' 홈" width="755" height="105"></a>' +
+      '<button type="button" class="theme-toggle" id="theme-toggle" role="switch" aria-checked="true" aria-label="Dark mode" title="Light / Dark">' +
+        '<span class="tt-track" aria-hidden="true"><span class="tt-knob"></span>' +
+        '<span class="tt-icon tt-sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></span>' +
+        '<span class="tt-icon tt-moon"><svg viewBox="0 0 24 24"><path d="M20.2 14.6A8.4 8.4 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/></svg></span>' +
+      "</span></button>" +
+      '<a class="nav-cta row-cta" href="' + joinHref + '">Join us</a>' +
       '<button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>' +
       '<nav class="site-nav" id="site-nav" aria-label="Main"><ul>' +
       NAV.map(([key, label, href]) => '<li><a href="' + href + '"' + (key === page ? ' aria-current="page"' : "") + ">" + label + "</a></li>").join("") +
-      '<li><a class="nav-cta" href="' + joinHref + '">Join us</a></li>' +
+      '<li class="li-cta"><a class="nav-cta" href="' + joinHref + '">Join us</a></li>' +
       "</ul></nav></div>";
 
     const hdr = $("#site-header");
+
+    // 화면 테마 (라이트 / 다크): 로고 오른쪽 토글. 선택은 브라우저에 저장
+    const tgl = $("#theme-toggle", hdr);
+    const metaColor = document.querySelector('meta[name="theme-color"]');
+    function applyTheme(t, save) {
+      document.documentElement.setAttribute("data-theme", t);
+      tgl.setAttribute("aria-checked", String(t === "dark"));
+      tgl.setAttribute("aria-label", t === "dark" ? "Dark mode (switch to light)" : "Light mode (switch to dark)");
+      if (metaColor) metaColor.setAttribute("content", t === "light" ? "#EBEBE8" : "#17181A");
+      if (save) { try { localStorage.setItem("ncsl-theme", t); } catch (e) {} }
+    }
+    applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark", false);
+    tgl.addEventListener("click", () => applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light", true));
+
     const onScroll = () => hdr.classList.toggle("is-scrolled", window.scrollY > 8);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
+
+    // 로고 + 메뉴가 한 줄에 안 들어가면 메뉴를 둘째 줄로 내려서 항상 보이게 (휴대폰 화면만 MENU 버튼)
+    function fitNav() {
+      const inner = $(".header-inner", hdr), brand = $(".brand", hdr), ul = $(".site-nav ul", hdr);
+      if (!inner || !brand || !ul) return;
+      hdr.classList.remove("is-collapsed", "is-two-row");
+      if (getComputedStyle($(".nav-toggle", hdr)).display === "none") {
+        const cs = getComputedStyle(inner);
+        const avail = inner.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+        const tg = $(".theme-toggle", hdr), tgs = tg ? getComputedStyle(tg) : null;
+        const tgw = tg ? tg.getBoundingClientRect().width + parseFloat(tgs.marginLeft) + 24 : 0;
+        const need = brand.getBoundingClientRect().width + tgw + ul.scrollWidth + 24;
+        hdr.classList.toggle("is-two-row", need > avail);
+      }
+      document.documentElement.style.setProperty("--header-h", hdr.offsetHeight + "px");   // 스크롤 위치 보정용
+    }
+    let fitT = 0;
+    window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitNav, 60); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNav);
+    fitNav();
 
     const toggle = $("#nav-toggle"), nav = $("#site-nav");
     const setMenu = (open) => {
@@ -165,8 +206,10 @@
     const p2 = [ax - L * Math.cos(ang) - Wd * Math.sin(ang), ay - L * Math.sin(ang) + Wd * Math.cos(ang)];
     return '<g class="loc-callout" aria-hidden="true">' +
       '<text x="' + tx + '" y="' + ty + '">' + esc(c.text) + "</text>" +
-      '<path d="M' + sx + " " + sy + " Q" + mx + " " + my + " " + ax + " " + ay + '"/>' +
-      '<polygon points="' + ax + "," + ay + " " + p1.map((v) => v.toFixed(1)).join(",") + " " + p2.map((v) => v.toFixed(1)).join(",") + '"/>' +
+      // 화살표: 사진 위에서 잘 보이도록 흰 선 + 아래에 어두운 테두리
+      '<path class="co-halo" d="M' + sx + " " + sy + " Q" + mx + " " + my + " " + ax + " " + ay + '"/>' +
+      '<path class="co-line" d="M' + sx + " " + sy + " Q" + mx + " " + my + " " + ax + " " + ay + '"/>' +
+      '<polygon class="co-head" points="' + ax + "," + ay + " " + p1.map((v) => v.toFixed(1)).join(",") + " " + p2.map((v) => v.toFixed(1)).join(",") + '"/>' +
       "</g>";
   }
   function initLocation() {
@@ -850,5 +893,284 @@
       if (sec !== "all") { sec = "all"; drawChips(); render(); }
       jumpTo(tHash());
     });
+  }
+  /* ================= Overview ================= */
+  if (page === "overview") {
+    const O = L.overview || {};
+    setHTML("#page-intro", O.intro || "");
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const steps = O.loop || [], domains = O.domains || [];
+    const range = (n) => Array.from({ length: n }, (_, i) => i);
+    const svgNS = (vb, body, label) => '<svg class="illus ov-svg" viewBox="' + vb + '" role="img" aria-label="' + esc(label) + '">' + body + "</svg>";
+
+    /* ---- 01 고리 ---- */
+    const cx = 220, cy = 220, R = 150;
+    const pos = (k) => { const a = (-90 + k * 360 / steps.length) * Math.PI / 180; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; };
+    let lb = '<circle class="ov-ring" cx="' + cx + '" cy="' + cy + '" r="' + R + '"/>';
+    steps.forEach((st, k) => {   // 단계 사이 화살표
+      const a = (-90 + (k + 0.5) * 360 / steps.length) * Math.PI / 180, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a), d = a * 180 / Math.PI + 90;
+      lb += '<path class="ov-chev" d="M-5 -6 L4 0 L-5 6" transform="translate(' + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + d.toFixed(1) + ')"/>';
+    });
+    const ringPath = "M" + cx + " " + (cy - R) + " A" + R + " " + R + " 0 1 1 " + (cx - 0.01) + " " + (cy - R) + " Z";
+    [0, -5].forEach((b) => (lb += '<rect class="solid" x="-4" y="-4" width="8" height="8" rx="1"><animateMotion path="' + ringPath + '" dur="10s" begin="' + b + 's" repeatCount="indefinite" rotate="auto"/></rect>'));
+    steps.forEach((st, k) => {
+      const [x, y] = pos(k);
+      lb += '<g class="ov-node" data-k="' + k + '" tabindex="0" role="button" aria-label="' + esc(st.title + " " + st.ko) + '">' +
+        '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="42"/>' +
+        '<text class="ov-node-num" x="' + x.toFixed(1) + '" y="' + (y - 10).toFixed(1) + '" text-anchor="middle">' + pad(k + 1) + "</text>" +
+        '<text class="ov-node-title" x="' + x.toFixed(1) + '" y="' + (y + 8).toFixed(1) + '" text-anchor="middle">' + esc(st.title.toUpperCase()) + "</text></g>";
+    });
+    lb += '<text class="ov-center-cap" x="' + cx + '" y="' + (cy - 26) + '" text-anchor="middle">ONE LOOP</text>' +
+      '<text class="ov-center-title" x="' + cx + '" y="' + (cy + 10) + '" text-anchor="middle">n + 1</text>' +
+      '<text class="ov-center-ko" x="' + cx + '" y="' + (cy + 36) + '" text-anchor="middle">돌 때마다 나아지는 모델</text>';
+    setHTML("#ov-loop", '<div class="ov-loop-art">' + svgNS("0 0 440 440", lb, "Model, Simulate, Explore, Deploy, Feedback 다섯 단계가 이어지는 고리") + "</div>" +
+      '<div class="ov-step" aria-live="polite"><p class="caps ov-step-num" id="ov-step-num"></p><h3 class="ov-step-title" id="ov-step-title"></h3>' +
+      '<p class="ov-step-ko" id="ov-step-ko"></p><p class="ov-step-text" id="ov-step-text"></p>' +
+      '<div class="ov-dots" role="group" aria-label="단계">' + steps.map((st, k) => '<button type="button" class="ov-dot" data-k="' + k + '" aria-label="' + esc(st.title) + '"></button>').join("") + "</div></div>");
+    let cur = 0, auto = !reduce, idle = 0;
+    function setStep(k) {
+      cur = (k + steps.length) % steps.length;
+      const st = steps[cur];
+      $$("#ov-loop .ov-node").forEach((n) => n.classList.toggle("is-on", +n.dataset.k === cur));
+      $$("#ov-loop .ov-dot").forEach((n) => n.setAttribute("aria-pressed", +n.dataset.k === cur));
+      $("#ov-step-num").textContent = pad(cur + 1) + " / " + pad(steps.length);
+      $("#ov-step-title").textContent = st.title;
+      $("#ov-step-ko").textContent = st.ko;
+      $("#ov-step-text").textContent = st.text;
+      $$("#ov-matrix [data-stage]").forEach((c) => c.classList.toggle("is-col", c.dataset.stage === st.id));   // 아래 표의 같은 단계 열 강조
+    }
+    const pick = (k) => { setStep(k); idle = Date.now(); };
+    $$("#ov-loop .ov-node, #ov-loop .ov-dot").forEach((n) => {
+      n.addEventListener("click", () => pick(+n.dataset.k));
+      n.addEventListener("mouseenter", () => pick(+n.dataset.k));
+      n.addEventListener("focus", () => pick(+n.dataset.k));
+      n.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(+n.dataset.k); } });
+    });
+    $("#ov-loop").addEventListener("mouseenter", () => (idle = Date.now()));
+
+    /* ---- 02 대기열 네트워크 ---- */
+    const SY = [72, 160, 248];
+    let nb = "";
+    const cap = (x, y, t, anchor) => '<text class="ov-cap" x="' + x + '" y="' + y + '"' + (anchor ? ' text-anchor="' + anchor + '"' : "") + ">" + t + "</text>";
+    const lab = (id, x, y, anchor) => '<text class="ov-lab" id="' + id + '" x="' + x + '" y="' + y + '" text-anchor="' + (anchor || "middle") + '"></text>';
+    // 제약 영역
+    nb += '<rect class="ov-zone" x="414" y="28" width="112" height="262" rx="6"/>' + cap(470, 314, "CONSTRAINTS", "middle") + lab("ov-l-constraint", 470, 330);
+    // 소스, 대기열, 서버, 싱크
+    nb += cap(24, 120, "SOURCE") + '<rect x="24" y="130" width="112" height="60" rx="3"/>' + lab("ov-l-source", 80, 164);
+    nb += '<line x1="136" y1="160" x2="176" y2="160"/>';
+    nb += cap(176, 120, "QUEUE") + '<rect x="176" y="136" width="150" height="48" rx="3"/>';
+    range(6).forEach((k) => (nb += '<line class="thin" x1="' + (176 + (k + 1) * 21.4) + '" y1="136" x2="' + (176 + (k + 1) * 21.4) + '" y2="184"/>' +
+      '<rect class="solid soft" x="' + (304 - k * 21.4 - 17) + '" y="141" width="15" height="38"><animate attributeName="opacity" values="0;0.7;0" dur="4.2s" begin="' + (-k * 0.55) + 's" repeatCount="indefinite"/></rect>'));
+    nb += lab("ov-l-queue", 251, 206);
+    SY.forEach((y, i) => {
+      nb += '<line class="thin" x1="326" y1="160" x2="436" y2="' + y + '"/><line class="thin" x1="504" y1="' + y + '" x2="600" y2="160"/>';
+      const c = (2 * Math.PI * 26).toFixed(1);
+      nb += '<circle cx="470" cy="' + y + '" r="34"/>' +
+        '<circle class="thin" cx="470" cy="' + y + '" r="26" style="stroke-dasharray:' + c + ";stroke-dashoffset:" + c + '" transform="rotate(-90 470 ' + y + ')"><animate attributeName="stroke-dashoffset" values="' + c + ';0" dur="' + (2.2 + i * 0.4) + 's" repeatCount="indefinite"/></circle>' +
+        lab("ov-l-s" + i, 470, y + 4);
+    });
+    nb += cap(470, 20, "SERVERS", "middle");
+    nb += cap(600, 120, "SINK") + '<rect x="600" y="130" width="136" height="60" rx="3"/>' + lab("ov-l-sink", 668, 164);
+    // 정책(우리가 설계하는 것): 대기열을 제어하고, 결과에서 피드백을 받음
+    nb += cap(196, 22, "POLICY") + '<rect class="ov-policy" x="196" y="30" width="170" height="44" rx="3"/>' + lab("ov-l-policy", 281, 57);
+    nb += '<path class="dash" d="M251 74 V132"/><path d="M246 126 L251 134 L256 126"/>' + cap(258, 106, "CONTROL");
+    nb += '<path class="dash" d="M668 130 V10 H300 V28"/><path d="M295 21 L300 29 L305 21"/>' + cap(546, 28, "FEEDBACK · METRICS");
+    // 흐르는 개체
+    SY.forEach((y, i) => [0, 1].forEach((j) => {
+      const d = -(i * 1.4 + j * 2.1);
+      nb += '<rect class="solid" x="-5" y="-5" width="10" height="10" rx="1"><animateMotion path="M136 160 H326 L436 ' + y + " M504 " + y + ' L600 160" dur="4.2s" begin="' + d + 's" repeatCount="indefinite"/>' +
+        '<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.92;1" dur="4.2s" begin="' + d + 's" repeatCount="indefinite"/></rect>';
+    }));
+    nb += '<rect class="solid" x="-4" y="-4" width="8" height="8"><animateMotion path="M668 128 V10 H300 V26" dur="3.4s" repeatCount="indefinite"/></rect>';
+    const rows = (O.roles || []).map(([key, en, ko]) => "<div><dt>" + esc(en) + "<span>" + esc(ko) + '</span></dt><dd id="ov-m-' + key + '"></dd></div>').join("");
+    setHTML("#ov-net", '<div class="ov-net-art">' + svgNS("0 0 760 340", nb, "소스에서 대기열과 서버를 거쳐 싱크로 흐르고, 결과가 정책으로 피드백되는 대기열 네트워크") + "</div>" +
+      '<dl class="ov-map" aria-live="polite">' + rows + "</dl>");
+    const chips = $("#ov-domains");
+    let dom = 0, autoDom = !reduce;
+    chips.innerHTML = domains.map((d, i) => '<button type="button" class="chip chip-tag" data-i="' + i + '" aria-pressed="false">' + esc(d.title) + "</button>").join("");
+    function swap(id, text) {
+      const el = document.getElementById(id); if (!el) return;
+      if (el.textContent === text) return;
+      el.classList.add("is-swap");
+      setTimeout(() => { el.textContent = text; el.classList.remove("is-swap"); }, reduce ? 0 : 170);
+    }
+    function setDomain(i) {
+      dom = (i + domains.length) % domains.length;
+      const d = domains[dom], l = d.labels || {};
+      $$("button", chips).forEach((b) => b.setAttribute("aria-pressed", +b.dataset.i === dom));
+      swap("ov-l-source", l.source || ""); swap("ov-l-queue", l.queue || ""); swap("ov-l-sink", l.sink || "");
+      swap("ov-l-policy", l.policy || ""); swap("ov-l-constraint", l.constraint || "");
+      (l.servers || []).forEach((t, k) => swap("ov-l-s" + k, t));
+      (O.roles || []).forEach(([key]) => swap("ov-m-" + key, (d.map || {})[key] || ""));
+    }
+    chips.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; autoDom = false; setDomain(+b.dataset.i); });
+
+    /* ---- 03 연구 주제 × 단계 ---- */
+    const topics = ((L.research || {}).topics) || [];
+    const mrows = (O.matrix || []).map((m) => {
+      const t = topics.find((x) => x.id === m.id); if (!t) return "";
+      return '<tr><th scope="row"><a href="research.html#detail-' + esc(t.id) + '">' + esc(t.short || t.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></a></th>' +
+        steps.map((st) => '<td data-stage="' + st.id + '">' + (m.stages.includes(st.id) ? '<span class="ov-on" aria-label="' + esc(st.title) + '"></span>' : '<span class="ov-off" aria-hidden="true"></span>') + "</td>").join("") + "</tr>";
+    }).join("");
+    setHTML("#ov-matrix", '<div class="ov-matrix-wrap"><table class="ov-matrix"><thead><tr><th scope="col">Research</th>' +
+      steps.map((st, k) => '<th scope="col" data-stage="' + st.id + '"><button type="button" data-k="' + k + '">' + esc(st.title) + "</button></th>").join("") +
+      "</tr></thead><tbody>" + mrows + "</tbody></table></div>");
+    $$("#ov-matrix thead button").forEach((b) => b.addEventListener("click", () => { pick(+b.dataset.k); $("#ov-loop").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); }));
+    setHTML("#ov-closing", esc(O.closing || ""));
+
+
+    /* ---- 03 재귀적 자기개선 (RSI) ---- */
+    const RS = O.rsi || {};
+    setHTML("#ov-rsi-lead", esc(RS.lead || ""));
+    const rsteps = RS.steps || [];
+    const rsiRoot = $("#ov-rsi");
+    if (rsiRoot && rsteps.length) {
+      const C0 = [320, 270], RR = 238;
+      const stAng = (k) => -90 + k * 360 / rsteps.length;
+      const pt = (deg, r) => [C0[0] + (r || RR) * Math.cos(deg * Math.PI / 180), C0[1] + (r || RR) * Math.sin(deg * Math.PI / 180)];
+      let rb = '<circle class="ov-ring rsi-ring" cx="' + C0[0] + '" cy="' + C0[1] + '" r="' + RR + '"/>';
+      rsteps.forEach((st, k) => {   // 고리 위 화살표
+        const a = stAng(k) + 45, [x, y] = pt(a);
+        rb += '<path class="ov-chev" d="M-5 -6 L4 0 L-5 6" transform="translate(' + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + (a + 90).toFixed(1) + ')"/>';
+      });
+      rb += '<g id="rsi-ghosts"></g><g id="rsi-sys"></g>';
+      const agentName = RS.agent || "AI AGENT";
+      const aw = 14 + agentName.length * 6.6;
+      rb += '<text class="ov-cap rsi-hub" x="' + C0[0] + '" y="' + (C0[1] - RR + 62) + '" text-anchor="middle">' + esc(RS.hub || "") + "</text>";
+      rb += '<g id="rsi-agent"><circle class="rsi-pulse" r="16"><animate attributeName="r" values="14;30" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.55;0" dur="1.6s" repeatCount="indefinite"/></circle>' +
+        '<rect class="rsi-agent" x="' + (-aw / 2).toFixed(1) + '" y="-11" width="' + aw.toFixed(1) + '" height="22" rx="11"/>' +
+        '<text class="rsi-agent-t" y="4" text-anchor="middle">' + esc(agentName) + "</text></g>";
+      rb += '<g id="rsi-call" class="rsi-call"><rect id="rsi-call-box" rx="3"/><text id="rsi-call-t" class="rsi-call-t"></text></g>';
+      rsteps.forEach((st, k) => {
+        const [x, y] = pt(stAng(k));
+        rb += '<g class="ov-node rsi-node" data-k="' + k + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="36"/>' +
+          '<text class="ov-node-title" x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle">' + esc(st.title.toUpperCase()) + "</text></g>";
+      });
+      rsiRoot.innerHTML = '<div class="ov-rsi-art">' + svgNS("0 0 640 540", rb, "AI가 모델링, 설계, 최적화, 분석을 거치며 고리를 돌 때마다 가운데 대기열 네트워크 시스템이 다음 세대로 개선되는 모습") + "</div>" +
+        '<div class="ov-rsi-panel" aria-live="polite">' +
+          '<p class="caps ov-step-num">Generation</p><p class="rsi-gen" id="rsi-gen">1</p>' +
+          '<p class="caps ov-step-num rsi-now-cap">Agent is now</p><h3 class="ov-step-title rsi-now" id="rsi-now"></h3><p class="ov-step-text rsi-now-text" id="rsi-now-text"></p>' +
+          '<dl class="ov-map rsi-metrics"><div><dt>Throughput<span>처리량</span></dt><dd id="rsi-m-thr"></dd></div>' +
+          '<div><dt>Latency<span>대기 시간</span></dt><dd id="rsi-m-lat"></dd></div>' +
+          '<div><dt>Servers<span>처리 자원</span></dt><dd id="rsi-m-srv"></dd></div></dl>' +
+          '<div class="rsi-log-wrap"><p class="caps ov-step-num">Agent log</p><ol class="rsi-log" id="rsi-log"></ol></div>' +
+          '<div class="rsi-spark-wrap"><p class="caps ov-step-num">Throughput by generation</p><svg class="illus rsi-spark" viewBox="0 0 300 90" id="rsi-spark" aria-hidden="true"></svg></div>' +
+          '<button type="button" class="chip rsi-btn" id="rsi-btn">Pause</button>' +
+        "</div>";
+
+      // 세대 g 의 시스템 성능 (복리로 좋아짐)
+      const thr = (g) => Math.pow(1.22, g - 1), lat = (g) => Math.pow(0.86, g - 1);
+      const nSrv = (g) => Math.min(2 + Math.ceil(g / 2), 6), waiting = (g) => Math.max(1, 6 - g);
+      // 가운데 시스템 그림 (선택한 분야의 이름표를 그대로 씀)
+      function sysSvg(g, ghost) {
+        const lb = (domains[dom] && domains[dom].labels) || {}, names = lb.servers || ["S1", "S2", "S3"];
+        const n = nSrv(g), w = waiting(g), sy0 = 270 - (n - 1) * 26;
+        const sxs = Array.from({ length: n }, (_, i) => sy0 + i * 52);
+        let b = '<rect class="rsi-frame" x="132" y="' + (Math.min(sy0 - 44, 200)) + '" width="376" height="' + (Math.max((n - 1) * 52 + 88, 140)) + '" rx="6"/>';
+        b += '<text class="ov-cap" x="140" y="' + (Math.min(sy0 - 44, 200) - 8) + '">SYSTEM · GEN ' + g + "</text>";
+        b += '<rect x="146" y="248" width="62" height="44" rx="3"/>' + '<text class="ov-lab rsi-lab" x="177" y="274" text-anchor="middle">' + esc((lb.source || "SOURCE").split(" ")[0]) + "</text>";
+        b += '<line x1="208" y1="270" x2="222" y2="270"/><rect x="222" y="252" width="96" height="36" rx="3"/>';
+        range(6).forEach((k) => (b += '<line class="thin" x1="' + (222 + (k + 1) * 16) + '" y1="252" x2="' + (222 + (k + 1) * 16) + '" y2="288"/>' +
+          (k < w ? '<rect class="solid soft" x="' + (304 - k * 16 - 12) + '" y="256" width="12" height="28"/>' : "")));
+        sxs.forEach((y, i) => {
+          b += '<line class="thin" x1="318" y1="270" x2="384" y2="' + y + '"/><line class="thin" x1="420" y1="' + y + '" x2="438" y2="270"/>';
+          b += '<circle cx="402" cy="' + y + '" r="18"/>' + '<text class="ov-lab rsi-lab rsi-srv" x="402" y="' + (y + 3) + '" text-anchor="middle">' + esc(String(names[i % names.length]).slice(0, 5)) + "</text>";
+        });
+        b += '<rect x="438" y="248" width="62" height="44" rx="3"/>' + '<text class="ov-lab rsi-lab" x="469" y="274" text-anchor="middle">' + esc((lb.sink || "SINK").split(" ")[0]) + "</text>";
+        if (!ghost) {
+          const dur = Math.max(4.2 * Math.pow(0.84, g - 1), 1.1).toFixed(2);
+          sxs.forEach((y, i) => [0, 1].forEach((j) => {
+            const d = -(((i * 0.9 + j * 1.7) * dur) / 4).toFixed(2);
+            b += '<rect class="solid" x="-4" y="-4" width="8" height="8" rx="1"><animateMotion path="M208 270 H318 L384 ' + y + " M420 " + y + ' L438 270" dur="' + dur + 's" begin="' + d + 's" repeatCount="indefinite"/>' +
+              '<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.92;1" dur="' + dur + 's" begin="' + d + 's" repeatCount="indefinite"/></rect>';
+          }));
+        }
+        return b;
+      }
+      let gen = 1, step = 0, playing = !reduce, lapT = 0, last = 0;
+      const LAP = 8000, hist = [];
+      const sysG = $("#rsi-sys"), ghostG = $("#rsi-ghosts"), agent = $("#rsi-agent");
+      function drawSys() {
+        sysG.classList.add("is-swap");
+        setTimeout(() => { sysG.innerHTML = sysSvg(gen, false); sysG.classList.remove("is-swap"); }, reduce ? 0 : 200);
+        // 이전 세대들은 뒤쪽에 겹쳐 흐리게 (계보)
+        const n = nSrv(gen), fy = Math.min(270 - (n - 1) * 26 - 44, 200), fh = Math.max((n - 1) * 52 + 88, 140);
+        ghostG.innerHTML = [3, 2, 1].filter((k) => gen - k >= 1).map((k) =>
+          '<g class="rsi-ghost" style="opacity:' + (0.75 / (k + 0.5)).toFixed(2) + '"><rect class="rsi-frame" x="' + (132 - 14 * k) + '" y="' + (fy - 14 * k) + '" width="376" height="' + fh + '" rx="6"/>' +
+          '<text class="ov-cap" x="' + (140 - 14 * k) + '" y="' + (fy - 14 * k - 6) + '">GEN ' + (gen - k) + "</text></g>").join("");
+      }
+      function drawMetrics() {
+        $("#rsi-gen").textContent = gen;
+        $("#rsi-m-thr").textContent = "× " + thr(gen).toFixed(2);
+        $("#rsi-m-lat").textContent = Math.round(lat(gen) * 100) + "% of gen 1";
+        $("#rsi-m-srv").textContent = nSrv(gen) + " (waiting " + waiting(gen) + ")";
+        hist.push(thr(gen)); if (hist.length > 12) hist.shift();
+        const mx = Math.log(Math.max(...hist)) || 1, mn = Math.log(Math.min(...hist));
+        const span = Math.max(mx - mn, 0.4), pts = hist.map((v, i) => [10 + i * (280 / 11), 80 - ((Math.log(v) - mn) / span) * 66]);
+        $("#rsi-spark").innerHTML = '<line class="thin" x1="10" y1="82" x2="290" y2="82"/>' +
+          '<polyline points="' + pts.map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" ") + '"/>' +
+          pts.map((p, i) => '<circle class="' + (i === pts.length - 1 ? "solid" : "") + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (i === pts.length - 1 ? 4 : 2.2) + '"/>').join("");
+      }
+      const logEl = $("#rsi-log"), callT = $("#rsi-call-t"), callB = $("#rsi-call-box"), callG = $("#rsi-call");
+      function setRStep(k) {
+        step = k;
+        const st = rsteps[k];
+        $$("#ov-rsi .rsi-node").forEach((n) => n.classList.toggle("is-on", +n.dataset.k === k));
+        $("#rsi-now").textContent = st.title;
+        $("#rsi-now-text").textContent = st.text;
+        // 단계 원 바깥쪽에 도구 호출 말풍선
+        const [x, y] = pt(stAng(k)), txt = st.call || "";
+        callT.textContent = txt;
+        const w = 12 + txt.length * 6.2, h = 20;
+        // 단계 원 옆 (위: 오른쪽, 오른쪽: 아래, 아래: 왼쪽, 왼쪽: 위)
+        const side = [[46, -h / 2, 0], [-w / 2, 46, 0], [-46 - w, -h / 2, 0], [-w / 2, -46 - h, 0]][k % 4];
+        const bx = Math.max(4, Math.min(636 - w, x + side[0])), by = Math.max(4, Math.min(536 - h, y + side[1]));
+        callB.setAttribute("x", bx.toFixed(1)); callB.setAttribute("y", by.toFixed(1)); callB.setAttribute("width", w.toFixed(1)); callB.setAttribute("height", h);
+        callT.setAttribute("x", (bx + w / 2).toFixed(1)); callT.setAttribute("y", (by + 14).toFixed(1));
+        callG.classList.remove("is-on"); void callG.getBoundingClientRect(); callG.classList.add("is-on");
+        // 에이전트 기록 (최근 4줄)
+        if (st.log) {
+          const li = document.createElement("li");
+          li.innerHTML = '<span class="rsi-log-gen">G' + gen + "</span>" + esc(st.log);
+          logEl.appendChild(li);
+          while (logEl.children.length > 4) logEl.removeChild(logEl.firstChild);
+        }
+      }
+      function placeAgent(frac) {
+        const [x, y] = pt(-90 + frac * 360);
+        agent.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
+      }
+      function nextGen() { gen += 1; drawSys(); drawMetrics(); }
+      function tick(now) {
+        if (!last) last = now;
+        const dt = now - last; last = now;
+        if (playing && !document.hidden) {
+          lapT += dt;
+          if (lapT >= LAP) { lapT -= LAP; nextGen(); }
+          const frac = lapT / LAP, k = Math.round(frac * rsteps.length) % rsteps.length;   // 가장 가까운 단계
+          if (k !== step) setRStep(k);
+          placeAgent(frac);
+        }
+        requestAnimationFrame(tick);
+      }
+      const btn = $("#rsi-btn");
+      btn.addEventListener("click", () => {
+        if (reduce) { nextGen(); return; }
+        playing = !playing; btn.textContent = playing ? "Pause" : "Play";
+      });
+      if (reduce) btn.textContent = "Next generation";
+      // 위에서 분야를 바꾸면 가운데 시스템 이름표도 같이 바뀜
+      chips.addEventListener("click", () => setTimeout(drawSys, 0));
+      sysG.addEventListener("redraw", drawSys);
+      setRStep(0); placeAgent(0); drawSys(); drawMetrics();
+      requestAnimationFrame(tick);
+    }
+
+    setStep(0); setDomain(0);
+    if (!reduce) {
+      setInterval(() => { if (auto && Date.now() - idle > 9000) setStep(cur + 1); }, 4200);
+      setInterval(() => { if (autoDom) { setDomain(dom + 1); const sg = $("#rsi-sys"); if (sg) sg.dispatchEvent(new Event("redraw")); } }, 5600);
+    }
+    if (reduce) $$(".ov-svg").forEach((el) => el.pauseAnimations && el.pauseAnimations());
   }
 })();

@@ -801,5 +801,64 @@
     return svg("0 0 420 260", b, "새벽-황혼 궤도에서 대형을 이루어 나는 태양광 연산 위성 군집. 위성끼리 광통신으로 연결되고, 방열판으로 열을 내보내며, 방사선 오류는 ECC로 고치고, 지상국으로 데이터를 내려보냄");
   };
 
+  // HW for Bio: 염기서열 → 읽기 조각(read) → k-mer de Bruijn 그래프로 de novo 조립 → HLS/RTL 로 만든 PE 배열에서 가속
+  I.tutHwBio = () => {
+    let b = "";
+    // DNA 이중나선 (위쪽)
+    const hx = (t) => 20 + t * 190;
+    let dna = "", top = "M", bot = "M";
+    range(41).forEach((i) => {
+      const t = i / 40, x = hx(t), y1 = 44 + 14 * Math.sin(t * Math.PI * 4), y2 = 44 - 14 * Math.sin(t * Math.PI * 4);
+      top += (i ? " L" : "") + x.toFixed(1) + " " + y1.toFixed(1);
+      bot += (i ? " L" : "") + x.toFixed(1) + " " + y2.toFixed(1);
+      if (i % 3 === 0 && i > 0 && i < 40) dna += Ln(x.toFixed(1), y1.toFixed(1), x.toFixed(1), y2.toFixed(1), "thin");
+    });
+    dna += P(top) + P(bot);
+    b += Part("DNA sample", dna) + T(20, 18, "SEQUENCING");
+    // 읽기 조각(read): 나선에서 떨어져 내려와 그래프로
+    let reads = "";
+    [[34, 0], [86, -0.8], [138, -1.6], [62, -2.4], [112, -3.2]].forEach(([x, d]) => {
+      reads += `<g><path d="M-14 0 H14" style="stroke-width:2.4"/>${Move(`M${x} 70 L${x + 6} 112`, 4, d)}${Fade(4, d, "0;1;1;0", "0;0.15;0.8;1")}</g>`;
+    });
+    b += Part("Short reads", reads) + T(214, 100, "READS", "end");
+    // de Bruijn 그래프 (k-mer 노드, 조립 경로가 하나씩 이어짐)
+    const nodes = [[34, 150, "ACG"], [84, 136, "CGT"], [134, 150, "GTA"], [134, 200, "GTC"], [184, 136, "TAC"], [84, 214, "TCA"]];
+    const edges = [[0, 1], [1, 2], [2, 4], [1, 3], [3, 5]];
+    let g = "";
+    edges.forEach(([i, j]) => {
+      const [x1, y1] = nodes[i], [x2, y2] = nodes[j], dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+      const sx = x1 + ux * 15, sy = y1 + uy * 15, ex = x2 - ux * 15, ey = y2 - uy * 15;
+      g += Ln(sx.toFixed(1), sy.toFixed(1), ex.toFixed(1), ey.toFixed(1), "thin") +
+        `<path d="M${(ex - ux * 6 - uy * 3.5).toFixed(1)} ${(ey - uy * 6 + ux * 3.5).toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)} L${(ex - ux * 6 + uy * 3.5).toFixed(1)} ${(ey - uy * 6 - ux * 3.5).toFixed(1)}" class="thin"/>`;
+    });
+    nodes.forEach(([x, y, k], i) => {
+      g += C(x, y, 15) + T(x, y + 3, k, "middle");
+      g += `<circle class="solid soft" cx="${x}" cy="${y}" r="15">${Blink(4, -i * 0.66, 0, 0.35)}</circle>`;
+    });
+    const path = [nodes[0], nodes[1], nodes[2], nodes[4]].map(([x, y]) => x + " " + y);
+    g += Tok(8, 8, Move("M" + path.join(" L"), 4, 0, ' calcMode="linear"'), Fade(4, 0, "0;1;1;0", "0;0.06;0.9;1"));
+    b += Part("de Bruijn graph (de novo assembly)", g) + T(20, 246, "DE BRUIJN GRAPH");
+    // HLS → RTL (오른쪽 위)
+    const fx = [252, 308, 364];
+    let hls = "";
+    ["C++", "HLS", "RTL"].forEach((n, i) => {
+      hls += R(fx[i], 30, 44, 28, 2) + T(fx[i] + 22, 48, n, "middle");
+      if (i < 2) hls += Ln(fx[i] + 44, 44, fx[i + 1], 44, "thin");
+    });
+    hls += Tok(8, 5, Move("M274 66 H386", 2.6, 0, ' calcMode="linear" keyPoints="0;0;0.5;0.5;1;1" keyTimes="0;0.25;0.4;0.65;0.8;1"'), Fade(2.6, 0, "0;1;1;0", "0;0.05;0.92;1"));
+    b += Part("High-level synthesis to RTL", hls) + T(252, 20, "DESIGN FLOW");
+    b += P("M386 76 V96", "dash") + P("M381 90 L386 97 L391 90");
+    // PE 배열 (FPGA / PIM): 파도처럼 번지는 연산
+    let pe = R(244, 104, 166, 120, 4);
+    range(3).forEach((r) => range(4).forEach((c) => {
+      const x = 256 + c * 38, y = 116 + r * 34;
+      pe += R(x, y, 28, 24, 2) + `<rect class="solid soft" x="${x + 3}" y="${y + 3}" width="22" height="18">${Blink(1.8, -(r + c) * 0.3, 0, 0.8)}</rect>`;
+    }));
+    b += Part("Accelerator: PE array on FPGA / PIM", pe) + T(244, 240, "PE ARRAY · FPGA / PIM");
+    // 그래프 → 가속기
+    b += `<path d="M206 176 C222 176 226 164 242 164" style="stroke-dasharray:5 5">${Flow(0.9)}</path>`;
+    return svg("0 0 420 260", b, "DNA 서열을 짧은 조각으로 읽어 k-mer de Bruijn 그래프로 조립하고, HLS와 RTL로 설계한 가속기 PE 배열에서 처리하는 흐름");
+  };
+
   window.ILLUS = I;
 })();

@@ -74,7 +74,7 @@
       if (metaColor) metaColor.setAttribute("content", t === "light" ? "#EBEBE8" : "#17181A");
       if (save) { try { localStorage.setItem("ncsl-theme", t); } catch (e) {} }
     }
-    applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark", false);
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light", false);   // 기본은 라이트
     tgl.addEventListener("click", () => applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light", true));
 
     const onScroll = () => hdr.classList.toggle("is-scrolled", window.scrollY > 8);

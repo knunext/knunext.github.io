@@ -54,7 +54,8 @@ LAB.tutorials = {
       resources: [
         { type: "Textbook", title: "Computer Organization and Design RISC-V Edition", note: "Patterson & Hennessy, 2nd ed.", image: "assets/img/tutorials/cod-riscv.png", link: "" },
         { type: "Textbook", title: "Computer Architecture: A Quantitative Approach", note: "Hennessy, Patterson & Kozyrakis, 7th ed.", image: "assets/img/tutorials/ca-quantitative.png", link: "" },
-        { type: "Textbook", title: "RISC-V System-on-Chip Design", note: "Harris, Stine, Thompson & Harris", image: "assets/img/tutorials/riscv-soc-design.png", link: "" }
+        { type: "Textbook", title: "RISC-V System-on-Chip Design", note: "Harris, Stine, Thompson & Harris", image: "assets/img/tutorials/riscv-soc-design.png", link: "" },
+        { type: "Textbook", title: "Digital Design and Computer Architecture RISC-V Edition", note: "Harris, Stine, Thompson & Harris", image: "assets/img/tutorials/harris-ca-rv.png", link: "" }
       ],
       sponsors: [],
       partners: []
@@ -109,7 +110,14 @@ LAB.tutorials = {
       // RTL, HLS 자료는 지금 따로 있으므로 각각 링크 (TODO: 실제 주소로 변경)
       body: "<p>- De novo Genome Assembly (k-mer, de Bruijn Graph)<br>- Sequence Alignment & Read Mapping<br>- <a href=\"KNU_HW_for_Bio/rtl.html\">RTL Design (Verilog)</a><br>- <a href=\"KNU_HW_for_Bio/hls.html\">High-Level Synthesis (HLS)</a><br>- FPGA & PIM Acceleration</p>",
       related: [{ title: "BIO-PIM", link: "research.html#detail-ai-accelerator" }],
-      resources: [],
+      resources: [
+        { type: "Textbook", title: "Bioinformatics Algorithms", note: "3nd ed.", image: "assets/img/tutorials/bioinfor-algo.png", link: "" },
+        { type: "Textbook", title: "An Introduction to Bioinformatics Algorithms", note: "", image: "assets/img/tutorials/bioinfo-algo2.png", link: "" },
+        { type: "Textbook", title: "Digital Design and Computer Architecture RISC-V Edition", note: "Harris, Stine, Thompson & Harris", image: "assets/img/tutorials/harris-ca-rv.png", link: "" },
+        { type: "Textbook", title: "Getting Started with FPGAs", note: "", image: "assets/img/tutorials/fpga-primary.png", link: "" },
+        { type: "Textbook", title: "Parallel Programming for FPGAs", note: "", image: "assets/img/tutorials/parapro-fpgas.png", link: "" },
+        { type: "Textbook", title: "Reconfigurable Computing", note: "", image: "assets/img/tutorials/reconfig-compu.png", link: "" },
+      ],
       sponsors: [],
       partners: []
     },

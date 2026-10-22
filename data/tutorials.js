@@ -105,7 +105,7 @@ LAB.tutorials = {
       section: "hwbio",
       title: "Hardware for Bioinformatics",
       audience: ["Members", "Candidates"],
-      link: "KNU_HW_for_Bio/",   // TODO: RTL·HLS 를 묶는 메인 페이지가 생기면 그 주소로
+      link: "HW_Accel/",   // TODO: RTL·HLS 를 묶는 메인 페이지가 생기면 그 주소로
       summary: "De novo 유전체 조립과 이를 가속하는 RTL·HLS 하드웨어 설계",
       // RTL, HLS 자료는 지금 따로 있으므로 각각 링크 (TODO: 실제 주소로 변경)
       body: "<p>- De novo Genome Assembly (k-mer, de Bruijn Graph)<br>- Sequence Alignment & Read Mapping<br>- <a href=\"KNU_HW_for_Bio/rtl.html\">RTL Design (Verilog)</a><br>- <a href=\"KNU_HW_for_Bio/hls.html\">High-Level Synthesis (HLS)</a><br>- FPGA & PIM Acceleration</p>",

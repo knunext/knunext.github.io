@@ -23,7 +23,7 @@ LAB.tutorials = {
       description: "드론과 휴머노이드 로봇의 계획, 제어, 의사결정을 시뮬레이션 환경에서 실습합니다." },
     { id: "mns", link: "KNU_Intro_to_Simulations/", title: "Modeling & Simulation", illustration: "tutMns",
       description: "이산 사건 시뮬레이션(DES)과 에이전트 기반 시뮬레이션(ABS)으로 실세계 문제를 모델링합니다." },
-    { id: "hwbio", link: "KNU_HW_for_Bio/", title: "HW for Bio", illustration: "tutHwBio",   // TODO: RTL·HLS 를 묶는 메인 페이지 주소
+    { id: "hwbio", link: "HW_Accel/", title: "HW for Bio", illustration: "tutHwBio",   // TODO: RTL·HLS 를 묶는 메인 페이지 주소
       description: "De novo 유전체 조립 알고리즘을 익히고, 이를 가속하는 하드웨어를 RTL과 HLS로 설계합니다." },
     { id: "opart", link: "KNU_Intro_to_Wargaminig/", title: "Operational Art", illustration: "tutOpart",
       description: "작전술의 개념과 워게임을 통해 국방 M&S 연구의 배경 지식을 다집니다." },

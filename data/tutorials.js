@@ -6,6 +6,7 @@
  *     link: 자료 주소, summary: 한 줄 소개
  *     body: '자세히 보기'에 들어갈 설명 (HTML 가능)
  *     related: 연관 연구/프로젝트 [{ title, link }]
+ *     more: '자세히 보기' 아래 MORE 칸, 더 기초적이거나 연관된 다른 튜토리얼 사이트 [{ title, note, link }] (2열, 4개 정도까지 권장)
  *     sponsors / partners: 로고 [{ name, logo, url }] (뉴스와 같은 형식)
  *     resources: 교재·영상 등 참고 자료 [{ type, title, note, image, link }] → 오른쪽 "MATERIALS" 칸
  *       type 은 그림이 없을 때만 칸에 표시됨 (예: "Textbook", "YouTube") / note 는 저자·판 등 (마우스를 올리면 보임)
@@ -68,6 +69,11 @@ LAB.tutorials = {
       summary: "학부 수준 로보틱스 AI",
       body: "<p>- Motion Models<br>- Motion Planning<br>- Path Planning<br>- Bayesian Filters<br>- Decision Making<br>- VLM & VLA</p>",
       related: [{ title: "항공드론혁신융합대학사업(첨단기술융합대학)", link: "research.html#detail-mns-ax" }],
+      // TODO: 실제 튜토리얼 주소로 변경
+      more: [
+        { title: "Math 101", note: "선형대수, 확률, 미적분 기초", link: "KNU_Intro_to_Simulations/math-101-site/" },
+        //{ title: "Python 101", note: "NumPy와 시뮬레이션을 위한 파이썬 기초", link: "KNU_Intro_to_Robotics/python101/" }
+      ],
       resources: [
         { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },
         //{ type: "Textbook", title: "The Hundred-Page Language Models Book", note: "", image: "assets/img/tutorials/100-lang.png", link: "" },

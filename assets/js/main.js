@@ -860,6 +860,14 @@
         '<div class="tut-main"><h3 class="tut-title">' + (it.link ? '<a href="' + esc(it.link) + '">' + esc(it.title) + "</a>" : esc(it.title)) + "</h3>" +
         (it.summary ? '<p class="tut-summary">' + esc(it.summary) + "</p>" : "") +
         (more ? '<details class="news-details"><summary>자세히 보기</summary><div class="news-body">' + more + "</div></details>" : "") +
+        // MORE: 더 기초적이거나 연관된 다른 튜토리얼 사이트 (2열 박스)
+        ((it.more || []).filter((m) => m && m.title).length
+          ? '<div class="tut-more"><p class="caps tut-more-label">More <span aria-hidden="true">&#8250;</span></p><ul>' +
+            it.more.filter((m) => m && m.title).map((m) => '<li><a class="more-box" href="' + esc(m.link || "#") + '">' +
+              '<span class="more-title">' + esc(m.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></span>' +
+              (m.note ? '<span class="more-note">' + esc(m.note) + "</span>" : "") + "</a></li>").join("") +
+            "</ul></div>"
+          : "") +
         "</div>" +
         '<div class="tut-aside">' +
         (it.audience && it.audience.length ? '<p class="tut-aud">' + it.audience.map((a) => '<span class="badge">' + esc(a) + "</span>").join("") + "</p>" : "") +

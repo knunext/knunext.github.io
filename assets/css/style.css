@@ -1254,6 +1254,21 @@ html[data-theme="light"] .site-header.is-scrolled { border-bottom-color: var(--l
 .theme-switch button[aria-pressed="true"] { color: var(--page); background: var(--text); }
 .theme-switch button:focus-visible { outline: 1px solid var(--text); outline-offset: 2px; }
 
+/* Tutorials: MORE (기초·연관 튜토리얼 링크, 2열) */
+.tut-more { margin-top: 1.4rem; max-width: 34rem; }
+.tut-more-label { margin: 0 0 0.6rem; color: var(--text-2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; }
+.tut-more ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.more-box {
+  display: flex; flex-direction: column; gap: 0.25rem; height: 100%; box-sizing: border-box; padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line-2); color: var(--text); text-decoration: none;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.more-title { font-size: 0.95rem; font-weight: 500; }
+.more-note { font-size: 0.78rem; color: var(--text-2); line-height: 1.45; transition: color 0.18s ease; }
+.more-box:hover, .more-box:focus-visible { background: var(--text); border-color: var(--text); color: var(--page); outline: none; }
+.more-box:hover .more-note, .more-box:focus-visible .more-note { color: var(--page); opacity: 0.8; }
+@media (max-width: 560px) { .tut-more ul { grid-template-columns: 1fr; } }
+
 /* =========================================================
    Footer
    ========================================================= */

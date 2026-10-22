@@ -72,7 +72,7 @@ LAB.tutorials = {
       // TODO: 실제 튜토리얼 주소로 변경
       more: [
         { title: "Math 101", note: "선형대수, 확률, 미적분 기초", link: "KNU_Intro_to_Simulations/math-101-site/" },
-        //{ title: "Python 101", note: "NumPy와 시뮬레이션을 위한 파이썬 기초", link: "KNU_Intro_to_Robotics/python101/" }
+        { title: "M&S 101", note: "모델링 및 시뮬레이션 기초", link: "KNU_Intro_to_Simulations/" }
       ],
       resources: [
         { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },
@@ -96,6 +96,10 @@ LAB.tutorials = {
       summary: "Modeling & Simulation 기초 트레이닝",
       body: "<p>- Discrete Event Simulation<br>- Agent-based Modeling<br>- DEVS<br>- Behavior Planning<br>- Robotics & Physical AI</p>",
       related: [{ title: "지역지능화혁신인재양성사업(GrandICT)", link: "research.html#detail-mns-ax" }],
+      more: [
+        { title: "Math 101", note: "선형대수, 확률, 미적분 기초", link: "KNU_Intro_to_Simulations/math-101-site/" },
+        //{ title: "Python 101", note: "NumPy와 시뮬레이션을 위한 파이썬 기초", link: "KNU_Intro_to_Robotics/python101/" }
+      ],
       resources: [
         { type: "Textbook", title: "강화 학습", note: "1st ed.", image: "assets/img/tutorials/rl_book.png", link: "" },
         { type: "Textbook", title: "Theory of Modeling and Simulation", note: "", image: "assets/img/tutorials/mns.png", link: "" },

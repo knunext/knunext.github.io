@@ -293,58 +293,20 @@ LAB.research = {
         {
           label: "연구 그룹",
           items: [
-            "KNU SCENT Lab (Lead-PI: Prof. Yongtae Kim)",
-            "KNU COBI Lab (Co-PI: Prof. Inuk Jung)",
-            "KNU MECCA Lab (Co-PI: Prof. Myungsuk Kim)",
-            "KNU NCSL"
+            "SCENT Lab (Lead-PI: Prof. Yongtae Kim), COBI Lab (Co-PI: Prof. Inuk Jung)",
+            "MECCA Lab (Co-PI: Prof. Myungsuk Kim), NCSL Lab (Co-PI: Prof. Jeonggeun Kim)",
           ]
         }
       ]
-    },
-    {
-      title: "Project Ouroboros",
-      subtitle: "οὐροβόρος, AI 에이전트 기반 재귀적 시스템 개선 루프",
-      sponsor: "",
-      sponsors: [],
-      partners: [],
-      period: "",
-      description: "AI 에이전트가 시스템을 설계하고, 실행 피드백을 받아 더 개선된 시스템을 다시 설계하는 과정을 반복합니다. <a href=\"#ouroboros\">연구 주제 보기</a>",
-      lists: []
-    },
-    {
-      title: "Scalable Near-Far Memory Architecture for Multi-GPUs with CXL-interface",
-      subtitle: "다중 GPU 환경을 위한, 확장 가능한 Near-Far 메모리 아키텍처 연구",
-      sponsor: "Yonsei-Samsung Joint Research Program, Samsung Electronics",
-      sponsors: [],
-      partners: [],
-      period: "2020–",
-      description: "다중 GPU 환경에서의 메모리 병목 현상을 해소하기 위한 Near-Far Memory Architecture 설계",
-      lists: [
-        { label: "연구 그룹", items: ["Project PI: Prof. Bernd Burgstaller, Yonsei University"] },
-        {
-          label: "Publications",
-          items: [
-            "LPGSim: A Lightweight Parallel GPU Simulator Maximizing Speed with Trustworthy Simulation (SIGMETRICS 2026)",
-            "Comprehensive Design Space Exploration for Graph Neural Network Aggregation on GPUs (IEEE CAL 2025)"
-          ]
-        }
-      ]
-    },
-    {
-      title: "AI솔루션 개발·실증 지원(가치사슬형) 사업",
-      subtitle: "지역 제조 혁신을 위한 AX",
-      sponsor: "지역주도형 AI대전환사업, 중소벤처기업부",
-      sponsors: [],
-      partners: [],
-      period: "2026.01–2026.12",
-      description: "",
-      lists: [{ label: "공동 연구진", items: ["아라소프트(주)", "경상국립대학교 부석준 교수님", "건국대학교 오병국 교수님"] }]
-    },
+    },    
     {
       title: "저작권기술 글로벌 인재 양성 사업",
       subtitle: "멀티모달 기반 콘텐츠 저작권 관련 기술 (문화AX)",
       sponsor: "선도형 저작권 기술개발사업, 문화체육관광부",
-      sponsors: [],
+      sponsors: [
+        { name: "한국콘텐츠진흥원", logo: "assets/img/sponsors/kocca.png", url: "" },
+        { name: "문화체육관광부", logo: "assets/img/sponsors/moc.png", url: "" },  
+      ],
       partners: [],
       period: "2026–2031",
       description: "",
@@ -356,25 +318,94 @@ LAB.research = {
       ]
     },
     {
+      title: "Scalable Near-Far Memory Architecture for Multi-GPUs with CXL-interface",
+      subtitle: "다중 GPU 환경을 위한, 확장 가능한 Near-Far 메모리 아키텍처 연구",
+      sponsor: "Samsung Electronics",
+      sponsors: [
+        { name: "삼성전자", logo: "assets/img/sponsors/samsung.png", url: "" },
+      ],
+      partners: [],
+      period: "2020–2025",
+      description: "Yonsei-Samsung Joint Research Program / 다중 GPU 환경에서의 메모리 병목 현상을 해소하기 위한 Near-Far Memory Architecture 설계",
+      lists: [
+        { label: "연구 그룹", items: ["Project PI: Prof. Bernd Burgstaller, ELC Lab, Yonsei University"] },
+        //{
+        //  label: "Publications",
+        //  items: [
+        //    "LPGSim: A Lightweight Parallel GPU Simulator Maximizing Speed with Trustworthy Simulation (SIGMETRICS 2026)",
+        //    "Comprehensive Design Space Exploration for Graph Neural Network Aggregation on GPUs (IEEE CAL 2025)"
+        //  ]
+        //}
+      ]
+    },
+    {
+      title: "AI솔루션 개발·실증 지원(가치사슬형) 사업",
+      subtitle: "지역 제조 혁신을 위한 AX / Smart Factory 및 SFaaS를 위한 디지털트윈",
+      sponsor: "지역주도형 AI대전환사업, 중소벤처기업부",
+      sponsors: [
+        { name: "중소벤처기업부", logo: "assets/img/sponsors/mos.png", url: "" },
+        { name: "경남테크노파크", logo: "assets/img/sponsors/gntp.png", url: "" },
+        { name: "중소기업벤처진흥공단", logo: "assets/img/sponsors/kosme.png", url: "" },
+      ],
+      partners: [],
+      period: "2026.01–2026.11",
+      description: "",
+      lists: [{ label: "공동 연구진", items: ["아라소프트(주)", "경상국립대학교 부석준 교수님", "건국대학교 오병국 교수님"] }]
+    },
+    {
+      title: "항공드론혁신융합대학사업 (COSS)",
+      subtitle: "Physical AI + 항공/드론 (Robotics/AI)",
+      sponsor: "교육부, 혁신융합대학사업",
+      sponsors: [
+        { name: "교육부", logo: "assets/img/sponsors/moe.png", url: "" },
+        { name: "한국연구재단 (NRF)", logo: "assets/img/sponsors/nrf.png", url: "" },
+        { name: "혁신융합대학사업 (COSS)", logo: "assets/img/sponsors/coss.png", url: "" },
+      ],
+      partners: [],
+      period: "2025-2026",
+      description: "",
+      lists: [
+        { label: "공동 연구진", items: ["경북대학교 컴퓨터학부, 우주공학부, 전자공학부, 로봇공학과"] },
+      ]
+    },
+    {
       title: "자율화된 군지휘결심체계(MDMP)를 위한 국방M&S 및 에이전트AI 기반 프레임워크",
       subtitle: "완전히 자율화된 무인 전투 부대 운영을 위한 지휘결심체계 자동화 연구 (국방AX)",
+      sponsor: "IITP (ITRC, Grand-ICT)",
+      sponsors: [
+        { name: "IITP", logo: "assets/img/sponsors/iitp.png", url: "" },
+        { name: "ITRC", logo: "assets/img/sponsors/itrc.png", url: "" },
+      ],
+      partners: [],
+      period: "2025-2029",
+      description: "",
+      lists: [
+        { label: "공동 연구진", items: ["경북대학교 남덕윤 교수님 (HPC Lab), 김명석 교수님 (MECCA Lab)"] },
+        //{ label: "Publications", items: ["한국멀티미디어학회 학술지", "한국군사과학기술학회 추계학술대회"] }
+      ]
+    },    
+    {
+      title: "Project Ouroboros",
+      subtitle: "οὐροβόρος, AI 에이전트 기반 재귀적 시스템 개선 루프",
       sponsor: "",
       sponsors: [],
       partners: [],
-      period: "",
-      description: "",
-      lists: [
-        { label: "공동 연구진", items: ["경북대학교 김명석 교수님 (MECCA Lab)"] },
-        { label: "Publications", items: ["한국멀티미디어학회 학술지", "한국군사과학기술학회 추계학술대회"] }
-      ]
+      period: "2025-",
+      description: "AI 에이전트가 시스템을 설계하고, 실행 피드백을 받아 더 개선된 시스템을 다시 설계하는 과정을 반복합니다. <a href=\"#ouroboros\">연구 주제 보기</a>",
+      lists: []
     },
     {
       title: "다중 가속기 기반의 이종 컴퓨팅 연구 (Accelerator-rich Heterogeneous Computing)",
       subtitle: "xPU 및 다중 계층 메모리 시스템 기반의 초고성능 이종 컴퓨팅 시스템 구축",
-      sponsor: "",
-      sponsors: [],
+      sponsor: "교육부, 한국연구재단, IITP (ITRC, Grand-ICT)",
+      sponsors: [
+        { name: "교육부", logo: "assets/img/sponsors/moe.png", url: "" },
+        { name: "한국연구재단 (NRF)", logo: "assets/img/sponsors/nrf.png", url: "" },
+        { name: "IITP", logo: "assets/img/sponsors/iitp.png", url: "" },
+        { name: "ITRC", logo: "assets/img/sponsors/itrc.png", url: "" },
+      ],
       partners: [],
-      period: "",
+      period: "2021-2024",
       description: "다중/이기종 프로세서 xPU (CPU, GPU, NPU, PIM, ISC) 및 다계층 메모리 기반 이종 컴퓨팅 구조 연구",
       lists: [{ label: "공동 연구진", items: ["경북대학교 남덕윤 교수님 (HPC Lab)"] }]
     }

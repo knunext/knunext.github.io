@@ -8,7 +8,7 @@
 window.LAB = window.LAB || {};
 
 LAB.overview = {
-  intro: "하나의 고리로 이어집니다. 현실의 시스템을 모델링하고, 시뮬레이션하고, 더 나은 설계와 운용 기법을 찾아 적용한 뒤, 다시 그 결과로 모델을 개선합니다.",
+  intro: "Agent-in-the-Loop. 현실의 시스템을 모델링하고, 시뮬레이션하고, 더 나은 설계와 운용 기법을 찾아 적용한 뒤, 다시 그 위에서 다음 모델을 개선합니다.",
 
   loop: [
     { id: "model", title: "Model", ko: "모델링",
@@ -85,5 +85,5 @@ LAB.overview = {
     { id: "copyright-ai", stages: ["model", "deploy", "feedback"] }
   ],
 
-  closing: "규모와 대상은 달라도 질문은 하나입니다. 제약 속에서, 흐름을 어떻게 설계하고 운용해야 가장 좋은가."
+  closing: "문제의 규모와 대상은 달라도 질문은 하나입니다. 여러가지 제약 속에서, 어떻게 시스템을 설계하고 운용해야 가장 좋은가."
 };

@@ -10,7 +10,7 @@ LAB.site = {
   university: "Kyungpook National University",
   department: "경북대학교 컴퓨터학부",
   tagline:
-    "AI 반도체와 메모리 중심 컴퓨팅부터 제조, 국방을 위한 AX, 그리고 궤도 데이터센터까지. 미래를 위한 차세대 컴퓨팅 시스템을 연구합니다.",
+    "AI 반도체와 Memory 중심 컴퓨팅부터 Simulation 기반 제조AX & 국방AX, 우주 AI 데이터센터까지. 미래를 위한 차세대 컴퓨팅 시스템을 연구합니다.",
 
   // 메인 화면 첫 카드
   hero: {
@@ -31,9 +31,9 @@ LAB.site = {
     items: [
       { name: "AI 반도체", illustration: "chip", link: "research.html#ai-accelerator" },
       { name: "AI 제조혁신", illustration: "robot", link: "research.html#mns-ax" },
-      { name: "국방 AX", illustration: "defense", link: "research.html#defense-mns" },
+      { name: "국방 M&S + AX", illustration: "defense", link: "research.html#defense-mns" },
       { name: "Project Ouroboros", illustration: "ouroboros", link: "research.html#ouroboros" },
-      { name: "궤도 데이터센터", illustration: "orbitSide", link: "research.html#orbital-dc" }
+      { name: "Orbit AI Datacenter", illustration: "orbitSide", link: "research.html#orbital-dc" }
     ]
   }
 };

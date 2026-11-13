@@ -341,7 +341,18 @@ ul.clamp { display: block; max-height: 4.7em; }
 .hero-headline a { text-decoration: none; }
 .hero-headline a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 
-.hero-drawings { display: grid; gap: 0.5rem; align-content: center; }
+.hero-drawings { display: grid; gap: 1.1rem; align-content: end; }   /* 왼쪽 그림들과 아래쪽을 맞춤 */
+.hero-copy { display: flex; flex-direction: column; }
+.hero-drawings-left { margin-top: auto; padding-top: 2.5rem; }
+.hero-drawings-left:empty { display: none; }
+/* 그림 안 작은 지시 글자, 세대 숫자 */
+.illus .hero-cap { font-size: 9px; letter-spacing: 0.14em; fill: var(--text-2); stroke: none; }
+.illus .ouro-head, .illus .ouro-body { fill: var(--card); }   /* 몸통·머리 안쪽을 카드 배경색으로 */
+.illus .hero-gen { font-family: "Inter Tight", Pretendard, sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; fill: var(--text); stroke: none; }
+/* 그림의 부분에 마우스를 올리면 그 부분만 또렷하게 (툴팁으로 이름) */
+.drawing-art .illus .part { transition: opacity 0.25s ease; }
+.drawing-art .illus:has(.part:hover) .part:not(:hover) { opacity: 0.3; }
+.drawing-art .illus .part:hover *:not(text) { stroke: var(--text); }
 .drawing {
   display: grid;
   grid-template-columns: 130px minmax(0, 1fr);
@@ -357,7 +368,13 @@ ul.clamp { display: block; max-height: 4.7em; }
 .hero-card .wordmark { font-size: clamp(1.6rem, 8.6cqi, 6.25rem); }
 
 @media (max-width: 900px) {
-  .hero-top { grid-template-columns: 1fr; }
+  .hero-top { grid-template-columns: 1fr; row-gap: 0; }
+  #hero-drawings { margin-top: 2rem; }
+  .hero-drawings-left { margin-top: 1.1rem !important; }
+  /* 한 줄로 쌓일 때는 원래 순서대로 (오른쪽 3개 → 왼쪽 2개) */
+  .hero-copy { display: contents; }
+  #hero-drawings { order: 2; }
+  .hero-drawings-left { order: 3; margin-top: 0; padding-top: 0; }
 }
 @media (max-width: 520px) {
   .drawing { grid-template-columns: 92px minmax(0, 1fr); gap: 0.75rem; }

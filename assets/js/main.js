@@ -295,9 +295,14 @@
     setHTML("#hero-label", esc(H.label || S.shortName));
     setHTML("#hero-headline", (S.tagline || esc(S.name)) + ' <span class="ne" aria-hidden="true">&#8599;</span>');
     const ex = (S.explore && S.explore.items) || [];
-    setHTML("#hero-drawings", ex.map((i) =>
+    const drawRow = (i) =>
       '<a class="drawing" href="' + esc(i.link || "research.html") + '"><span class="drawing-label">' + esc(i.name) + "</span>" +
-      '<span class="drawing-art">' + art(i) + "</span></a>").join(""));
+      '<span class="drawing-art">' + art(i) + "</span></a>";
+    setHTML("#hero-drawings", ex.filter((i) => i.side !== "left").map(drawRow).join(""));
+    setHTML("#hero-drawings-left", ex.filter((i) => i.side === "left").map(drawRow).join(""));   // 왼쪽 소개 문장 아래
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      $$(".hero-card .illus").forEach((el) => el.pauseAnimations && el.pauseAnimations());
+    }
     setHTML("#hero-info", (H.info || []).map((c) =>
       '<div class="info' + (c.label ? " info-split" : "") + '">' + (c.label ? '<p class="caps info-key">' + esc(c.label) + (c.text ? " &rarr;" : "") + "</p>" : "") +
       (c.items ? '<ul class="caps arrow-list">' + c.items.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "") +

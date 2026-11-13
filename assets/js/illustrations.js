@@ -860,5 +860,214 @@
     return svg("0 0 420 260", b, "DNA 서열을 짧은 조각으로 읽어 k-mer de Bruijn 그래프로 조립하고, HLS와 RTL로 설계한 가속기 PE 배열에서 처리하는 흐름");
   };
 
+  /* ---------- Home hero: 정밀 기술도면풍 그림 (600 x 190), 은은한 움직임 + 부분 강조 ---------- */
+  const lab = (x, y, s, anchor) => `<text class="hero-cap" x="${x}" y="${y}"${anchor ? ` text-anchor="${anchor}"` : ""}>${s}</text>`;
+  // 지시선(leader): 점 → 꺾인 선 → 글자
+  const lead = (x1, y1, x2, y2, s, anchor) =>
+    `<circle class="solid" cx="${x1}" cy="${y1}" r="1.6"/>` + P(`M${x1} ${y1} L${x2} ${y2} H${x2 + (anchor === "end" ? -14 : 14)}`, "thin") +
+    lab(x2 + (anchor === "end" ? -17 : 17), y2 + 3, s, anchor === "end" ? "end" : undefined);
+  const hatchLine = (x1, x2, y, step) => range(Math.floor((x2 - x1) / step)).map((k) => Ln(x1 + k * step, y + 6, x1 + k * step + 5, y, "thin")).join("");
+
+  // AI 반도체: 2.5D 패키지 단면 (기판·BGA, 인터포저·마이크로범프, 연산 다이, HBM 스택·TSV, 히트 스프레더)
+  I.heroChip = () => {
+    let b = "";
+    // 히트 스프레더 (점선)
+    b += Part("Heat spreader (lid)", P("M70 112 V58 H530 V112", "dash"));
+    // 기판 + BGA
+    let sub = R(46, 130, 508, 16, 2) + Ln(46, 138, 554, 138, "thin");
+    range(36).forEach((k) => (sub += C(58 + k * 14, 152, 3.8)));
+    b += Part("Package substrate · BGA", sub);
+    // 인터포저 + 재배선층 + 마이크로범프
+    let ip = R(92, 114, 416, 14, 1) + P("M100 121 H500", "dash");
+    range(52).forEach((k) => (ip += C(100 + k * 8, 112, 1.3, "thin")));
+    b += Part("Silicon interposer · RDL · micro-bumps", ip);
+    // 연산 다이 (타일)
+    let die = R(222, 74, 156, 38, 2);
+    range(2).forEach((r) => range(8).forEach((c) => {
+      const x = 228 + c * 18.5, y = 79 + r * 15;
+      die += R(x, y, 15, 12, 1) + `<rect class="solid soft" x="${x + 2}" y="${y + 2}" width="11" height="8">${Blink(1.8, -((c + r * 3) % 8) * 0.22, 0, 0.75)}</rect>`;
+    }));
+    b += Part("Compute die (accelerator tiles)", die);
+    // HBM 스택 4개 (8단 + 베이스 다이, TSV)
+    [112, 162, 394, 444].forEach((x, si) => {
+      let st = R(x, 104, 44, 8, 1);
+      range(8).forEach((k) => (st += R(x, 64 + k * 5, 44, 5)));
+      [x + 12, x + 32].forEach((tx) => (st += Ln(tx, 64, tx, 112, "thin")));
+      st += Tok(3, 6, Move(`M${x + 12} 110 V66`, 1.6, -si * 0.4), Fade(1.6, -si * 0.4));
+      b += Part("HBM stack (8-high, TSV)", st);
+    });
+    // 인터포저를 지나는 데이터 (HBM ↔ 다이)
+    [[156, 222], [206, 222], [394, 378], [444, 378]].forEach(([x1, x2], k) =>
+      (b += Tok(8, 3, Move(`M${x1} 119 H${x2}`, 1.4, -k * 0.35), Fade(1.4, -k * 0.35))));
+    // 지시선
+    b += lead(134, 66, 120, 30, "HBM3E", "end") + lead(300, 76, 316, 30, "COMPUTE DIE") + lead(470, 121, 520, 92, "INTERPOSER") + lead(80, 138, 60, 176, "SUBSTRATE");
+    return svg("0 0 600 190", b, "2.5D 패키지 단면: 기판과 BGA, 인터포저, 연산 다이, HBM 스택, 그 사이를 오가는 데이터");
+  };
+
+  // AI 제조혁신: 6축 로봇팔 + 비전 카메라 + 롤러 컨베이어 + AGV
+  I.heroFab = () => {
+    let b = "";
+    b += Ln(16, 176, 586, 176) + hatchLine(16, 586, 176, 12);
+    // 로봇팔 (받침대, 회전부, 관절 3개, 그리퍼)
+    const bx = 112, by = 140;
+    let arm = R(bx - 30, by + 8, 60, 28, 2) + R(bx - 22, by - 4, 44, 12, 3) + Ln(bx - 30, by + 18, bx + 30, by + 18, "thin");
+    range(4).forEach((k) => (arm += C(bx - 22 + k * 14.7, by + 30, 1.6, "thin")));
+    const link = (L, w) => R(0, -w / 2, L, w, w / 2) + Ln(8, 0, L - 8, 0, "thin") + C(0, 0, w / 2 + 2) + C(0, 0, 3, "thin");
+    arm += `<g transform="translate(${bx} ${by - 8})"><g>${link(78, 16)}` +
+      `<animateTransform attributeName="transform" type="rotate" values="-118;-62;-62;-118;-118" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
+      `<g transform="translate(78 0)"><g>${link(66, 13)}` +
+      `<animateTransform attributeName="transform" type="rotate" values="96;70;70;96;96" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
+      `<g transform="translate(66 0)"><g>${link(22, 10)}<path d="M22 -10 V10 M22 -10 H34 M22 10 H34 M30 -10 V-4 M30 10 V4"/>` +
+      `<animateTransform attributeName="transform" type="rotate" values="58;30;30;58;58" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
+      `</g></g></g></g></g></g>`;
+    b += Part("6-axis industrial robot arm", arm);
+    // 비전 카메라 (갠트리)
+    let vis = P("M300 176 V40 H388 V176", "thin") + R(332, 40, 24, 14, 2) + C(344, 58, 4);
+    vis += `<path class="dash" d="M344 62 L318 120 M344 62 L370 120">${Blink(2.4, 0, 0.25, 1)}</path>`;
+    b += Part("Machine vision (inspection camera)", vis);
+    // 롤러 컨베이어 + 이동하는 부품 상자
+    let cv = R(232, 120, 280, 12, 6) + Ln(240, 140, 240, 176, "thin") + Ln(504, 140, 504, 176, "thin") + Ln(372, 132, 372, 176, "thin");
+    range(10).forEach((k) => {
+      const cx = 242 + k * 29.5;
+      cv += C(cx, 126, 5.2) + `<g>${Ln(cx - 4, 126, cx + 4, 126, "thin")}${Ln(cx, 122, cx, 130, "thin")}${Spin(cx, 126, 1.2)}</g>`;
+    });
+    [0, -2.4, -4.8].forEach((d) => {
+      cv += `<g>${R(-15, -22, 30, 22, 1)}${Ln(-15, -14, 15, -14, "thin")}${Ln(0, -22, 0, -14, "thin")}` +
+        `<animateTransform attributeName="transform" type="translate" values="246 120;496 120" dur="7.2s" begin="${d}s" repeatCount="indefinite"/>` +
+        `${Fade(7.2, d, "0;1;1;0", "0;0.05;0.9;1")}</g>`;
+    });
+    b += Part("Roller conveyor with parts", cv);
+    // AGV (왕복)
+    let agv = R(-30, -18, 60, 14, 3) + R(-20, -28, 40, 10, 1) + C(-18, -2, 5) + C(18, -2, 5) + Ln(-26, -12, 26, -12, "thin");
+    agv += `<circle class="solid" cx="24" cy="-11" r="1.8">${Blink(0.8, 0, 0.2, 1)}</circle>`;
+    b += Part("AGV (autonomous transport)", `<g>${agv}<animateTransform attributeName="transform" type="translate" values="540 176;560 176;540 176" dur="5s" repeatCount="indefinite"/></g>`);
+    b += lab(112, 20, "6-AXIS ARM", "middle") + lab(344, 24, "VISION", "middle") + lab(438, 156, "CONVEYOR", "middle") + lab(560, 142, "AGV", "middle");
+    return svg("0 0 600 190", b, "6축 로봇팔이 부품을 옮기고, 비전 카메라가 검사하고, 롤러 컨베이어와 AGV가 부품을 나르는 제조 셀");
+  };
+
+  // 국방 M&S + AX: 궤도 차량, 레이더, 쿼드콥터 드론, 데이터 링크
+  I.heroDefense = () => {
+    let b = "";
+    b += Ln(16, 172, 586, 172) + hatchLine(16, 586, 172, 12);
+    // 궤도 차량 (차체, 포탑, 포신, 보기륜, 궤도)
+    let tk = P("M60 150 L76 128 H220 L238 150 Z") + P("M116 128 L124 112 H186 L196 128") + Ln(196, 118, 262, 112) + Ln(196, 122, 262, 116) + R(258, 110, 8, 8, 1);
+    tk += R(48, 148, 202, 22, 11) + Ln(150, 112, 150, 96, "thin") + C(150, 94, 2, "thin") + R(132, 116, 14, 6, 1);
+    range(6).forEach((k) => {
+      const cx = 72 + k * 30;
+      tk += C(cx, 159, 8) + `<g>${C(cx, 159, 3, "thin")}${Ln(cx - 6, 159, cx + 6, 159, "thin")}${Spin(cx, 159, 2.4)}</g>`;
+    });
+    range(3).forEach((k) => (tk += C(98 + k * 44, 146, 2.4, "thin")));
+    b += Part("Tracked armored vehicle", tk);
+    // 레이더 (회전하는 탐지 범위)
+    let rd = R(318, 140, 54, 30, 2) + Ln(345, 140, 345, 116) + P("M330 116 Q345 98 360 116 Z") + C(328, 170, 0.1);
+    rd += `<g><path class="dash" d="M345 108 L392 84 A54 54 0 0 1 398 112 Z"/><animateTransform attributeName="transform" type="rotate" values="-35 345 108;35 345 108;-35 345 108" dur="5s" repeatCount="indefinite"/></g>`;
+    b += Part("Radar · C2 node", rd);
+    // 쿼드콥터 (모터, 프로펠러, 짐벌 카메라, 시야)
+    const prop = (x, d) => `<ellipse cx="${x}" cy="-12" rx="16" ry="2"><animate attributeName="rx" values="16;4;16" dur="0.14s" begin="${d}s" repeatCount="indefinite"/></ellipse>`;
+    let dr = R(-22, -6, 44, 12, 4) + Ln(-22, 0, -46, -8) + Ln(22, 0, 46, -8) + Ln(-46, -8, -46, -12) + Ln(46, -8, 46, -12);
+    dr += prop(-46, 0) + prop(46, -0.07) + R(-6, 6, 12, 8, 2) + C(0, 10, 2.4, "thin") + Ln(-12, 6, -16, 14, "thin") + Ln(12, 6, 16, 14, "thin");
+    dr += `<path class="dash" d="M0 14 L-34 74 M0 14 L34 74">${Blink(2, 0, 0.3, 1)}</path>`;
+    b += Part("Quadcopter drone (ISR)", `<g>${dr}<animateTransform attributeName="transform" type="translate" values="470 48;476 40;470 48" dur="3.2s" repeatCount="indefinite"/></g>`);
+    // 고정익 무인기 (멀리서 지나감)
+    let fw = P("M-24 0 H22 Q28 0 30 -1 M2 0 L-6 -15 H-1 L10 0 L-1 15 H-6 Z M-18 0 L-24 -6 H-21 L-14 0 L-21 6 H-24 Z");   // 위에서 본 고정익 무인기
+    b += Part("Fixed-wing UAV", `<g>${fw}<animateTransform attributeName="transform" type="translate" values="40 30;580 18" dur="14s" repeatCount="indefinite"/>${Fade(14, 0, "0;0.9;0.9;0", "0;0.08;0.9;1")}</g>`);
+    // 데이터 링크
+    b += Part("Tactical data links", `<path d="M150 94 Q300 30 462 46" style="stroke-dasharray:4 6">${Flow(1.2)}</path><path d="M345 98 Q420 70 462 54" style="stroke-dasharray:4 6">${Flow(1)}</path>`);
+    b += lab(150, 188, "", "middle") + lab(345, 82, "RADAR", "middle") + lab(470, 18, "UAS · ISR", "middle") + lab(150, 104, "", "middle");
+    return svg("0 0 600 190", b, "궤도 차량, 회전하는 레이더, 감시 드론과 고정익 무인기가 전술 데이터 링크로 연결된 장면");
+  };
+
+  // Project Ouroboros: 비늘 마디로 된 뱀 고리가 돌고, 세대(n)가 올라감. 왼쪽 설계, 오른쪽 피드백
+  I.heroOuro = () => {
+    let b = "";
+    const cx = 300, cy = 95, Rm = 58, W = 16;
+    // 각도 φ: 맨 위가 0, 시계 방향이 + (머리가 향하는 방향)
+    const at = (phi, r) => { const a = (phi - 90) * Math.PI / 180; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; };
+    const f = (v) => v.toFixed(1);
+    // 몸통: 목(φ=-16°)에서 시작해 반시계 방향으로 한 바퀴 돌아, 꼬리 끝(φ=+8°)이 입 속으로 들어감
+    const NECK = -16, TAIL = -352, TAPER = -228;
+    const width = (phi) => (phi > TAPER ? W : 1.2 + (W - 1.2) * Math.pow((phi - TAIL) / (TAPER - TAIL), 0.85));
+    const phis = []; for (let p = NECK; p >= TAIL; p -= 2) phis.push(p);
+    const outer = phis.map((p) => at(p, Rm + width(p) / 2)), inner = phis.map((p) => at(p, Rm - width(p) / 2)).reverse();
+    let body = '<path class="ouro-body" d="M' + outer.map((q) => f(q[0]) + " " + f(q[1])).join(" L") + " L" + inner.map((q) => f(q[0]) + " " + f(q[1])).join(" L") + ' Z"/>';
+    for (let p = NECK - 8; p > TAIL + 6; p -= 10) {                // 비늘 마디
+      const w = width(p), [x1, y1] = at(p, Rm - w / 2), [x2, y2] = at(p, Rm + w / 2);
+      body += Ln(f(x1), f(y1), f(x2), f(y2), "thin");
+    }
+    // 머리: 목의 바깥·안쪽 가장자리에서 그대로 이어져, 위로 부푼 머리통 → 주둥이 → 벌린 입 → 아래턱
+    const [nox, noy] = at(NECK, Rm + W / 2), [nix, niy] = at(NECK, Rm - W / 2);
+    const [tx, ty] = at(8, Rm);                                         // 꼬리 끝 (입 속)
+    const skull = at(-6, Rm + W / 2 + 7), brow = at(4, Rm + W / 2 + 5), snout = at(17, Rm + 3.5);
+    const lipU = at(9, Rm + 1.5), lipL = at(9, Rm - 2.5), jawTip = at(16, Rm - 5.5), chin = at(2, Rm - W / 2 - 4);
+    let head = '<path class="ouro-head" d="M' + f(nox) + " " + f(noy) +
+      " Q" + f(skull[0]) + " " + f(skull[1]) + " " + f(brow[0]) + " " + f(brow[1]) +
+      " Q" + f(at(13, Rm + W / 2 + 2)[0]) + " " + f(at(13, Rm + W / 2 + 2)[1]) + " " + f(snout[0]) + " " + f(snout[1]) +
+      " L" + f(lipU[0]) + " " + f(lipU[1]) + " L" + f(lipL[0]) + " " + f(lipL[1]) +
+      " L" + f(jawTip[0]) + " " + f(jawTip[1]) +
+      " Q" + f(at(10, Rm - W / 2 - 3)[0]) + " " + f(at(10, Rm - W / 2 - 3)[1]) + " " + f(chin[0]) + " " + f(chin[1]) +
+      " Q" + f(at(-8, Rm - W / 2 - 1)[0]) + " " + f(at(-8, Rm - W / 2 - 1)[1]) + " " + f(nix) + " " + f(niy) + ' Z"/>';
+    const eye = at(-1, Rm + 3.5), nos = at(13, Rm + 4);
+    head += C(f(eye[0]), f(eye[1]), 4.2, "thin") + '<circle class="solid" cx="' + f(eye[0]) + '" cy="' + f(eye[1]) + '" r="2.3"/>' +
+      '<circle class="solid" cx="' + f(nos[0]) + '" cy="' + f(nos[1]) + '" r="0.9"/>';
+    // 꼬리 끝이 입 안쪽에 물려 있음을 강조 (입 가장자리 짧은 선)
+    head += Ln(f(lipU[0]), f(lipU[1]), f(tx), f(ty), "thin");
+    b += Part("Ouroboros: the self-improving loop", `<g>${body}${head}${Spin(cx, cy, 40)}</g>`);
+    // 세대 표시: n → n+1 → n+2 …
+    const gens = ["n", "n + 1", "n + 2", "n + 3"];
+    let g = "";
+    gens.forEach((t, i) => (g += `<text class="hero-gen" x="${cx}" y="${cy + 6}" text-anchor="middle" opacity="0">${t}` +
+      `<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.04;0.21;0.25;1" dur="8s" begin="${i * 2}s" repeatCount="indefinite"/></text>`));
+    b += Part("Generation counter", g) + lab(cx, cy - 16, "GENERATION", "middle");
+    // 왼쪽: 설계 도면 (격자, 블록이 그려짐)
+    let ds = R(40, 40, 120, 100, 2);
+    range(5).forEach((k) => (ds += Ln(40, 40 + (k + 1) * 16.6, 160, 40 + (k + 1) * 16.6, "thin") + Ln(40 + (k + 1) * 20, 40, 40 + (k + 1) * 20, 140, "thin")));
+    ds += `<path d="M60 120 V70 H100 V100 H140 V60" style="stroke-width:2;stroke-dasharray:180;stroke-dashoffset:180"><animate attributeName="stroke-dashoffset" values="180;0;0;180" keyTimes="0;0.45;0.85;1" dur="8s" repeatCount="indefinite"/></path>`;
+    b += Part("Design (AI-generated architecture)", ds) + lab(40, 160, "DESIGN");
+    // 오른쪽: 피드백 (성능 막대가 세대마다 올라감)
+    let fb = Ln(440, 140, 560, 140) + Ln(440, 40, 440, 140, "thin");
+    range(5).forEach((k) => {
+      const h = 18 + k * 18;
+      fb += `<rect class="solid soft" x="${452 + k * 21}" width="13" y="${140 - h}" height="${h}"><animate attributeName="opacity" values="0.15;0.85;0.15" dur="8s" begin="${-8 + k * 1.6}s" repeatCount="indefinite"/></rect>`;
+    });
+    fb += P("M455 118 L476 100 L497 84 L518 64 L539 46", "dash");
+    b += Part("Feedback (performance per generation)", fb) + lab(560, 160, "FEEDBACK", "end");
+    // 연결 화살표
+    b += `<path d="M162 90 H226" style="stroke-dasharray:4 5">${Flow(1)}</path>` + P("M220 85 L228 90 L220 95");
+    b += `<path d="M374 90 H436" style="stroke-dasharray:4 5">${Flow(1)}</path>` + P("M430 85 L438 90 L430 95");
+    return svg("0 0 600 190", b, "비늘 마디로 된 뱀 고리가 천천히 돌며 세대가 n에서 n+1로 올라가고, 왼쪽에서 설계가 그려지고 오른쪽 성능 막대가 높아지는 모습");
+  };
+
+  // Orbit AI Datacenter: 정밀한 연산 위성(버스·태양광 패널·방열판·광통신 단말·안테나) + 군집 + 지구
+  I.heroOrbit = () => {
+    let b = "";
+    [[30, 22], [120, 14], [520, 20], [580, 70], [20, 98], [410, 12]].forEach(([x, y]) => (b += P(`M${x - 3} ${y} H${x + 3} M${x} ${y - 3} V${y + 3}`, "thin")));
+    b += Part("Earth", P("M0 186 Q300 132 600 186") + P("M0 174 Q300 118 600 174", "dash"));
+    // 주 위성
+    const sx = 300, sy = 78;
+    let sat = R(sx - 26, sy - 22, 52, 44, 2) + Ln(sx - 26, sy - 8, sx + 26, sy - 8, "thin") + Ln(sx - 26, sy + 8, sx + 26, sy + 8, "thin");
+    range(3).forEach((k) => (sat += `<rect class="solid" x="${sx - 18 + k * 13}" y="${sy - 4}" width="6" height="8">${Blink(1.3, -k * 0.4, 0.15, 1)}</rect>`));
+    [[-1], [1]].forEach(([d]) => {
+      const x0 = d < 0 ? sx - 26 - 14 - 150 : sx + 26 + 14;
+      sat += Ln(d < 0 ? sx - 26 : sx + 26, sy, d < 0 ? sx - 40 : sx + 40, sy) + R(x0, sy - 18, 150, 36, 1);
+      range(9).forEach((k) => (sat += Ln(x0 + (k + 1) * 15, sy - 18, x0 + (k + 1) * 15, sy + 18, "thin")));
+      sat += Ln(x0, sy, x0 + 150, sy, "thin");
+    });
+    sat += R(sx - 14, sy - 42, 28, 20, 1);
+    range(5).forEach((k) => (sat += Ln(sx - 10 + k * 5, sy - 40, sx - 10 + k * 5, sy - 24, "thin")));
+    [-6, 0, 6].forEach((dx, k) => (sat += `<path d="M${sx + dx} ${sy - 46} q-3 -5 0 -10 q3 -5 0 -10" style="stroke-dasharray:3 3">${Flow(1 + k * 0.2)}</path>`));
+    sat += P(`M${sx - 8} ${sy + 22} L${sx - 14} ${sy + 34} H${sx + 14} L${sx + 8} ${sy + 22}`) + C(sx + 20, sy + 30, 5, "thin");
+    b += Part("Compute satellite (bus, solar arrays, radiator, optical terminal)", sat);
+    // 군집 (작은 위성)
+    const mini = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${R(-8, -6, 16, 12, 1)}${R(-34, -4, 22, 8)}${R(12, -4, 22, 8)}${Ln(-12, 0, -8, 0)}${Ln(8, 0, 12, 0)}</g>`;
+    b += Part("Constellation (formation flying)", mini(70, 118, 0.9) + mini(528, 112, 0.9) + mini(150, 52, 0.6) + mini(470, 44, 0.6));
+    b += Part("Optical inter-satellite links",
+      `<path d="M104 116 L160 86" style="stroke-dasharray:5 5">${Flow(0.9)}</path><path d="M494 110 L450 86" style="stroke-dasharray:5 5">${Flow(0.9)}</path>` +
+      `<path d="M163 54 L274 66" style="stroke-dasharray:5 5">${Flow(1.1)}</path><path d="M454 46 L326 66" style="stroke-dasharray:5 5">${Flow(1.1)}</path>`);
+    // 지상국 다운링크
+    b += Part("Ground station downlink", P("M392 156 Q400 166 408 156") + Ln(400, 162, 400, 170) + `<path d="M${sx + 20} ${sy + 36} L400 154" style="stroke-dasharray:4 5">${Flow(1.2)}</path>`);
+    b += lab(300, 186, "", "middle") + lab(sx, 14, "RADIATOR", "middle") + lab(120, 140, "ISL", "middle");
+    return svg("0 0 600 190", b, "태양광 패널과 방열판을 단 연산 위성이 작은 위성들과 광통신으로 연결되어 궤도를 날고, 지상국으로 데이터를 내려보내는 모습");
+  };
+
   window.ILLUS = I;
 })();

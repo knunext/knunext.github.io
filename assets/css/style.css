@@ -347,7 +347,9 @@ ul.clamp { display: block; max-height: 4.7em; }
 .hero-drawings-left:empty { display: none; }
 /* 그림 안 작은 지시 글자, 세대 숫자 */
 .illus .hero-cap { font-size: 9px; letter-spacing: 0.14em; fill: var(--text-2); stroke: none; }
-.illus .ouro-head, .illus .ouro-body { fill: var(--card); }   /* 몸통·머리 안쪽을 카드 배경색으로 */
+.illus .ouro-head, .illus .ouro-body { fill: var(--card); }
+.illus .cell { stroke: var(--line); stroke-width: 0.6; }                  /* 태양광 셀 */
+.illus .glint { stroke: var(--text); stroke-width: 6; opacity: 0.12; }   /* 패널 반사광 */   /* 몸통·머리 안쪽을 카드 배경색으로 */
 .illus .hero-gen { font-family: "Inter Tight", Pretendard, sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; fill: var(--text); stroke: none; }
 /* 그림의 부분에 마우스를 올리면 그 부분만 또렷하게 (툴팁으로 이름) */
 .drawing-art .illus .part { transition: opacity 0.25s ease; }

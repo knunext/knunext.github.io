@@ -904,77 +904,140 @@
     return svg("0 0 600 190", b, "2.5D 패키지 단면: 기판과 BGA, 인터포저, 연산 다이, HBM 스택, 그 사이를 오가는 데이터");
   };
 
-  // AI 제조혁신: 6축 로봇팔 + 비전 카메라 + 롤러 컨베이어 + AGV
+  // AI 제조혁신: 산업용 6축 로봇팔(모터 하우징·평형 실린더·손목), 제어반, 비전 갠트리, 롤러 컨베이어, AGV
   I.heroFab = () => {
     let b = "";
-    b += Ln(16, 176, 586, 176) + hatchLine(16, 586, 176, 12);
-    // 로봇팔 (받침대, 회전부, 관절 3개, 그리퍼)
-    const bx = 112, by = 140;
-    let arm = R(bx - 30, by + 8, 60, 28, 2) + R(bx - 22, by - 4, 44, 12, 3) + Ln(bx - 30, by + 18, bx + 30, by + 18, "thin");
-    range(4).forEach((k) => (arm += C(bx - 22 + k * 14.7, by + 30, 1.6, "thin")));
-    const link = (L, w) => R(0, -w / 2, L, w, w / 2) + Ln(8, 0, L - 8, 0, "thin") + C(0, 0, w / 2 + 2) + C(0, 0, 3, "thin");
-    arm += `<g transform="translate(${bx} ${by - 8})"><g>${link(78, 16)}` +
-      `<animateTransform attributeName="transform" type="rotate" values="-118;-62;-62;-118;-118" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
-      `<g transform="translate(78 0)"><g>${link(66, 13)}` +
-      `<animateTransform attributeName="transform" type="rotate" values="96;70;70;96;96" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
-      `<g transform="translate(66 0)"><g>${link(22, 10)}<path d="M22 -10 V10 M22 -10 H34 M22 10 H34 M30 -10 V-4 M30 10 V4"/>` +
-      `<animateTransform attributeName="transform" type="rotate" values="58;30;30;58;58" keyTimes="0;0.3;0.5;0.8;1" dur="7s" repeatCount="indefinite"/>` +
+    b += Ln(10, 176, 590, 176) + hatchLine(10, 590, 176, 12);
+    // 제어반 (HMI 화면, 상태등)
+    let cab = R(14, 96, 40, 80, 2) + R(20, 104, 28, 18, 1) + Ln(20, 130, 48, 130, "thin") + Ln(20, 136, 48, 136, "thin") + R(22, 150, 10, 18, 1) + R(36, 150, 10, 18, 1);
+    cab += `<rect class="solid soft" x="22" y="106" width="24" height="14">${Blink(3, 0, 0.15, 0.6)}</rect>`;
+    [[26, "0"], [34, "-0.5"], [42, "-1"]].forEach(([x, d]) => (cab += `<circle class="solid" cx="${x}" cy="90" r="2">${Blink(1.5, +d, 0.2, 1)}</circle>`));
+    cab += Ln(26, 92, 26, 96, "thin") + Ln(34, 92, 34, 96, "thin") + Ln(42, 92, 42, 96, "thin");
+    b += Part("Robot controller (HMI)", cab);
+    // 로봇팔
+    const bx = 120, by = 150;
+    let base = P(`M${bx - 30} 176 L${bx - 26} ${by + 6} H${bx + 26} L${bx + 30} 176`) + R(bx - 22, by - 6, 44, 12, 3) + Ln(bx - 26, by + 14, bx + 26, by + 14, "thin");
+    range(5).forEach((k) => (base += C(bx - 20 + k * 10, 170, 1.4, "thin")));
+    base += P(`M${bx - 30} 172 Q${bx - 46} 172 ${bx - 52} 160 Q${bx - 60} 140 ${bx - 54} 124`, "thin");   // 케이블
+    const upper = // 위팔: 어깨 쪽이 넓고 팔꿈치 쪽이 좁은 테이퍼 + 평형 실린더
+      `<path d="M0 -13 L74 -9 Q80 -8 80 0 Q80 8 74 9 L0 13 Q-13 13 -13 0 Q-13 -13 0 -13 Z"/>` +
+      Ln(10, -6, 66, -4, "thin") + Ln(10, 6, 66, 4, "thin") +
+      `<path d="M2 -19 H34 Q37 -19 37 -16 Q37 -13 34 -13 H2 Z"/>` + Ln(37, -16, 52, -12.5, "thin") + C(52, -12, 1.8, "thin") + Ln(-2, -16, 2, -16, "thin") +   // 평형 실린더 (위팔 윗면)
+      C(0, 0, 10) + C(0, 0, 5, "thin") + C(0, 0, 1.6, "thin") + C(74, 0, 8) + C(74, 0, 3.5, "thin");
+    const fore = // 아래팔: 모터 뭉치 + 가늘어지는 팔 + 손목
+      `<path d="M-8 -10 H12 L60 -6 Q64 -5 64 0 Q64 5 60 6 L12 10 H-8 Z"/>` + R(-16, -12, 14, 24, 3) + Ln(16, 0, 56, 0, "thin") + C(60, 0, 5) + C(60, 0, 2, "thin");
+    const wrist = // 손목 + 그리퍼
+      R(0, -6, 14, 12, 2) + `<path d="M14 -9 H20 V9 H14 M20 -9 H30 V-4 H24 M20 9 H30 V4 H24"/>` + Ln(4, -6, 4, 6, "thin");
+    const KT = 'keyTimes="0;0.28;0.48;0.78;1" dur="8s" repeatCount="indefinite"';
+    let arm = base + `<g transform="translate(${bx} ${by - 12})"><g>${upper}` +
+      `<animateTransform attributeName="transform" type="rotate" values="-112;-58;-58;-112;-112" ${KT}/>` +
+      `<g transform="translate(74 0)"><g>${fore}` +
+      `<animateTransform attributeName="transform" type="rotate" values="98;72;72;98;98" ${KT}/>` +
+      `<g transform="translate(60 0)"><g>${wrist}` +
+      `<animateTransform attributeName="transform" type="rotate" values="54;30;30;54;54" ${KT}/>` +
       `</g></g></g></g></g></g>`;
-    b += Part("6-axis industrial robot arm", arm);
-    // 비전 카메라 (갠트리)
-    let vis = P("M300 176 V40 H388 V176", "thin") + R(332, 40, 24, 14, 2) + C(344, 58, 4);
-    vis += `<path class="dash" d="M344 62 L318 120 M344 62 L370 120">${Blink(2.4, 0, 0.25, 1)}</path>`;
-    b += Part("Machine vision (inspection camera)", vis);
-    // 롤러 컨베이어 + 이동하는 부품 상자
-    let cv = R(232, 120, 280, 12, 6) + Ln(240, 140, 240, 176, "thin") + Ln(504, 140, 504, 176, "thin") + Ln(372, 132, 372, 176, "thin");
+    b += Part("6-axis industrial robot (J1–J6, counterbalance)", arm);
+    // 비전 검사 갠트리 (조명 링 + 카메라 + 시야)
+    let vis = P("M300 176 V44 H392 V176", "thin") + Ln(300, 54, 392, 54, "thin") + R(330, 44, 32, 14, 2) + E(346, 62, 12, 3) + R(340, 62, 12, 8, 1) + C(346, 72, 3);
+    vis += `<path class="dash" d="M346 76 L322 122 H370 Z">${Blink(2.4, 0, 0.2, 0.9)}</path>`;
+    b += Part("Machine vision (camera + ring light)", vis);
+    // 컨베이어: 프레임, 레일, 다리·가새, 구동 모터, 롤러
+    let cv = R(232, 120, 284, 12, 6) + Ln(232, 116, 516, 116, "thin") + Ln(232, 136, 516, 136, "thin");
+    [244, 372, 504].forEach((x) => (cv += Ln(x, 136, x, 176) + Ln(x - 6, 176, x + 6, 176)));
+    [244, 372, 504].forEach((x) => (cv += Ln(x, 146, x + (x < 500 ? 12 : -12), 136, "thin")));        // 다리 보강재
+    cv += R(500, 138, 22, 16, 2) + C(511, 146, 4, "thin") + Ln(516, 128, 511, 138, "thin");   // 구동 모터
     range(10).forEach((k) => {
-      const cx = 242 + k * 29.5;
+      const cx = 244 + k * 29.6;
       cv += C(cx, 126, 5.2) + `<g>${Ln(cx - 4, 126, cx + 4, 126, "thin")}${Ln(cx, 122, cx, 130, "thin")}${Spin(cx, 126, 1.2)}</g>`;
     });
-    [0, -2.4, -4.8].forEach((d) => {
-      cv += `<g>${R(-15, -22, 30, 22, 1)}${Ln(-15, -14, 15, -14, "thin")}${Ln(0, -22, 0, -14, "thin")}` +
-        `<animateTransform attributeName="transform" type="translate" values="246 120;496 120" dur="7.2s" begin="${d}s" repeatCount="indefinite"/>` +
-        `${Fade(7.2, d, "0;1;1;0", "0;0.05;0.9;1")}</g>`;
+    [0, -2.6, -5.2].forEach((d) => {
+      cv += `<g>${R(-16, -22, 32, 22, 1)}${Ln(-16, -15, 16, -15, "thin")}${Ln(0, -22, 0, -15, "thin")}${R(-10, -11, 12, 7)}` +
+        `<animateTransform attributeName="transform" type="translate" values="248 120;498 120" dur="7.8s" begin="${d}s" repeatCount="indefinite"/>` +
+        `${Fade(7.8, d, "0;1;1;0", "0;0.05;0.9;1")}</g>`;
     });
-    b += Part("Roller conveyor with parts", cv);
-    // AGV (왕복)
-    let agv = R(-30, -18, 60, 14, 3) + R(-20, -28, 40, 10, 1) + C(-18, -2, 5) + C(18, -2, 5) + Ln(-26, -12, 26, -12, "thin");
-    agv += `<circle class="solid" cx="24" cy="-11" r="1.8">${Blink(0.8, 0, 0.2, 1)}</circle>`;
-    b += Part("AGV (autonomous transport)", `<g>${agv}<animateTransform attributeName="transform" type="translate" values="540 176;560 176;540 176" dur="5s" repeatCount="indefinite"/></g>`);
-    b += lab(112, 20, "6-AXIS ARM", "middle") + lab(344, 24, "VISION", "middle") + lab(438, 156, "CONVEYOR", "middle") + lab(560, 142, "AGV", "middle");
-    return svg("0 0 600 190", b, "6축 로봇팔이 부품을 옮기고, 비전 카메라가 검사하고, 롤러 컨베이어와 AGV가 부품을 나르는 제조 셀");
+    b += Part("Belt-roller conveyor (frame, drive motor)", cv);
+    // AGV: 낮은 차체, 라이다, 바퀴, 상태등, 팔레트 위 상자
+    let agv = R(-34, -16, 68, 12, 3) + R(-26, -22, 52, 6, 1) + R(-18, -36, 30, 14, 1) + Ln(-18, -29, 12, -29, "thin") +
+      C(-22, -2, 4.5) + C(22, -2, 4.5) + C(0, -2, 3, "thin") + R(26, -24, 6, 6, 1) + Ln(29, -24, 29, -28, "thin");
+    agv += `<circle class="solid" cx="-28" cy="-10" r="1.8">${Blink(0.8, 0, 0.2, 1)}</circle>`;
+    b += Part("AGV with LiDAR and pallet", `<g>${agv}<animateTransform attributeName="transform" type="translate" values="548 176;566 176;548 176" dur="5s" repeatCount="indefinite"/></g>`);
+    b += lab(34, 84, "HMI", "middle") + lab(120, 20, "6-AXIS ROBOT", "middle") + lab(346, 36, "VISION", "middle") + lab(436, 160, "CONVEYOR", "middle") + lab(556, 128, "AGV", "middle");
+    return svg("0 0 600 190", b, "제어반, 6축 산업용 로봇팔, 비전 검사 갠트리, 롤러 컨베이어와 AGV가 있는 제조 셀");
   };
 
-  // 국방 M&S + AX: 궤도 차량, 레이더, 쿼드콥터 드론, 데이터 링크
+  // 국방 M&S + AX: 주력전차(오른쪽을 향함), 레이더, 쿼드콥터, 고정익 무인기, 데이터 링크
   I.heroDefense = () => {
     let b = "";
-    b += Ln(16, 172, 586, 172) + hatchLine(16, 586, 172, 12);
-    // 궤도 차량 (차체, 포탑, 포신, 보기륜, 궤도)
-    let tk = P("M60 150 L76 128 H220 L238 150 Z") + P("M116 128 L124 112 H186 L196 128") + Ln(196, 118, 262, 112) + Ln(196, 122, 262, 116) + R(258, 110, 8, 8, 1);
-    tk += R(48, 148, 202, 22, 11) + Ln(150, 112, 150, 96, "thin") + C(150, 94, 2, "thin") + R(132, 116, 14, 6, 1);
-    range(6).forEach((k) => {
-      const cx = 72 + k * 30;
-      tk += C(cx, 159, 8) + `<g>${C(cx, 159, 3, "thin")}${Ln(cx - 6, 159, cx + 6, 159, "thin")}${Spin(cx, 159, 2.4)}</g>`;
-    });
-    range(3).forEach((k) => (tk += C(98 + k * 44, 146, 2.4, "thin")));
-    b += Part("Tracked armored vehicle", tk);
-    // 레이더 (회전하는 탐지 범위)
-    let rd = R(318, 140, 54, 30, 2) + Ln(345, 140, 345, 116) + P("M330 116 Q345 98 360 116 Z") + C(328, 170, 0.1);
-    rd += `<g><path class="dash" d="M345 108 L392 84 A54 54 0 0 1 398 112 Z"/><animateTransform attributeName="transform" type="rotate" values="-35 345 108;35 345 108;-35 345 108" dur="5s" repeatCount="indefinite"/></g>`;
-    b += Part("Radar · C2 node", rd);
-    // 쿼드콥터 (모터, 프로펠러, 짐벌 카메라, 시야)
-    const prop = (x, d) => `<ellipse cx="${x}" cy="-12" rx="16" ry="2"><animate attributeName="rx" values="16;4;16" dur="0.14s" begin="${d}s" repeatCount="indefinite"/></ellipse>`;
-    let dr = R(-22, -6, 44, 12, 4) + Ln(-22, 0, -46, -8) + Ln(22, 0, 46, -8) + Ln(-46, -8, -46, -12) + Ln(46, -8, 46, -12);
-    dr += prop(-46, 0) + prop(46, -0.07) + R(-6, 6, 12, 8, 2) + C(0, 10, 2.4, "thin") + Ln(-12, 6, -16, 14, "thin") + Ln(12, 6, 16, 14, "thin");
-    dr += `<path class="dash" d="M0 14 L-34 74 M0 14 L34 74">${Blink(2, 0, 0.3, 1)}</path>`;
-    b += Part("Quadcopter drone (ISR)", `<g>${dr}<animateTransform attributeName="transform" type="translate" values="470 48;476 40;470 48" dur="3.2s" repeatCount="indefinite"/></g>`);
-    // 고정익 무인기 (멀리서 지나감)
-    let fw = P("M-24 0 H22 Q28 0 30 -1 M2 0 L-6 -15 H-1 L10 0 L-1 15 H-6 Z M-18 0 L-24 -6 H-21 L-14 0 L-21 6 H-24 Z");   // 위에서 본 고정익 무인기
-    b += Part("Fixed-wing UAV", `<g>${fw}<animateTransform attributeName="transform" type="translate" values="40 30;580 18" dur="14s" repeatCount="indefinite"/>${Fade(14, 0, "0;0.9;0.9;0", "0;0.08;0.9;1")}</g>`);
-    // 데이터 링크
-    b += Part("Tactical data links", `<path d="M150 94 Q300 30 462 46" style="stroke-dasharray:4 6">${Flow(1.2)}</path><path d="M345 98 Q420 70 462 54" style="stroke-dasharray:4 6">${Flow(1)}</path>`);
-    b += lab(150, 188, "", "middle") + lab(345, 82, "RADAR", "middle") + lab(470, 18, "UAS · ISR", "middle") + lab(150, 104, "", "middle");
-    return svg("0 0 600 190", b, "궤도 차량, 회전하는 레이더, 감시 드론과 고정익 무인기가 전술 데이터 링크로 연결된 장면");
+    b += Ln(10, 174, 590, 174) + hatchLine(10, 590, 174, 12);
+    // ---- 궤도와 바퀴
+    let tr = P("M44 150 Q40 172 62 172 H242 Q262 172 260 150 Q258 142 248 140 H52 Q44 141 44 150 Z");
+    tr += `<path d="M62 172 H242" style="stroke-dasharray:2 4;stroke-width:3">${Flow(1.2)}</path>`;              // 접지 궤도판
+    tr += `<path class="thin" d="M52 143 H248" style="stroke-dasharray:2 4">${Flow(1.2)}</path>`;                   // 위쪽 궤도
+    const wheel = (x, y, r) => `<g>${C(x, y, r)}${C(x, y, r * 0.62, "thin")}${C(x, y, r * 0.22)}` +
+      range(6).map((k) => { const a = k * Math.PI / 3; return C((x + r * 0.42 * Math.cos(a)).toFixed(1), (y + r * 0.42 * Math.sin(a)).toFixed(1), 0.9, "thin"); }).join("") +
+      `${Spin(x, y, 3)}</g>`;
+    range(7).forEach((k) => (tr += wheel(76 + k * 25, 160, 10)));
+    tr += `<g>${C(54, 152, 9)}${range(10).map((k) => { const a = k * Math.PI / 5; return Ln((54 + 6 * Math.cos(a)).toFixed(1), (152 + 6 * Math.sin(a)).toFixed(1), (54 + 9 * Math.cos(a)).toFixed(1), (152 + 9 * Math.sin(a)).toFixed(1), "thin"); }).join("")}${Spin(54, 152, 3)}</g>`;   // 구동륜 (뒤)
+    tr += wheel(250, 152, 8);                                                                                       // 유도륜 (앞)
+    // ---- 차체 (측면 장갑 스커트, 전면 경사)
+    let hull = P("M38 124 H252 L276 132 L268 146 H44 L38 138 Z") + Ln(38, 130, 266, 130, "thin");
+    [70, 100, 130, 160, 190, 220, 246].forEach((x) => (hull += Ln(x, 130, x, 146, "thin")));
+    range(12).forEach((k) => (hull += C(54 + k * 18, 141, 0.9, "thin")));
+    hull += R(150, 133, 34, 7, 1) + R(196, 133, 30, 7, 1);                                                          // 측면 상자
+    hull += P("M36 124 V112 H44 V124") + Ln(30, 106, 30, 124, "thin") + Ln(28, 106, 32, 106, "thin");              // 후방 견인 고리·안테나 받침
+    // ---- 포탑 (쐐기형 전면 장갑, 바스켓, 조준경, 해치, 연막탄 발사기, 안테나)
+    let tur = P("M86 124 V104 L96 94 H188 L232 104 L214 118 L200 124 Z") + P("M188 94 L214 104 L200 118", "thin");
+    tur += Ln(96, 104, 186, 104, "thin") + Ln(120, 94, 120, 124, "thin") + Ln(160, 94, 160, 124, "thin");
+    tur += `<path class="thin" d="M72 100 H86 V122 H72 Z M72 106 H86 M72 112 H86 M72 118 H86 M78 100 V122"/>`;      // 뒤쪽 짐 바스켓
+    tur += R(166, 82, 16, 12, 2) + Ln(170, 82, 170, 76, "thin") + R(166, 72, 14, 6, 1);                              // 조준경
+    tur += E(132, 92, 10, 2.5) + R(126, 87, 12, 5, 1);                                                              // 해치
+    range(4).forEach((k) => (tur += P(`M${196 + k * 5} 106 l4 -4`, "thin")));                                      // 연막탄 발사기
+    tur += Ln(98, 94, 96, 58, "thin") + Ln(108, 94, 110, 66, "thin");                                               // 안테나
+    tur += R(124, 108, 30, 10, 1) + Ln(139, 108, 139, 118, "thin") + R(176, 96, 8, 4, 1) + R(146, 96, 8, 4, 1);   // 측면 수납함, 잠망경
+    // ---- 주포 (포방패, 열차폐 슬리브, 배연기, 포구)
+    let gun = R(222, 100, 18, 14, 2) + P("M240 104 H346 M240 110 H346");
+    [256, 272, 300, 318, 334].forEach((x) => (gun += Ln(x, 104, x, 110, "thin")));
+    gun += E(286, 107, 9, 5) + R(344, 102, 8, 10, 1) + Ln(348, 102, 348, 112, "thin");
+    b += Part("Main battle tank (tracks, road wheels, skirts)", tr + hull) + Part("Turret · gun (wedge armor, sights)", tur + gun);
+    // ---- 레이더 차량 (8x8 트럭, 오른쪽에 운전실, 가운데 세운 AESA 레이더 판이 방위각으로 회전)
+    let rt = Ln(376, 148, 560, 148) + R(378, 106, 92, 42, 2);                                                       // 차대, 뒤쪽 장비 셸터
+    [400, 424, 448].forEach((x) => (rt += Ln(x, 106, x, 148, "thin")));
+    rt += R(384, 114, 12, 8, 1) + R(454, 114, 10, 22, 1) + `<path class="thin" d="M380 102 H468 M384 102 V106 M404 102 V106 M424 102 V106 M444 102 V106 M464 102 V106"/>`;   // 통풍구, 문, 난간
+    rt += P("M474 148 V104 H534 L556 118 V148") + P("M522 108 H532 L550 120 V132 H522 Z", "thin") + R(482, 112, 16, 18, 1) + Ln(474, 136, 556, 136, "thin");   // 운전실, 앞유리, 옆창
+    range(4).forEach((k) => (rt += Ln(546, 138 + k * 2.4, 556, 138 + k * 2.4, "thin")));                             // 그릴
+    rt += R(552, 144, 8, 6, 1);                                                                                      // 범퍼
+    const tire = (x) => `<g>${C(x, 160, 11)}${C(x, 160, 6, "thin")}${C(x, 160, 2)}${Ln(x - 6, 160, x + 6, 160, "thin")}${Spin(x, 160, 2.8)}</g>`;
+    [394, 420, 496, 522].forEach((x) => (rt += tire(x)));
+    rt += Ln(382, 106, 380, 56, "thin") + Ln(466, 106, 468, 64, "thin");                                             // 안테나
+    // 레이더 판: 회전을 폭 변화로 표현
+    let panel = R(-22, -30, 44, 56, 2);
+    range(5).forEach((k) => (panel += Ln(-22, -30 + (k + 1) * 9.3, 22, -30 + (k + 1) * 9.3, "thin")));
+    range(3).forEach((k) => (panel += Ln(-22 + (k + 1) * 11, -30, -22 + (k + 1) * 11, 26, "thin")));
+    rt += R(418, 98, 18, 8, 1) + Ln(427, 98, 427, 90);                                                               // 회전대
+    rt += `<g transform="translate(427 62)"><g>${panel}<animateTransform attributeName="transform" type="scale" values="1 1;0.12 1;-1 1;0.12 1;1 1" dur="8s" repeatCount="indefinite"/></g></g>`;
+    rt += `<path class="dash" d="M450 58 L494 36 M450 64 L498 66">${Blink(2.4, 0, 0.15, 0.9)}</path>`;              // 탐지 빔
+    b += Part("Radar vehicle (8x8, rotating AESA)", rt);
+    // ---- 쿼드콥터 (X자 프레임, 배터리, 짐벌 카메라, 2엽 프로펠러, 착륙 다리)
+    const rotor = (x, y, d) => `<g>${E(x, y, 16, 2.4, "thin")}<line x1="${x - 15}" y1="${y}" x2="${x + 15}" y2="${y}" style="stroke-width:1.6"><animateTransform attributeName="transform" type="scale" values="1 1;-1 1;1 1" dur="0.18s" begin="${d}s" repeatCount="indefinite" additive="sum"/></line></g>`;
+    let qd = R(-13, -6, 26, 12, 3) + R(-9, -13, 18, 7, 1) + Ln(-6, -10, 6, -10, "thin");                             // 몸체, 배터리
+    [[-38, -8], [-28, 2], [38, -8], [28, 2]].forEach(([x, y]) => (qd += Ln(x < 0 ? -12 : 12, y < 0 ? -3 : 3, x, y) + R(x - 3, y - 5, 6, 6, 1)));   // 팔, 모터
+    qd += `<g transform="translate(-38 -12)">${rotor(0, 0, 0)}</g><g transform="translate(38 -12)">${rotor(0, 0, -0.05)}</g>` +
+      `<g transform="translate(-28 -2)">${rotor(0, 0, -0.09)}</g><g transform="translate(28 -2)">${rotor(0, 0, -0.13)}</g>`;
+    qd += R(4, 6, 10, 8, 2) + C(9, 10, 2.2, "thin") + Ln(-8, 6, -12, 16, "thin") + Ln(-4, 6, -2, 16, "thin") + Ln(-14, 16, 0, 16, "thin");   // 짐벌 카메라, 착륙 다리
+    qd += `<path class="dash" d="M9 14 L-6 52 M9 14 L26 52">${Blink(2, 0, 0.3, 1)}</path>`;
+    b += Part("Quadcopter (ISR)", `<g>${qd}<animateTransform attributeName="transform" type="translate" values="544 70;549 62;544 70" dur="3.2s" repeatCount="indefinite"/></g>`);
+    // ---- 고정익 무인기 (MALE급: 위성통신 돔 기수, 가는 동체, 긴 직선 날개, 역V 꼬리, 후방 추진 프로펠러, 센서 볼)
+    let uav = `<path d="M-50 -1 C-20 -3 8 -5 24 -7 C34 -14 48 -13 56 -5 Q60 1 52 5 C32 7 0 6 -40 3 L-50 1 Z"/>` +
+      Ln(30, -10, 30, 5, "thin") + Ln(-12, -4, -12, 5, "thin") + C(44, 10, 4.4) + Ln(44, 5, 44, 6, "thin") + C(45.5, 10, 1.4, "thin") +   // 동체, 패널선, 센서 볼
+      `<path d="M2 -4 L38 -24 H44 L12 -4 Z"/>` + `<path d="M-2 3 L-44 24 H-36 L8 3 Z"/>` + Ln(-30, 17, -18, 11, "thin") +             // 먼 날개, 가까운 날개, 플랩선
+      `<path d="M-26 13 h-10 l-2 2 l2 2 h10 Z" class="thin"/>` +                                                                        // 날개 아래 장착물
+      `<path d="M-42 -1 L-54 -16 H-50 L-38 -1 Z"/><path d="M-42 2 L-52 14 H-48 L-38 2 Z"/>` +                                           // 역V 꼬리
+      `<ellipse cx="-55" cy="0" rx="1.6" ry="10"><animate attributeName="ry" values="10;2;10" dur="0.12s" repeatCount="indefinite"/></ellipse>` + C(-53, 0, 1.6);
+    b += Part("MALE UAV (fixed-wing)", `<g>${uav}<animateTransform attributeName="transform" type="translate" values="40 30;600 22" dur="16s" repeatCount="indefinite"/>${Fade(16, 0, "0;0.95;0.95;0", "0;0.08;0.88;1")}</g>`);
+    // ---- 데이터 링크
+    b += Part("Tactical data links", `<path d="M108 66 Q330 0 520 56" style="stroke-dasharray:4 6">${Flow(1.2)}</path><path d="M450 52 Q490 40 520 60" style="stroke-dasharray:4 6">${Flow(1)}</path>`);
+    b += lab(427, 24, "AESA RADAR", "middle") + lab(548, 30, "UAS · ISR", "middle");
+    return svg("0 0 600 190", b, "오른쪽을 향한 주력전차, 회전하는 레이더, 감시 드론과 고정익 무인기가 전술 데이터 링크로 연결된 장면");
   };
 
   // Project Ouroboros: 비늘 마디로 된 뱀 고리가 돌고, 세대(n)가 올라감. 왼쪽 설계, 오른쪽 피드백
@@ -1037,36 +1100,55 @@
     return svg("0 0 600 190", b, "비늘 마디로 된 뱀 고리가 천천히 돌며 세대가 n에서 n+1로 올라가고, 왼쪽에서 설계가 그려지고 오른쪽 성능 막대가 높아지는 모습");
   };
 
-  // Orbit AI Datacenter: 정밀한 연산 위성(버스·태양광 패널·방열판·광통신 단말·안테나) + 군집 + 지구
+  // Orbit AI Datacenter: 지구 곡면과 대기, 지평선의 태양, 큰 태양광 날개 두 장과 세로 판형 본체를 가진 연산 위성(원근), 군집, 광통신
   I.heroOrbit = () => {
     let b = "";
-    [[30, 22], [120, 14], [520, 20], [580, 70], [20, 98], [410, 12]].forEach(([x, y]) => (b += P(`M${x - 3} ${y} H${x + 3} M${x} ${y - 3} V${y + 3}`, "thin")));
-    b += Part("Earth", P("M0 186 Q300 132 600 186") + P("M0 174 Q300 118 600 174", "dash"));
-    // 주 위성
-    const sx = 300, sy = 78;
-    let sat = R(sx - 26, sy - 22, 52, 44, 2) + Ln(sx - 26, sy - 8, sx + 26, sy - 8, "thin") + Ln(sx - 26, sy + 8, sx + 26, sy + 8, "thin");
-    range(3).forEach((k) => (sat += `<rect class="solid" x="${sx - 18 + k * 13}" y="${sy - 4}" width="6" height="8">${Blink(1.3, -k * 0.4, 0.15, 1)}</rect>`));
-    [[-1], [1]].forEach(([d]) => {
-      const x0 = d < 0 ? sx - 26 - 14 - 150 : sx + 26 + 14;
-      sat += Ln(d < 0 ? sx - 26 : sx + 26, sy, d < 0 ? sx - 40 : sx + 40, sy) + R(x0, sy - 18, 150, 36, 1);
-      range(9).forEach((k) => (sat += Ln(x0 + (k + 1) * 15, sy - 18, x0 + (k + 1) * 15, sy + 18, "thin")));
-      sat += Ln(x0, sy, x0 + 150, sy, "thin");
+    [[24, 18], [110, 10], [440, 14], [586, 46], [16, 70], [520, 8]].forEach(([x, y]) => (b += P(`M${x - 3} ${y} H${x + 3} M${x} ${y - 3} V${y + 3}`, "thin")));
+    // 지구: 큰 곡면 + 대기층 + 지평선의 태양
+    b += Part("Earth limb and atmosphere", P("M0 112 Q300 40 600 150") + P("M0 104 Q300 30 600 142", "dash") + P("M0 124 Q300 56 600 162", "thin"));
+    let sun = "";
+    range(12).forEach((k) => {
+      const a = (k * 30) * Math.PI / 180, r1 = 8, r2 = k % 2 ? 22 : 34;
+      sun += Ln((318 + r1 * Math.cos(a)).toFixed(1), (66 + r1 * Math.sin(a)).toFixed(1), (318 + r2 * Math.cos(a)).toFixed(1), (66 + r2 * Math.sin(a)).toFixed(1), "thin");
     });
-    sat += R(sx - 14, sy - 42, 28, 20, 1);
-    range(5).forEach((k) => (sat += Ln(sx - 10 + k * 5, sy - 40, sx - 10 + k * 5, sy - 24, "thin")));
-    [-6, 0, 6].forEach((dx, k) => (sat += `<path d="M${sx + dx} ${sy - 46} q-3 -5 0 -10 q3 -5 0 -10" style="stroke-dasharray:3 3">${Flow(1 + k * 0.2)}</path>`));
-    sat += P(`M${sx - 8} ${sy + 22} L${sx - 14} ${sy + 34} H${sx + 14} L${sx + 8} ${sy + 22}`) + C(sx + 20, sy + 30, 5, "thin");
-    b += Part("Compute satellite (bus, solar arrays, radiator, optical terminal)", sat);
-    // 군집 (작은 위성)
-    const mini = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${R(-8, -6, 16, 12, 1)}${R(-34, -4, 22, 8)}${R(12, -4, 22, 8)}${Ln(-12, 0, -8, 0)}${Ln(8, 0, 12, 0)}</g>`;
-    b += Part("Constellation (formation flying)", mini(70, 118, 0.9) + mini(528, 112, 0.9) + mini(150, 52, 0.6) + mini(470, 44, 0.6));
+    b += Part("Sun at the horizon", `<g>${C(318, 66, 6)}${sun}${Blink(4, 0, 0.45, 1)}</g>`);
+    // 태양광 날개 (원근: 왼쪽 날개는 가깝고 크게, 오른쪽은 아래로 멀어지며)
+    const wing = (pts, folds, id) => {
+      const [p1, p2, p3, p4] = pts;   // 위왼, 위오, 아래오, 아래왼
+      const lerp = (a, c, t) => [a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t];
+      let g = `<path class="ouro-body" d="M${p1} L${p2} L${p3} L${p4} Z"/>`;
+      [0.28, 0.72].forEach((t) => { const a = lerp(p1, p4, t), c = lerp(p2, p3, t); g += Ln(a[0].toFixed(1), a[1].toFixed(1), c[0].toFixed(1), c[1].toFixed(1), "thin"); });
+      range(11).forEach((k) => { const t = (k + 1) / 12, a = lerp(p1, p2, t), c = lerp(p4, p3, t); g += `<line class="cell" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${c[0].toFixed(1)}" y2="${c[1].toFixed(1)}"/>`; });
+      // 접힘선: 가운데 줄을 따라 마름모가 이어짐
+      const ptAt = (t, v) => lerp(lerp(p1, p2, t), lerp(p4, p3, t), v);
+      let zu = "M" + ptAt(0, 0.5).map((v) => v.toFixed(1)).join(" "), zd = zu;
+      range(folds).forEach((k) => {
+        const tm = (k + 0.5) / folds, te = (k + 1) / folds;
+        zu += " L" + ptAt(tm, 0.42).map((v) => v.toFixed(1)).join(" ") + " L" + ptAt(te, 0.5).map((v) => v.toFixed(1)).join(" ");
+        zd += " L" + ptAt(tm, 0.58).map((v) => v.toFixed(1)).join(" ") + " L" + ptAt(te, 0.5).map((v) => v.toFixed(1)).join(" ");
+      });
+      g += P(zu, "thin") + P(zd, "thin");
+      // 패널 위를 지나가는 반사광
+      g += `<clipPath id="${id}"><path d="M${p1} L${p2} L${p3} L${p4} Z"/></clipPath>` +
+        `<g clip-path="url(#${id})"><line class="glint" x1="0" y1="-20" x2="-30" y2="200"><animateTransform attributeName="transform" type="translate" values="${p1[0] - 40} 0;${p2[0] + 60} 0" dur="6s" repeatCount="indefinite"/></line></g>`;
+      return g;
+    };
+    // 양쪽 날개: 같은 높이·같은 크기로 본체를 중심으로 대칭
+    let sat = wing([[50, 62], [268, 62], [268, 122], [50, 122]], 6, "orb-wa") + wing([[332, 62], [550, 62], [550, 122], [332, 122]], 6, "orb-wb");
+    // 본체: 세로로 긴 판 + 가운데 버스
+    sat += `<path class="ouro-body" d="M292 16 H308 V170 H292 Z"/>` + Ln(297, 22, 297, 164, "thin") + Ln(303, 22, 303, 164, "thin");
+    range(15).forEach((k) => { const y = (16 + 154 * (k + 1) / 16).toFixed(1); sat += `<line class="cell" x1="292" y1="${y}" x2="308" y2="${y}"/>`; });
+    sat += R(283, 84, 34, 16, 2) + Ln(268, 92, 283, 92, "thin") + Ln(317, 92, 332, 92, "thin");
+    range(3).forEach((k) => (sat += `<rect class="solid" x="${288 + k * 9}" y="89" width="5" height="6">${Blink(1.3, -k * 0.4, 0.15, 1)}</rect>`));
+    sat += C(300, 112, 4, "thin") + Ln(300, 100, 300, 108, "thin");                                                // 광통신 단말
+    b += Part("Compute satellite (solar wings, panel bus, optical terminal)", sat);
+    // 멀리 있는 군집 + 광통신 링크
+    const mini = (x, y, sc) => `<g transform="translate(${x} ${y}) scale(${sc})">${P("M-30 -10 L-4 -6 L-4 6 L-30 2 Z M30 -6 L4 -2 L4 10 L30 6 Z")}${P("M-2 -16 L2 -17 L1 16 L-3 17 Z")}</g>`;
+    b += Part("Constellation (formation flying)", mini(566, 154, 0.6) + mini(484, 28, 0.45) + mini(40, 158, 0.6));
     b += Part("Optical inter-satellite links",
-      `<path d="M104 116 L160 86" style="stroke-dasharray:5 5">${Flow(0.9)}</path><path d="M494 110 L450 86" style="stroke-dasharray:5 5">${Flow(0.9)}</path>` +
-      `<path d="M163 54 L274 66" style="stroke-dasharray:5 5">${Flow(1.1)}</path><path d="M454 46 L326 66" style="stroke-dasharray:5 5">${Flow(1.1)}</path>`);
-    // 지상국 다운링크
-    b += Part("Ground station downlink", P("M392 156 Q400 166 408 156") + Ln(400, 162, 400, 170) + `<path d="M${sx + 20} ${sy + 36} L400 154" style="stroke-dasharray:4 5">${Flow(1.2)}</path>`);
-    b += lab(300, 186, "", "middle") + lab(sx, 14, "RADIATOR", "middle") + lab(120, 140, "ISL", "middle");
-    return svg("0 0 600 190", b, "태양광 패널과 방열판을 단 연산 위성이 작은 위성들과 광통신으로 연결되어 궤도를 날고, 지상국으로 데이터를 내려보내는 모습");
+      `<path d="M304 112 L548 150" style="stroke-dasharray:5 5">${Flow(0.9)}</path><path d="M300 16 L470 28" style="stroke-dasharray:5 5">${Flow(1.1)}</path><path d="M296 112 L58 156" style="stroke-dasharray:5 5">${Flow(1)}</path>`);
+    b += lab(50, 52, "SOLAR ARRAY") + lab(300, 184, "COMPUTE BUS", "middle") + lab(440, 146, "ISL", "middle");
+    return svg("0 0 600 190", b, "지구 곡면 위, 지평선의 태양을 등지고 큰 태양광 날개 두 장과 세로 판형 본체를 펼친 연산 위성이 군집과 광통신으로 연결된 모습");
   };
 
   window.ILLUS = I;

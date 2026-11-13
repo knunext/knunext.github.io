@@ -26,14 +26,15 @@ LAB.site = {
 
   // '탐험 분야'. 메인 카드 오른쪽 라인 드로잉 옆에 표시됩니다.
   // illustration: chip | robot | defense | ouroboros | orbitSide (assets/js/illustrations.js)
+  // side: "left" 인 항목은 왼쪽 소개 문장 아래, 나머지는 오른쪽에 놓임
   explore: {
     title: "탐험 분야",
     items: [
-      { name: "AI 반도체", illustration: "chip", link: "research.html#ai-accelerator" },
-      { name: "AI 제조혁신", illustration: "robot", link: "research.html#mns-ax" },
-      { name: "국방 M&S + AX", illustration: "defense", link: "research.html#defense-mns" },
-      { name: "Project Ouroboros", illustration: "ouroboros", link: "research.html#ouroboros" },
-      { name: "Orbit AI Datacenter", illustration: "orbitSide", link: "research.html#orbital-dc" }
+      { name: "AI 반도체", illustration: "heroChip", link: "research.html#ai-accelerator" },
+      { name: "AI 제조혁신", illustration: "heroFab", link: "research.html#mns-ax" },
+      { name: "국방 M&S + AX", illustration: "heroDefense", link: "research.html#defense-mns" },
+      { name: "Project Ouroboros", illustration: "heroOuro", link: "research.html#ouroboros", side: "left" },
+      { name: "Orbit AI Datacenter", illustration: "heroOrbit", link: "research.html#orbital-dc", side: "left" }
     ]
   }
 };

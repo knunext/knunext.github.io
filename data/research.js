@@ -28,6 +28,7 @@ LAB.research = {
       id: "ai-accelerator",
       short: "PIM for Bioinformatics", // 상단 칩에 표시되는 짧은 이름
       illustration: "pim",
+      scene: "bio3d",            // 위쪽 카드 영역 3D: 시퀀서 → HBM-PIM 패키지 (assets/js/bio-scene.js)
       labels: ["Genome", "Memory", "Accelerator"],
       wordmark: ["Bio", "PIM"],
       category: "AI 가속기",
@@ -55,6 +56,16 @@ LAB.research = {
       id: "near-far-memory",
       short: "Near-Far Memory", // 상단 칩에 표시되는 짧은 이름
       illustration: "nearfar",
+      scene: "nearfar3d",            // 위쪽 카드 영역 3D: GPU·HBM(Near) ↔ CXL 메모리(Far), LLM/VLM/VLA (assets/js/nearfar-scene.js)
+      // 위 트랜스포머 그림 옆에 세로로 놓이는 모델 로고 (순서대로 표시). 로고 파일은 assets/img/models/
+      sceneLogosLabel: "가속 대상 모델",
+      sceneLogos: [
+        { name: "GPT", logo: "assets/img/models/gpt.png" },
+        { name: "Claude", logo: "assets/img/models/claude.png" },
+        { name: "Gemini", logo: "assets/img/models/gemini.png" },
+        { name: "Qwen", logo: "assets/img/models/qwen.png" },
+        { name: "DeepSeek", logo: "assets/img/models/deepseek.png" }
+      ],
       labels: ["Multi-GPU", "CXL", "Far Memory"],
       wordmark: ["Near", "Far"],
       category: "Collaboration",
@@ -85,6 +96,7 @@ LAB.research = {
       id: "defense-mns",
       short: "Defense M&S", // 상단 칩에 표시되는 짧은 이름
       illustration: "wargame",
+      scene: "wargame3d",            // 위쪽 카드 영역 3D: 헥스 지도 위 전장 (assets/js/wargame-scene.js)
       labels: ["Wargame", "M&S", "LLM Agent"],
       wordmark: ["War", "Game"],
       category: "국방 AX + 국방 M&S",
@@ -114,6 +126,7 @@ LAB.research = {
       id: "mns-ax",
       short: "M&S for AX", // 상단 칩에 표시되는 짧은 이름
       illustration: "sim",
+      scene: "factory3d",          // 위쪽 카드 영역을 3D 제조·물류 장면으로 (assets/js/factory-scene.js)
       labels: ["Logistics", "Manufacturing", "Space"],
       wordmark: ["Sim", "AX"],
       category: "제조/물류 AX",
@@ -148,6 +161,7 @@ LAB.research = {
       id: "ouroboros",
       short: "Project Ouroboros", // 상단 칩에 표시되는 짧은 이름
       illustration: "loop",
+      scene: "ouroboros3d",            // 위쪽 카드 영역 3D: 꼬리를 문 뱀 + 설계·실행·피드백·개선 루프 (assets/js/ouroboros-scene.js)
       labels: ["Design", "Feedback", "Improve"],
       wordmark: ["Ouro", "boros"],
       category: "Agentic AI",
@@ -176,6 +190,7 @@ LAB.research = {
       id: "heterogeneous",
       short: "Heterogeneous Computing", // 상단 칩에 표시되는 짧은 이름
       illustration: "hetero",
+      scene: "hetero3d",            // 위쪽 카드 영역 3D: xPU 칩렛 + NoC + 다중 계층 메모리 (assets/js/hetero-scene.js)
       labels: ["xPU", "Memory", "NoC"],
       wordmark: ["Hetero", "HPC"],
       category: "Collaboration",
@@ -210,6 +225,7 @@ LAB.research = {
       id: "copyright-ai",
       short: "Content Provenance", // 상단 칩에 표시되는 짧은 이름
       illustration: "provenance",
+      scene: "provenance3d",            // 위쪽 카드 영역 3D: 원본·변형·AI 생성 이미지와 C2PA 매니페스트 (assets/js/provenance-scene.js)
       labels: ["C2PA", "AI Detection", "Reuse Tracing"],
       wordmark: ["Proven", "ance"],
       category: "문화 AX",
@@ -248,6 +264,7 @@ LAB.research = {
       id: "orbital-dc",
       short: "Orbital Data Center",
       illustration: "orbit",
+      scene: "orbit3d",            // 위쪽 카드 영역을 3D 사진풍 장면으로 (assets/js/orbit-scene.js)
       labels: ["Satellite", "Radiation", "Thermal"],
       wordmark: ["Orbit", "DC"],
       category: "Space Computing",

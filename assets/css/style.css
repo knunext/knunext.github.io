@@ -610,6 +610,70 @@ ul.clamp { display: block; max-height: 4.7em; }
 
 .wordmark-sm { font-size: clamp(2.4rem, 10.5cqi, 6.25rem); }
 
+/* 3D 배경 카드 (예: Orbital Data Center): 위쪽 영역을 카드 가장자리까지 꽉 채운 장면, 글자는 흰색으로 겹침 */
+.slide.has-scene .slide-top {
+  position: relative; isolation: isolate; align-content: space-between;
+  min-height: clamp(360px, 44cqi, 560px);
+  margin: calc(-1 * clamp(20px, 3.2vw, 44px)) calc(-1 * clamp(20px, 3.2vw, 44px)) 0;
+  padding: clamp(20px, 3.2vw, 44px);
+  border-radius: 6px 6px 0 0; overflow: hidden;
+  grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr;
+}
+.slide-scene {
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(120% 90% at 35% 60%, #1b2a44 0%, #070a12 55%, #020306 100%);   /* WebGL 이 안 될 때 */
+}
+.slide-scene canvas { display: block; width: 100%; height: 100%; }
+.slide-scene::after {   /* 글자가 잘 읽히도록 왼쪽 위를 살짝 어둡게 */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.18) 42%, rgba(0, 0, 0, 0) 65%);
+}
+.slide.has-scene .slide-top .label,
+.slide.has-scene .slide-title,
+.slide.has-scene .slide-title a { color: #F4F5F7; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45); }
+.slide.has-scene .slide-art { display: block; align-self: end; }
+.slide.has-scene .art-labels { display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; }
+.slide.has-scene .art-labels li { min-width: 7.5rem; border-top-color: rgba(244, 245, 247, 0.6); color: #F4F5F7; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5); }
+/* 밝은 3D 장면 (scene-light): 글자 어둡게, 왼쪽 위는 밝게 */
+.slide.scene-light .slide-scene::after { background: linear-gradient(100deg, rgba(240,242,245,0.85) 0%, rgba(240,242,245,0.35) 40%, rgba(240,242,245,0) 62%); }
+.slide.scene-light .slide-top .label,
+.slide.scene-light .slide-title,
+.slide.scene-light .slide-title a { color: #15171a; text-shadow: none; }
+.slide.scene-light .art-labels li { color: #15171a; border-top-color: rgba(21,23,26,0.45); text-shadow: none; }
+/* 장면 위 HTML 캡션 (scene-kit.js captions): 3D 위치를 따라다니는 큼직한 글자 상자 */
+.scene-caps { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.scene-cap { position: absolute; left: 0; top: 0; will-change: transform; }
+.scene-cap > * { position: absolute; left: 0; top: 0; }
+.scene-cap.cap-above > * { transform: translate(-50%, calc(-100% - 8px)); }
+.scene-cap.cap-below > * { transform: translate(-50%, 8px); }
+.scene-cap.cap-right > * { transform: translate(10px, -50%); }
+.scene-cap.cap-left > * { transform: translate(calc(-100% - 10px), -50%); }
+.scene-cap.cap-center > * { transform: translate(-50%, -50%); }
+.scene-cap.cap-fixed { left: auto; right: clamp(20px, 3.2vw, 44px); top: 46%; }
+.scene-cap.cap-fixed > * { position: static; transform: translateY(-50%); }
+.cap-box.cap-side { padding: 0; background: none; border: 0; box-shadow: none; text-align: right; font-size: clamp(20px, 3.4cqi, 38px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.cap-box.cap-side small { margin-top: 0.35em; font-size: clamp(11px, 1.3cqi, 14px); font-weight: 500; letter-spacing: 0; color: #4b5058; }
+.cap-box {
+  display: block; padding: 0.32em 0.62em 0.36em; white-space: nowrap;
+  font-family: "Inter Tight", Pretendard, "Pretendard Variable", Arial, sans-serif; font-size: clamp(12px, 1.6cqi, 17px); font-weight: 600; line-height: 1.2; letter-spacing: -0.005em;
+  color: #15171a; background: rgba(255, 255, 255, 0.9); border-left: 3px solid var(--cap, #15171a); border-radius: 2px;
+  box-shadow: 0 1px 8px rgba(20, 24, 30, 0.12);
+}
+.cap-box small { display: block; margin-top: 0.15em; font-size: 0.78em; font-weight: 500; color: #4b5058; }
+.cap-box.cap-title { padding: 0.1em 0.3em; font-size: clamp(18px, 3cqi, 32px); font-weight: 700; letter-spacing: -0.02em; background: none; border: 0; box-shadow: none; text-align: center; }
+.cap-box.cap-title small { font-size: 0.5em; font-weight: 500; letter-spacing: 0; }
+.cap-box.cap-plain { background: none; border: 0; box-shadow: none; padding: 0; }
+/* 장면 위 로고 목록 (예: Near-Far 의 가속 대상 모델). 장면이 있으면 3D 위치를 따라가고, 없으면 오른쪽 위에 놓임 */
+.scene-logos { position: absolute; right: clamp(20px, 3.2vw, 44px); top: clamp(20px, 3.2vw, 44px); z-index: 1; display: flex; flex-direction: column; gap: clamp(5px, 0.8cqi, 9px); margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.scene-cap > .scene-logos { right: auto; }
+.scene-logos li { display: block; }
+@container (max-width: 640px) {   /* 좁은 카드: 캡션은 한 줄만 */
+  .cap-box { font-size: 11px; padding: 0.25em 0.5em; }
+  .cap-box small { display: none; }
+  .cap-box.cap-title { font-size: 16px; }
+}
+.scene-logos img { display: block; max-width: none; width: clamp(26px, 3.6cqi, 40px); height: auto; border-radius: 22%; box-shadow: 0 2px 8px rgba(20, 24, 30, 0.18), 0 0 0 1px rgba(20, 24, 30, 0.08); }
+
 @container (max-width: 640px) {
   .slide-top { grid-template-columns: 1fr; min-height: 0; }
   .slide-art { grid-template-columns: 84px minmax(0, 1fr); }
@@ -1302,3 +1366,4 @@ html[data-theme="light"] .site-header.is-scrolled { border-bottom-color: var(--l
 .footer-inner a { color: var(--text); }
 .footer-copy { margin-top: 1.25rem; color: var(--text-3); }
 @media (max-width: 760px) { .footer-inner { grid-template-columns: 1fr; } }
+.scene-cap.is-on .cap-box { background: #1f6fff; color: #fff; border-left-color: #0b3fae; }

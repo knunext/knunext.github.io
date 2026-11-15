@@ -422,14 +422,17 @@
 
     track.innerHTML = topics.map((t, i) => {
       const firstList = (t.lists || []).find((l) => l.items && l.items.length);
-      return '<article class="slide" data-i="' + i + '" aria-label="' + (i + 1) + " / " + topics.length + ": " + esc(t.short || t.title) + '">' +
-        '<div class="slide-top"><div class="slide-copy">' +
+      return '<article class="slide' + (t.scene ? " has-scene" : "") + '" data-i="' + i + '" aria-label="' + (i + 1) + " / " + topics.length + ": " + esc(t.short || t.title) + '">' +
+        '<div class="slide-top">' + (t.scene ? '<div class="slide-scene" data-scene="' + esc(t.scene) + '" aria-hidden="true"></div>' : "") +
+        (t.sceneLogos && t.sceneLogos.length ? '<ul class="scene-logos" aria-label="' + esc(t.sceneLogosLabel || "") + '">' +
+          t.sceneLogos.filter((g) => g.logo).map((g) => '<li><img src="' + esc(g.logo) + '" alt="' + esc(g.name || "") + '" title="' + esc(g.name || "") + '"></li>').join("") + "</ul>" : "") +
+        '<div class="slide-copy">' +
         '<p class="label">' + esc(t.category || "") + "</p>" +
         '<h3 class="slide-title"><a href="#detail-' + esc(t.id) + '" data-detail="' + i + '">' + esc(t.subtitle || t.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></a></h3>' +
         "</div>" +
         '<div class="slide-art">' +
         (t.labels && t.labels.length ? '<ul class="art-labels">' + t.labels.map((l) => "<li>" + esc(l) + "</li>").join("") + "</ul>" : "") +
-        '<div class="art">' + art(t) + "</div></div></div>" +
+        (t.scene ? "" : '<div class="art">' + art(t) + "</div>") + "</div></div>" +   // 3D 배경이 있으면 선화는 생략
         '<div class="info-row">' +
         '<div class="info"><p class="caps">' + esc(t.title) + "</p></div>" +
         (firstList ? '<div class="info info-split"><p class="caps info-key">' + esc(firstList.label) + ':</p><ul class="caps arrow-list clamp">' + firstList.items.slice(0, 3).map((x) => "<li>" + x + "</li>").join("") + "</ul></div>" : '<div class="info"></div>') +

@@ -568,6 +568,7 @@ ul.clamp { display: block; max-height: 4.7em; }
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
+  align-items: flex-start;   /* 카드마다 내용 길이만큼 (짧은 카드에 빈 공간이 생기지 않게) */
 }
 .track::-webkit-scrollbar { display: none; }
 .track:focus-visible { outline-offset: -1px; }
@@ -692,24 +693,31 @@ ul.clamp { display: block; max-height: 4.7em; }
 }
 .arrow:disabled { color: var(--text-3); cursor: default; }
 
-/* 슬라이드 아래 상세 목록 */
-.topic-detail { border-bottom: 1px solid var(--line-2); }
-.detail:target .detail-main h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
-.detail {
+/* 슬라이드 안 상세: 워드마크 아래 가로선, 왼쪽(번호·한국어 명칭·영문 명칭·관련 수업) / 오른쪽(설명·과제·스폰서·파트너) */
+.slide-detail {
   display: grid;
-  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 2fr);
-  gap: 1.5rem clamp(24px, 5vw, 72px);
-  padding-block: clamp(28px, 4vw, 44px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 1.5rem clamp(24px, 5cqi, 64px);
+  margin-top: clamp(22px, 3.2cqi, 36px);
+  padding-top: clamp(20px, 3cqi, 32px);
   border-top: 1px solid var(--line-2);
-  scroll-margin-top: calc(var(--header-h) + 20px);
 }
-.detail-side .label { color: var(--text-2); font-size: 0.8rem; }
-.detail-art { margin-top: 1.25rem; max-width: 300px; }
+.sd-num { color: var(--text-2); }
+.sd-title { margin-top: 0.9rem; font-size: clamp(1.15rem, 2.3cqi, 1.55rem); font-weight: 500; letter-spacing: -0.025em; line-height: 1.3; }
+.sd-en { margin-top: 0.4rem; color: var(--text-2); font-size: 0.92rem; }
+.sd-main > .prose { max-width: 62ch; }
+.sd-main .info-block { margin-top: 1.4rem; }
+.sd-main .info-block:first-child { margin-top: 0; }
+.sd-logos { display: flex; flex-wrap: wrap; gap: 0 2.5rem; }
+.sd-logos:empty { display: none; }
+.sd-logos .sponsor-block { margin-top: 1.6rem !important; }
+.slide .note { background: var(--page); }
+.slide-detail .detail-rel { max-width: none; }
+.slide-detail:target .sd-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+@container (max-width: 640px) {
+  .slide-detail { grid-template-columns: 1fr; }
+}
 .credit { margin-top: 0.5rem; color: var(--text-3); font-size: 0.75rem; }
-.detail-main h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); letter-spacing: -0.025em; }
-.detail-en { margin-top: 0.4rem; color: var(--text-2); font-size: 0.95rem; }
-.detail-main .prose { margin-top: 1.1rem; }
-.detail-main .info-block { margin-top: 1.5rem; }
 /* Sponsor 로고 칸 (모든 연구 주제 공통 크기, 뉴스는 조금 작게) */
 .news-sponsors { margin-top: 1.1rem !important; }
 .news-sponsors .sponsor { width: 184px; height: 58px; padding: 12px 16px; }
@@ -744,8 +752,6 @@ a.sponsor:hover { border-color: var(--text); }
   .chips-row .chips::-webkit-scrollbar { display: none; }
   .chips-row .chip { flex: none; white-space: nowrap; }
   .chips-row .btn-box { align-self: flex-start; }
-  .detail { grid-template-columns: 1fr; }
-  .detail-art { max-width: 360px; }
 }
 
 /* =========================================================

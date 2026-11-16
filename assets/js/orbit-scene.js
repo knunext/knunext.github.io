@@ -2,7 +2,8 @@
  * Research 카드의 3D 배경: 궤도 AI 데이터센터 (three.js)
  * - 위성: 가운데 연산 모듈, 날개와 수직으로 세운 방열판, 트러스 끝의 태양광 날개 두 장
  * - <div data-scene="orbit3d"> 안에 그림. 카드가 화면에 보일 때만 움직이고, 마우스를 따라 시점이 살짝 바뀜
- * - 지구 텍스처: NASA Blue Marble 기반 (three.js 예제 텍스처, MIT) — assets/img/space/earth-textures.js 에 data URI 로
+ * - 지구 텍스처: Solar System Scope (NASA 자료 기반, CC BY 4.0), 4096 판 — assets/img/space/earth-textures.js 에 data URI 로
+ * - 지구는 직접 쓴 셰이더: 낮 지표, 바다 햇빛 반사, 고도 요철, 구름(별도 층)과 구름 그림자, 지평선 쪽 대기 연무
  * - WebGL 이 안 되면 CSS 배경(우주 그라데이션)만 남음
  */
 (function () {
@@ -44,20 +45,76 @@ function init(host) {
     scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xcfd8ff, size: 1.1, sizeAttenuation: false, transparent: true, opacity: 0.75 })));
   }
 
-  /* ---------- 지구 (지표, 구름, 대기 테두리) ---------- */
+  /* ---------- 지구: 햇빛 받는 낮 지표 (바다 반사광, 고도 요철, 구름과 구름 그림자, 대기 연무) ---------- */
   const earth = new THREE.Group();
   const R = 40;
   earth.position.set(0, -R - 1.25, -14);
-  earth.rotation.set(0.25, -1.9, 0);
+  const EROT = [-0.688, 2.476];   // 화면 가운데 아래가 한반도(북쪽이 지평선 쪽)가 되도록 맞춘 지구 자세
+  earth.rotation.set(EROT[0], EROT[1], 0);
   scene.add(earth);
+  // 햇빛 방향 (태양 쪽, 월드 좌표): 왼쪽 뒤 높은 곳 → 보이는 지표가 낮이고, 바다 위로 햇빛 반사가 생김
+  const sunDir = new THREE.Vector3(-0.5, 0.62, -0.6).normalize();
+  const dayTex = tex("day", true), brcTex = tex("brc", false);
+  const earthUniforms = { dayMap: { value: dayTex }, brcMap: { value: brcTex }, sunDir: { value: sunDir }, cloudOff: { value: 0 } };
+  // vE·vNo: 지표의 동쪽·북쪽 방향 (고도 요철로 법선을 기울일 때 씀)
+  const EARTH_VS = "varying vec2 vUv; varying vec3 vN; varying vec3 vP; varying vec3 vE; varying vec3 vNo; void main(){ vUv = uv; vec4 wp = modelMatrix * vec4(position, 1.0); vP = wp.xyz; vec3 n = normalize(normal); vec3 e = normalize(cross(vec3(0.0, 1.0, 0.0), n) + vec3(1e-5, 0.0, 0.0)); mat3 m = mat3(modelMatrix); vN = normalize(m * n); vE = normalize(m * e); vNo = normalize(m * cross(n, e)); gl_Position = projectionMatrix * viewMatrix * wp; }";
   const ground = new THREE.Mesh(
-    new THREE.SphereGeometry(R, 128, 96),
-    new THREE.MeshPhongMaterial({ map: tex("atmos", true), specularMap: tex("spec"), specular: new THREE.Color(0x2a3a55), shininess: 18 })
+    new THREE.SphereGeometry(R, 192, 128),
+    new THREE.ShaderMaterial({
+      uniforms: earthUniforms, vertexShader: EARTH_VS,
+      fragmentShader: `
+        uniform sampler2D dayMap; uniform sampler2D brcMap; uniform vec3 sunDir; uniform float cloudOff;
+        varying vec2 vUv; varying vec3 vN; varying vec3 vP; varying vec3 vE; varying vec3 vNo;
+        void main(){
+          vec3 N = normalize(vN), V = normalize(cameraPosition - vP), L = normalize(sunDir);
+          vec3 brc = texture2D(brcMap, vUv).rgb;
+          // 고도 요철: 이웃 텍셀과의 높이 차(보간되어 매끈함)로 법선을 동·북 방향으로 기울임
+          const float D = 1.5 / 4096.0;
+          float hx = texture2D(brcMap, vUv + vec2(D, 0.0)).r - texture2D(brcMap, vUv - vec2(D, 0.0)).r;
+          float hy = texture2D(brcMap, vUv + vec2(0.0, D)).r - texture2D(brcMap, vUv - vec2(0.0, D)).r;
+          vec3 Nb = normalize(N - (hx * normalize(vE) + hy * normalize(vNo)) * 2.2);
+          float land = smoothstep(0.3, 0.7, brc.g);
+          vec3 day = texture2D(dayMap, vUv).rgb;
+          day = mix(day * vec3(0.32, 0.46, 0.78), day * 1.05, land);                    // 바다는 더 깊은 남색
+          float NdL = dot(Nb, L), NdL0 = dot(N, L);
+          float lit = smoothstep(-0.06, 0.5, NdL);
+          // 구름 그림자: 햇빛 쪽으로 조금 비껴 구름을 다시 읽음
+          float cs = texture2D(brcMap, vUv + vec2(cloudOff + 0.0012, -0.0008)).b;
+          vec3 sunCol = vec3(1.0, 0.96, 0.9);
+          vec3 col = day * lit * (1.0 - 0.5 * smoothstep(0.25, 0.9, cs)) * sunCol * 1.55;
+          // 바다 위 햇빛 반사 (넓게 번지는 것 + 날카로운 것)
+          vec3 H = normalize(L + V); float nh = max(dot(N, H), 0.0);
+          col += sunCol * (pow(nh, 18.0) * 0.18 + pow(nh, 220.0) * 1.2) * (1.0 - land) * smoothstep(0.0, 0.25, NdL0);
+          // 대기 연무: 비스듬히 볼수록(지평선 쪽) 푸른 산란광이 덮음, 해 질 녘 쪽은 주황
+          float mu = max(dot(N, V), 0.0), haze = pow(1.0 - mu, 2.6);
+          vec3 hazeCol = mix(vec3(0.9, 0.5, 0.25), vec3(0.32, 0.55, 1.0), smoothstep(-0.05, 0.3, NdL0)) * (0.15 + 0.85 * smoothstep(-0.1, 0.6, NdL0));
+          col = mix(col, hazeCol, clamp(haze * 0.9, 0.0, 0.92)) + vec3(0.02, 0.04, 0.09) * (1.0 - mu) * lit;
+          gl_FragColor = vec4(col, 1.0);
+          #include <tonemapping_fragment>
+          #include <colorspace_fragment>
+        }`,
+    })
   );
   earth.add(ground);
-  const clouds = new THREE.Mesh(
-    new THREE.SphereGeometry(R * 1.006, 128, 96),
-    new THREE.MeshLambertMaterial({ map: tex("clouds", true), transparent: true, opacity: 0.85, depthWrite: false })
+  const clouds = new THREE.Mesh(                             // 구름층: 지표보다 살짝 높아 지평선 쪽에서 입체감
+    new THREE.SphereGeometry(R * 1.0035, 192, 128),
+    new THREE.ShaderMaterial({
+      uniforms: earthUniforms, vertexShader: EARTH_VS, transparent: true, depthWrite: false,
+      fragmentShader: `
+        uniform sampler2D brcMap; uniform vec3 sunDir; uniform float cloudOff;
+        varying vec2 vUv; varying vec3 vN; varying vec3 vP; varying vec3 vE; varying vec3 vNo;
+        void main(){
+          vec3 N = normalize(vN), V = normalize(cameraPosition - vP), L = normalize(sunDir);
+          float c = smoothstep(0.18, 0.85, texture2D(brcMap, vUv + vec2(cloudOff, 0.0)).b);
+          float NdL = dot(N, L), lit = smoothstep(-0.08, 0.45, NdL);
+          vec3 col = mix(vec3(1.0, 0.62, 0.42), vec3(1.0, 0.99, 0.97), smoothstep(0.0, 0.3, NdL)) * (0.06 + 1.1 * lit);
+          float mu = max(dot(N, V), 0.0);
+          col = mix(col, vec3(0.45, 0.62, 1.0) * lit, pow(1.0 - mu, 3.0) * 0.6);
+          gl_FragColor = vec4(col, c * 0.95);
+          #include <tonemapping_fragment>
+          #include <colorspace_fragment>
+        }`,
+    })
   );
   earth.add(clouds);
   const rim = (scale, power, strength, side, color) => new THREE.Mesh(
@@ -72,8 +129,7 @@ function init(host) {
   earth.add(rim(1.012, 4.0, 0.55, THREE.FrontSide, 0x8fbaff));   // 지표 가장자리의 푸른 빛
   earth.add(rim(1.04, 7.0, 1.25, THREE.BackSide, 0x7fb0ff));     // 바깥 대기층
 
-  /* ---------- 빛: 지평선 뒤의 태양 + 약한 보조광 ---------- */
-  const sunDir = new THREE.Vector3(-1.6, 0.55, -10).normalize();
+  /* ---------- 빛: 왼쪽 뒤 높은 곳의 태양 (지구 셰이더와 같은 방향) + 약한 보조광 ---------- */
   const sun = new THREE.DirectionalLight(0xfff0dc, 2.6); sun.position.copy(sunDir.clone().multiplyScalar(100)); scene.add(sun);
   const fill = new THREE.DirectionalLight(0x9db8ff, 0.16); fill.position.set(2, 4, 10); scene.add(fill);
   const key = new THREE.DirectionalLight(0xffffff, 0.38); key.position.set(-6, 5, 8); scene.add(key);   // 위성을 비추는 빛 (지구는 거의 안 비춤)
@@ -90,7 +146,7 @@ function init(host) {
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity }));
     s.scale.set(size, size, 1); return s;
   };
-  const sunPos = new THREE.Vector3(-1.4, -0.35, -40);
+  const sunPos = sunDir.clone().multiplyScalar(400);
   const halo = sprite(glowTex([[0, "rgba(255,214,160,1)"], [0.16, "rgba(255,150,70,0.55)"], [0.5, "rgba(140,70,30,0.16)"], [1, "rgba(0,0,0,0)"]]), 52, 1);
   const core = sprite(glowTex([[0, "rgba(255,255,255,1)"], [0.12, "rgba(255,246,228,0.95)"], [0.4, "rgba(255,200,140,0.25)"], [1, "rgba(0,0,0,0)"]]), 9, 1);
   halo.position.copy(sunPos); core.position.copy(sunPos);
@@ -204,8 +260,8 @@ function init(host) {
     const t = (now - t0) / 1000;
     if (!reduce) {
       cur.x += (target.x - cur.x) * 0.04; cur.y += (target.y - cur.y) * 0.04;
-      clouds.rotation.y = t * 0.004;
-      ground.rotation.y = t * 0.0025;
+      earth.rotation.y = EROT[1] + t * 0.00116;            // 저궤도 위성에서 보는 지표 흐름 속도 (약 7.4 km/s ÷ 지구 반지름)
+      earthUniforms.cloudOff.value = t * 0.00035;          // 구름은 조금 더 흘러감
       sat.rotation.y = -0.82 + Math.sin(t * 0.15) * 0.1 + cur.x * 0.12;
       sat.rotation.x = 0.04 + cur.y * 0.05;
       sat.position.y = 0.45 + Math.sin(t * 0.4) * 0.04;

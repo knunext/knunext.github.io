@@ -445,7 +445,8 @@
         '<div class="sd-side"><p class="caps sd-num">' + pad(i + 1) + " / " + esc(t.category || "") + "</p>" +
         '<h4 class="sd-title">' + esc(t.subtitle || t.title) + "</h4>" +
         '<p class="sd-en">' + esc(t.title) + "</p>" + relBlock(t) +
-        (t.imageCredit && t.image && !t.scene ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") + "</div>" +
+        (t.imageCredit && t.image && !t.scene ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") +
+        (t.sceneCredit ? '<p class="credit sd-credit">' + t.sceneCredit + "</p>" : "") + "</div>" +
         '<div class="sd-main">' +
         (t.description ? '<p class="prose">' + t.description + "</p>" : "") +
         (t.note ? '<p class="note"><span class="caps">Notice</span> ' + t.note + "</p>" : "") +
@@ -495,7 +496,10 @@
       return best;
     }
     let raf = 0;
-    track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setActive(nearest())); }, { passive: true });
+    track.addEventListener("scroll", () => {
+      if (track.scrollTop) track.scrollTop = 0;              // 갤러리는 가로로만 (주소의 #detail- 로 브라우저가 세로로 밀었을 때 되돌림)
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setActive(nearest()));
+    }, { passive: true });
     track.addEventListener("keydown", (e) => {
       if (e.key === "ArrowRight") { e.preventDefault(); go(current + 1); }
       if (e.key === "ArrowLeft") { e.preventDefault(); go(current - 1); }
@@ -522,7 +526,12 @@
       if (i < 0) return;
       go(i, true);
       const el = toDetail ? document.getElementById("detail-" + id) : section;
-      const jump = () => el.scrollIntoView({ block: "start", inline: "nearest" });
+      // scrollIntoView 는 갤러리(track)까지 세로로 밀어 버리므로, 페이지만 직접 스크롤
+      const jump = () => {
+        track.scrollTop = 0;
+        const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - pad, behavior: "auto" });
+      };
       requestAnimationFrame(jump);
       // 처음 들어올 때는 글꼴·이미지가 늦게 자리 잡아 위치가 밀리므로 다 불러온 뒤 한 번 더 맞춤
       if (document.readyState !== "complete") window.addEventListener("load", () => requestAnimationFrame(jump), { once: true });

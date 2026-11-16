@@ -265,6 +265,8 @@ LAB.research = {
       short: "Orbital Data Center",
       illustration: "orbit",
       scene: "orbit3d",            // 위쪽 카드 영역을 3D 사진풍 장면으로 (assets/js/orbit-scene.js)
+      // 3D 장면에 쓴 지구 텍스처 출처 (CC BY 4.0 이라 표시 필요). 카드 상세 왼쪽 아래에 작게 나옴
+      sceneCredit: 'Earth textures: <a href="https://www.solarsystemscope.com/textures/">Solar System Scope</a>, based on NASA imagery, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (resized, recompressed)',
       labels: ["Satellite", "Radiation", "Thermal"],
       wordmark: ["Orbit", "DC"],
       category: "Space Computing",

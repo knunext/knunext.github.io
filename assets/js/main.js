@@ -417,49 +417,45 @@
     const topics = R.topics || [];
     setHTML("#page-intro", R.intro || "");
 
-    const track = $("#topic-track"), chips = $("#topic-chips"), detail = $("#topic-detail");
+    const track = $("#topic-track"), chips = $("#topic-chips");
     const section = $("#topics");
 
-    track.innerHTML = topics.map((t, i) => {
-      const firstList = (t.lists || []).find((l) => l.items && l.items.length);
-      return '<article class="slide' + (t.scene ? " has-scene" : "") + '" data-i="' + i + '" aria-label="' + (i + 1) + " / " + topics.length + ": " + esc(t.short || t.title) + '">' +
+    // 슬라이드 한 장 = 위 그림(3D 장면) + 워드마크 + 가로선 아래 상세 (한국어 명칭, 관련 수업, 설명, 과제, 스폰서·파트너)
+    const relBlock = (t) => t.related && t.related.length
+      ? '<div class="detail-rel"><p class="caps detail-rel-label">Related Courses / Tutorials</p><ul>' +
+        t.related.map((r) => '<li><a class="rel-box" href="' + esc(r.link || "#") + '">' +
+          (r.type ? '<span class="rel-type caps">' + esc(r.type) + "</span>" : "") +
+          '<span class="rel-title">' + esc(r.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></span></a></li>').join("") +
+        "</ul></div>"
+      : "";
+    track.innerHTML = topics.map((t, i) =>
+      '<article class="slide' + (t.scene ? " has-scene" : "") + '" data-i="' + i + '" aria-label="' + (i + 1) + " / " + topics.length + ": " + esc(t.short || t.title) + '">' +
         '<div class="slide-top">' + (t.scene ? '<div class="slide-scene" data-scene="' + esc(t.scene) + '" aria-hidden="true"></div>' : "") +
         (t.sceneLogos && t.sceneLogos.length ? '<ul class="scene-logos" aria-label="' + esc(t.sceneLogosLabel || "") + '">' +
           t.sceneLogos.filter((g) => g.logo).map((g) => '<li><img src="' + esc(g.logo) + '" alt="' + esc(g.name || "") + '" title="' + esc(g.name || "") + '"></li>').join("") + "</ul>" : "") +
         '<div class="slide-copy">' +
         '<p class="label">' + esc(t.category || "") + "</p>" +
-        '<h3 class="slide-title"><a href="#detail-' + esc(t.id) + '" data-detail="' + i + '">' + esc(t.subtitle || t.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></a></h3>' +
+        '<h3 class="slide-title"><a href="#detail-' + esc(t.id) + '">' + esc(t.subtitle || t.title) + ' <span class="ne" aria-hidden="true">&#8595;</span></a></h3>' +
         "</div>" +
         '<div class="slide-art">' +
         (t.labels && t.labels.length ? '<ul class="art-labels">' + t.labels.map((l) => "<li>" + esc(l) + "</li>").join("") + "</ul>" : "") +
         (t.scene ? "" : '<div class="art">' + art(t) + "</div>") + "</div></div>" +   // 3D 배경이 있으면 선화는 생략
-        '<div class="info-row">' +
-        '<div class="info"><p class="caps">' + esc(t.title) + "</p></div>" +
-        (firstList ? '<div class="info info-split"><p class="caps info-key">' + esc(firstList.label) + ':</p><ul class="caps arrow-list clamp">' + firstList.items.slice(0, 3).map((x) => "<li>" + x + "</li>").join("") + "</ul></div>" : '<div class="info"></div>') +
-        '<div class="info info-split"><p class="caps info-key">' + esc(S.shortName || "") + ' &rarr;</p><p class="caps clamp">' + (t.description || "") + "</p></div>" +
-        "</div>" +
         '<p class="wordmark wordmark-sm" aria-hidden="true">' + wordmark(t.wordmark) + "</p>" +
-        "</article>";
-    }).join("");
+        '<div class="slide-detail" id="detail-' + esc(t.id) + '">' +
+        '<div class="sd-side"><p class="caps sd-num">' + pad(i + 1) + " / " + esc(t.category || "") + "</p>" +
+        '<h4 class="sd-title">' + esc(t.subtitle || t.title) + "</h4>" +
+        '<p class="sd-en">' + esc(t.title) + "</p>" + relBlock(t) +
+        (t.imageCredit && t.image && !t.scene ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") + "</div>" +
+        '<div class="sd-main">' +
+        (t.description ? '<p class="prose">' + t.description + "</p>" : "") +
+        (t.note ? '<p class="note"><span class="caps">Notice</span> ' + t.note + "</p>" : "") +
+        lists(t.lists) +
+        '<div class="sd-logos">' + sponsorBlock(t.sponsors, R.showEmptySponsor !== false) + partnerBlock(t.partners) + "</div>" +
+        "</div></div>" +
+        "</article>"
+    ).join("");
 
     chips.innerHTML = topics.map((t, i) => '<button type="button" class="chip" data-i="' + i + '">' + esc(t.short || t.title) + "</button>").join("");
-
-    detail.innerHTML = topics.map((t, i) =>
-      '<article class="detail" id="detail-' + esc(t.id) + '">' +
-      '<div class="detail-side"><p class="label">' + pad(i + 1) + " / " + esc(t.category || "") + '</p><div class="detail-art">' + art(t) + "</div>" +
-      (t.imageCredit && t.image ? '<p class="credit">' + esc(t.imageCredit) + "</p>" : "") +
-      (t.related && t.related.length
-        ? '<div class="detail-rel"><p class="caps detail-rel-label">Related Courses / Tutorials</p><ul>' +
-          t.related.map((r) => '<li><a class="rel-box" href="' + esc(r.link || "#") + '">' +
-            (r.type ? '<span class="rel-type caps">' + esc(r.type) + "</span>" : "") +
-            '<span class="rel-title">' + esc(r.title) + ' <span class="ne" aria-hidden="true">&#8599;</span></span></a></li>').join("") +
-          "</ul></div>"
-        : "") + "</div>" +
-      '<div class="detail-main"><h3>' + esc(t.subtitle || t.title) + '</h3><p class="detail-en">' + esc(t.title) + "</p>" +
-      (t.description ? '<p class="prose">' + t.description + "</p>" : "") +
-      (t.note ? '<p class="note"><span class="caps">Notice</span> ' + t.note + "</p>" : "") +
-      lists(t.lists) + sponsorBlock(t.sponsors, R.showEmptySponsor !== false) + partnerBlock(t.partners) + "</div></article>"
-    ).join("");
 
     const slides = $$(".slide", track);
     const chipEls = $$(".chip", chips);
@@ -508,11 +504,20 @@
       if (c) go(Number(c.dataset.i));
     });
 
-    // research.html#ai-accelerator 처럼 들어오면 해당 카드로
+    // research.html#ai-accelerator 처럼 들어오면 해당 카드로, #detail-ai-accelerator 면 그 카드의 상세(가로선 아래)로
     const fromHash = () => {
-      const id = decodeURIComponent(location.hash.slice(1));
+      let id = decodeURIComponent(location.hash.slice(1));
+      const toDetail = id.indexOf("detail-") === 0;
+      if (toDetail) id = id.slice(7);
       const i = topics.findIndex((t) => t.id === id);
-      if (i >= 0) { go(i, true); section.scrollIntoView({ block: "start" }); }
+      if (i < 0) return;
+      go(i, true);
+      const el = toDetail ? document.getElementById("detail-" + id) : section;
+      const jump = () => el.scrollIntoView({ block: "start", inline: "nearest" });
+      requestAnimationFrame(jump);
+      // 처음 들어올 때는 글꼴·이미지가 늦게 자리 잡아 위치가 밀리므로 다 불러온 뒤 한 번 더 맞춤
+      if (document.readyState !== "complete") window.addEventListener("load", () => requestAnimationFrame(jump), { once: true });
+      if (document.fonts && document.fonts.status !== "loaded") document.fonts.ready.then(() => requestAnimationFrame(jump));
     };
     window.addEventListener("hashchange", fromHash);
     requestAnimationFrame(() => {

@@ -472,7 +472,16 @@
       $("#topic-counter").textContent = pad(i + 1) + " / " + pad(slides.length);
       $("#topic-prev").disabled = i === 0;
       $("#topic-next").disabled = i === slides.length - 1;
+      fit();
     }
+    // 갤러리 높이를 지금 보는 카드에 맞춤 (가장 긴 카드에 맞춰지면 아래 넘김 버튼이 멀리 떨어지므로)
+    function fit() {
+      const s = slides[current];
+      if (!s) return;
+      const cs = getComputedStyle(track);
+      track.style.height = Math.ceil(s.offsetHeight + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) + "px";
+    }
+    if (window.ResizeObserver) { const ro = new ResizeObserver(fit); slides.forEach((s) => ro.observe(s)); }
     function go(i, instant) {
       i = Math.max(0, Math.min(slides.length - 1, i));
       const s = slides[i];

@@ -569,7 +569,10 @@ ul.clamp { display: block; max-height: 4.7em; }
   scrollbar-width: none;
   overscroll-behavior-x: contain;
   align-items: flex-start;   /* 카드마다 내용 길이만큼 (짧은 카드에 빈 공간이 생기지 않게) */
+  overflow-y: hidden;        /* 높이는 main.js 가 지금 보는 카드에 맞춤 */
+  transition: height 0.35s ease;
 }
+@media (prefers-reduced-motion: reduce) { .track { transition: none; } }
 .track::-webkit-scrollbar { display: none; }
 .track:focus-visible { outline-offset: -1px; }
 

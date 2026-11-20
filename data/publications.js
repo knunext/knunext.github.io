@@ -44,16 +44,6 @@ LAB.ongoingWork = [
     tags: ["BK1"],
     scope: "international",
     authors: ["Anonymous-authors", "Jeonggeun Kim*"],
-    title: "Designing a HBM-based FPGA Accelerator for K-mer Counting Operations",
-    venue: "IntlConf",
-    details: "2026",
-    links: {}
-  },
-  {
-    status: "In Preparation",
-    tags: ["BK1"],
-    scope: "international",
-    authors: ["Anonymous-authors", "Jeonggeun Kim*"],
     title: "CombatBench: Combat Scenario-based Benchmarks for Military Decision Making Process",
     venue: "IntlConf",
     details: "2026",
@@ -82,6 +72,17 @@ LAB.ongoingWork = [
 
 LAB.publications = [
   // ---------- 2026 ----------
+  {
+    year: 2027,
+    scope: "international",
+    tags: ["BK1"],
+    authors: ["Junhyung Kim*", "Jaeyong Cho*", "Dukyun Nam", "Yongtae Kim", "Jeonggeun Kim*"],
+    title: "CoKmer: Cooperative CPU–FPGA Acceleration of Exact k-mer Counting",
+    venue: "The ACM SIGAPP Symposium on Applied Computing (SAC)",
+    details: "2027",
+    status: "Accepted",
+    links: {}
+  },
   {
     year: 2026,
     scope: "international",

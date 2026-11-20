@@ -47,6 +47,8 @@ LAB.people = {
         {
           name: "김준형",
           role: "PIM 랩장",
+          nameEn: "Junhyung Kim",
+          aliases: ["Junhyung Kim"],
           period: "Dec. 2024 – Present",
           research: ["BioPIM", "Processing-in-Memory", "FPGA", "HLS"],
           badges: [
@@ -81,6 +83,8 @@ LAB.people = {
         },
         {
           name: "조재용",
+          nameEn: "Jaeyong Cho",
+          aliases: ["Jaeyong Cho"],
           period: "Dec. 2024 – Present",
           research: ["BioPIM, Processing-in-Memory", "FPGA", "HLS"],
           badges: [

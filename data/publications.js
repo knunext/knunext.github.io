@@ -78,7 +78,7 @@ LAB.publications = [
     tags: ["BK1"],
     authors: ["Junhyung Kim*", "Jaeyong Cho*", "Dukyun Nam", "Yongtae Kim", "Jeonggeun Kim*"],
     title: "CoKmer: Cooperative CPU–FPGA Acceleration of Exact k-mer Counting",
-    venue: "The ACM SIGAPP Symposium on Applied Computing (SAC)",
+    venue: "Proceedings of the 42nd ACM/SIGAPP Symposium on Applied Computing (SAC)",
     details: "2027",
     status: "Accepted",
     links: {}
